@@ -9,6 +9,7 @@ import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
 import CommandRegistry from "./CommandRegistry";
 import { ENVIRONMENT, EnvironmentStages } from "../config";
 import { EmbedType, replyEmbedEphemeral } from "../util/util";
+import AudioManager from "./audio/AudioManager";
 
 const log = Logger.child({ label: "Core" });
 
@@ -136,6 +137,29 @@ export default class Core {
                     log.error({ error });
                 }
             }
+        });
+
+        // handle leaving voice channels when users go somewhere else
+        this.client.on("voiceStateUpdate", (old_state, new_state) => {
+            const subscription = AudioManager.get(new_state.guild.id);
+            // if we don't know of such a voice connection, let it stop
+            if (!subscription) return;
+
+            if (old_state.id === this.client.user.id) {
+                // if bot has disconnected or was kicked from a voice channel
+                if (old_state.channelId && !new_state.channelId) {
+                    return subscription.destroy();
+                }
+            } else if (!old_state.channelId) { // if wasn't in a voice channel to begin with, stop
+                return;
+            }
+
+            const channel = new_state.guild.me?.voice.channel;
+            if (!channel) return;
+
+            if (channel.members.filter(m => !m.user.bot).size > 0) return;
+
+            return subscription.destroy();
         });
     }
 
