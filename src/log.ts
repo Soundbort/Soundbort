@@ -33,7 +33,7 @@ const Logger = winston.createLogger({
         : "warn",
     levels,
     format: winston.format.combine(
-        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss:ms" }),
+        winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
         winston.format.splat(),
         winston.format.json(),
     ),
