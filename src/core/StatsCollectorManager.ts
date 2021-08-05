@@ -84,7 +84,7 @@ export class StatsCollectorManager extends EventEmitter {
             voice_connections,
             commands: commands,
             custom_samples,
-            played_samples: played_samples,
+            played_samples,
 
             ping,
             uptime,
