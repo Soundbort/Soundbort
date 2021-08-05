@@ -1,14 +1,16 @@
+import Discord from "discord.js";
+
 import registry from "../core/CommandRegistry";
 import { createStringOption } from "../modules/commands/options/createOption";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
 import { CommandGroup } from "../modules/commands/CommandGroup";
 import { exit } from "../util/exit";
-import { upload } from "../core/soundboard/methods/upload";
 import SoundboardManager from "../core/soundboard/SoundboardManager";
 import { EmbedType, isOwner, replyEmbed, replyEmbedEphemeral } from "../util/util";
 import { CustomSample } from "../core/soundboard/sample/CustomSample";
 import SampleID from "../core/soundboard/SampleID";
+import { OWNER_IDS } from "../config";
 
 const upload_pre_cmd = new Command({
     name: "upload-pre",
@@ -19,7 +21,7 @@ const upload_pre_cmd = new Command({
     async func(interaction) {
         const name = interaction.options.getString("name", true);
 
-        await upload(interaction, name, "standard");
+        await SoundboardManager.upload(interaction, name, "standard");
     },
 });
 
@@ -74,12 +76,16 @@ const backup_cmd = new Command({
 const reboot_cmd = new Command({
     name: "reboot",
     description: "Reboot the bot",
-    func(interaction) {
+    async func(interaction) {
+        if (!isOwner(interaction.user.id)) {
+            return await interaction.reply(replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error));
+        }
+
         exit(interaction.client, 0);
     },
 });
 
-registry.addCommand(new TopCommandGroup({
+const owner_cmd = new TopCommandGroup({
     name: "owner",
     description: "A set of owner commands.",
     commands: [
@@ -95,4 +101,17 @@ registry.addCommand(new TopCommandGroup({
         backup_cmd,
         reboot_cmd,
     ],
-}));
+    target: {
+        global: false,
+        guildHidden: true,
+    },
+    async onGuildCreate(app_command) {
+        const permissions: Discord.ApplicationCommandPermissionData[] = OWNER_IDS.map(id => ({
+            id: id,
+            type: "USER",
+            permission: true,
+        }));
+        await app_command.permissions.set({ permissions });
+    },
+});
+registry.addCommand(owner_cmd);
