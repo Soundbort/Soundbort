@@ -1,3 +1,5 @@
+import "./util/banner/bannerPrinter";
+
 import Discord from "discord.js";
 
 import Logger from "./log";
