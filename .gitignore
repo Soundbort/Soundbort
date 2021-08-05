@@ -1,0 +1,12 @@
+logs/
+data/
+
+# ignore dependencies
+node_modules/
+
+# ignore all config files (REALLY IMPORTANT)
+.env
+
+# ignore compiled files
+dist/
+

@@ -1,0 +1,97 @@
+export interface CacheOptions {
+    ttl?: number;
+    maxSize?: number;
+}
+
+const DEFAULTS: Required<CacheOptions> = {
+    maxSize: 0,
+    ttl: 0,
+};
+
+export default class Cache<K, T> extends Map<K, T> {
+    public readonly ttl: number;
+    public readonly maxSize: number;
+
+    private _ttl: Map<K, NodeJS.Timeout> = new Map();
+
+    constructor(_opts: CacheOptions = {}) {
+        super();
+
+        const opts = { ...DEFAULTS, ..._opts } as Required<CacheOptions>;
+
+        this.ttl = opts.ttl * 1000;
+        this.maxSize = opts.maxSize;
+    }
+
+    private _setTTLTimeout(key: K) {
+        if (this.ttl <= 0) return;
+
+        const old_timeout = this._ttl.get(key);
+        if (typeof old_timeout !== "undefined") clearTimeout(old_timeout);
+
+        const timeout = setTimeout(() => this.delete(key), this.ttl);
+        this._ttl.set(key, timeout);
+    }
+
+    clear(): void {
+        super.clear();
+
+        for (const [key] of this._ttl) {
+            const old_timeout = this._ttl.get(key);
+            if (typeof old_timeout !== "undefined") {
+                clearTimeout(old_timeout);
+            }
+        }
+        this._ttl.clear();
+    }
+
+    delete(key: K): boolean {
+        super.delete(key);
+
+        const old_timeout = this._ttl.get(key);
+        if (typeof old_timeout !== "undefined") {
+            clearTimeout(old_timeout);
+            this._ttl.delete(key);
+        }
+
+        return true;
+    }
+
+    get(key: K): T | undefined {
+        const doc = super.get(key);
+        if (!doc) return;
+
+        this._setTTLTimeout(key);
+
+        return doc;
+    }
+
+    find(finder: (item: T, key: K) => boolean): T | undefined {
+        for (const [key, item] of this) {
+            if (finder(item, key)) {
+                this._setTTLTimeout(key);
+                return item;
+            }
+        }
+    }
+
+    has(key: K): boolean {
+        this._setTTLTimeout(key);
+
+        if (super.has(key)) return true;
+
+        return false;
+    }
+
+    set(key: K, new_doc: T): this {
+        if (this.maxSize > 0 && this.size >= this.maxSize) {
+            const first_key = this.keys().next().value;
+            this.delete(first_key);
+        }
+
+        super.set(key, new_doc);
+        this._setTTLTimeout(key);
+
+        return this;
+    }
+}
