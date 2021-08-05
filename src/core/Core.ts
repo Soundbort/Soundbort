@@ -10,6 +10,7 @@ import CommandRegistry from "./CommandRegistry";
 import { ENVIRONMENT, EnvironmentStages } from "../config";
 import { EmbedType, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
+import GuildConfigManager from "./GuildConfigManager";
 
 const log = Logger.child({ label: "Core" });
 
@@ -24,6 +25,19 @@ export default class Core {
 
     async setup(): Promise<any> {
         log.info("Client ready. Running preparations...");
+
+        // -- getting-started (hi, invite, github, getting started)
+        /*
+        description: `A getting-started guide that will help you find your way around ${BOT_NAME}.`,
+        func(interaction) {
+            const embed = createEmbed()
+                .setFooter(`${BOT_NAME} v${VERSION}`)
+                .setAuthor(BOT_NAME, (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined);
+        */
+
+        // //// GDPR ////
+        // -- export-data
+        // -- delete-data
 
         // ///////////////////////
 
@@ -100,16 +114,34 @@ export default class Core {
         await this.client.application.commands.set(global_commands_data);
 
         // DEPLOY GUILDS
-        for (const [, guild] of this.client.guilds.cache) {
+        const deployToGuild = async (guild: Discord.Guild) => {
             const app_commands = await guild.commands.set(guild_commands_data);
 
             for (const [, app_command] of app_commands) {
                 const command = guild_commands.get(app_command.name);
-                if (typeof command?.onGuildCreate === "function") {
-                    await command.onGuildCreate(app_command);
+                if (command) {
+                    command.app_command = app_command;
+                    if (typeof command.onGuildCreate === "function") {
+                        await command.onGuildCreate(app_command, guild);
+                    }
                 }
             }
+        };
+
+        for (const [, guild] of this.client.guilds.cache) {
+            await deployToGuild(guild);
         }
+
+        this.client.on("guildCreate", async guild => {
+            try {
+                await deployToGuild(guild);
+
+                // default to the highest role in the server (server with no roles this will be @everyone)
+                await GuildConfigManager.setAdminRole(guild.id, guild.roles.highest.id);
+            } catch (error) {
+                log.error({ error });
+            }
+        });
     }
 
     attachListeners(): void {
@@ -118,7 +150,7 @@ export default class Core {
 
             try {
                 const command = CommandRegistry.commands.get(interaction.commandName);
-                if (!command) return await interaction.reply({ content: "This command doesn't exist anymore or some other thing screwed up.", ephemeral: true });
+                if (!command) return await interaction.reply(replyEmbedEphemeral("This command doesn't exist anymore or some other thing screwed up.", EmbedType.Error));
 
                 log.debug("Command '%s' by '%s' (%s) in %s (%s)", command.name, interaction.user.tag, interaction.user.id, interaction.channelId, interaction.channel?.type);
 
