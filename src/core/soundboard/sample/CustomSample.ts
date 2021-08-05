@@ -10,7 +10,6 @@ import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../..
 import Cache from "../../../modules/Cache";
 import { findAndRemove } from "../../../util/array";
 import { AbstractSample } from "./AbstractSample";
-import SampleID from "../SampleID";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 
@@ -84,28 +83,6 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         const sample = new CustomSample(doc);
         cache.set(sample.id, sample);
-
-        return sample;
-    }
-
-    static async findSampleByScope(
-        guildId: Discord.Snowflake | null,
-        userId: Discord.Snowflake,
-        name: string,
-        scope: "user" | "server" | null,
-    ): Promise<CustomSample | undefined> {
-        let sample: CustomSample | undefined;
-        if (!scope) {
-            sample = await CustomSample.findByName(guildId, userId, name);
-        } else if (scope === "user") {
-            sample = await CustomSample.findSampleUser(userId, name);
-        } else if (guildId) {
-            sample = await CustomSample.findSampleGuild(guildId, name);
-        }
-
-        if (!sample && SampleID.isId(name)) {
-            sample = await CustomSample.findById(name);
-        }
 
         return sample;
     }
@@ -293,13 +270,11 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     }
 
     /**
-     * Deletes a custom sample from cache, database and file system
+     * Deletes a custom sample from a soundboard
      */
     static async remove(user_guild_id: Discord.Snowflake, sample: CustomSample): Promise<void> {
         if (sample.creatorId === user_guild_id) {
-            cache.delete(sample.id);
-            await collectionCustomSample().deleteOne({ id: sample.id });
-            await fs.unlink(sample.file);
+            await this.removeCompletely(sample);
         } else {
             const cached = cache.get(sample.id);
             if (cached) {
@@ -314,6 +289,15 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
                 { $removeFromSet: { userIds: user_guild_id, guildIds: user_guild_id } },
             );
         }
+    }
+
+    /**
+     * Deletes a custom sample from cache, database and file system
+     */
+    static async removeCompletely(sample: CustomSample): Promise<void> {
+        cache.delete(sample.id);
+        await collectionCustomSample().deleteOne({ id: sample.id });
+        await fs.unlink(sample.file);
     }
 
     static async ensureDir(): Promise<void> {
