@@ -53,7 +53,7 @@
     "eslint": "^7.31.0",
     "rimraf": "^3.0.2",
     "standard-version": "^9.3.1",
-    "ts-node-dev": "^1.1.8",
+    "ts-node": "^10.1.0",
     "typescript": "^4.3.5"
   },
   "engines": {
@@ -64,7 +64,7 @@
     "build:docker": "docker build -t loneless/soundbort .",
     "lint": "eslint src/ --ext .ts,.js",
     "lint:fix": "eslint src/ --ext .ts,.js --fix",
-    "start:watch": "NODE_ENV=development ts-node-dev --project tsconfig.json --no-notify src/index.ts",
+    "start:watch": "NODE_ENV=development ts-node --project tsconfig.json src/index.ts",
     "start:devel": "NODE_ENV=development node --unhandled-rejections=strict dist/index.js",
     "start": "NODE_ENV=production node dist/index.js",
     "release:major": "standard-version --release-as major",
