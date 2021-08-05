@@ -15,6 +15,7 @@
     "@types/color": "^3.0.2",
     "bufferutil": "^4.0.3",
     "canvas": "^2.8.0",
+    "chalk": "^4.1.2",
     "color": "^3.0.0",
     "cron": "^1.8.2",
     "discord.js": "^13.0.0-dev.t1627949059.35fa3b3",
