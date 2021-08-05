@@ -17,6 +17,9 @@ const log = Logger.child({ label: "Command => play" });
 export function install({ client, stats_collector }: CmdInstallerArgs): void {
     async function play(interaction: Discord.CommandInteraction | Discord.ButtonInteraction, sample: CustomSample | PredefinedSample): Promise<void> {
         try {
+            // shouldn't true, but Typescript wants it
+            if (!interaction.inGuild()) return;
+
             const member = await interaction.guild?.members.fetch(interaction.user.id);
             if (!member) {
                 throw new Error("interaction.guild ist nicht definiert.");
@@ -28,6 +31,9 @@ export function install({ client, stats_collector }: CmdInstallerArgs): void {
             }
             if (subscription === JoinFailureTypes.FailedTryAgain) {
                 return await interaction.reply(replyEmbedEphemeral("Connecting to the voice channel failed. Try again later.", EmbedType.Error));
+            }
+            if (AudioManager.has(interaction.guildId) && interaction.guild?.me?.voice.channelId && member.voice.channelId !== interaction.guild.me.voice.channelId) {
+                return await interaction.reply(replyEmbedEphemeral("You need to be in the same voice channel as the bot!", EmbedType.Info));
             }
 
             await sample.play(subscription.audio_player);
