@@ -1,5 +1,6 @@
 import { ENVIRONMENT } from "./config";
 
+import chalk from "chalk";
 import winston from "winston";
 import "winston-daily-rotate-file";
 
@@ -44,9 +45,9 @@ const Logger = winston.createLogger({
                 winston.format.printf(info => {
                     let str = `${info.timestamp} `;
                     if (info.shard)
-                        str += `[shard:${info.shard}] `;
+                        str += chalk.magenta(`[shard:${info.shard}] `);
                     if (info.label)
-                        str += `[${info.label}] `;
+                        str += chalk.cyan(`[${info.label}] `);
                     return str + `${info.level}: ${info.message}`;
                 }),
             ),
