@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import { Command } from "./Command";
 import { CommandGroup } from "./CommandGroup";
-import { CommandTarget, GuildCreateEvent } from "./types";
+import { CommandTarget, GuildCreateEventHandler } from "./types";
 
 export interface TopCommandGroupOptions {
     name: string;
@@ -10,16 +10,17 @@ export interface TopCommandGroupOptions {
     defaultPermission?: boolean,
     permissions?: Discord.ApplicationCommandPermissions[]
     target?: CommandTarget;
-    onGuildCreate?: GuildCreateEvent;
+    onGuildCreate?: GuildCreateEventHandler;
 }
 export class TopCommandGroup {
+    app_command: Discord.ApplicationCommand | null = null;
     name: string;
     description: string;
     commands: Map<string, Command | CommandGroup> = new Map();
     defaultPermission: boolean;
     permissions: Discord.ApplicationCommandPermissionData[];
     target: CommandTarget;
-    onGuildCreate?: GuildCreateEvent;
+    onGuildCreate?: GuildCreateEventHandler;
 
     constructor({ name, description, commands, defaultPermission = true, permissions = [], target = { global: false, guildHidden: false }, onGuildCreate }: TopCommandGroupOptions) {
         this.name = name;

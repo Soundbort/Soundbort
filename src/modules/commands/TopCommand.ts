@@ -1,18 +1,19 @@
 import Discord from "discord.js";
 import { Command, CommandOptions } from "./Command";
-import { GuildCreateEvent, CommandTarget } from "./types";
+import { GuildCreateEventHandler, CommandTarget } from "./types";
 
 export interface TopCommandOptions extends CommandOptions {
     permissions?: Discord.ApplicationCommandPermissions[]
     target?: CommandTarget;
-    onGuildCreate?: GuildCreateEvent;
+    onGuildCreate?: GuildCreateEventHandler;
 }
 
 export class TopCommand extends Command {
+    app_command: Discord.ApplicationCommand | null = null;
     permissions: Discord.ApplicationCommandPermissionData[];
     target: CommandTarget;
 
-    onGuildCreate?: GuildCreateEvent;
+    onGuildCreate?: GuildCreateEventHandler;
 
     constructor({ name, description, options = [], permissions = [], target = { global: false, guildHidden: false }, func, onGuildCreate }: TopCommandOptions) {
         super({ name, description, options, func });
