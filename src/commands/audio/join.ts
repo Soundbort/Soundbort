@@ -21,6 +21,6 @@ registry.addCommand(new TopCommand({
         if (subscription === JoinFailureTypes.FailedTryAgain)
             return await interaction.reply(replyEmbedEphemeral("Couldn't join the voice channel you're in... Maybe try again later.", EmbedType.Error));
 
-        await interaction.reply(replyEmbed("Done did :thumbsup:"));
+        await interaction.reply(replyEmbed("👍 Joined"));
     },
 }));

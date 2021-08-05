@@ -18,6 +18,6 @@ registry.addCommand(new TopCommand({
 
         subscription.destroy();
 
-        await interaction.reply(replyEmbed("Bye :wave:"));
+        await interaction.reply(replyEmbed("👋 Bye"));
     },
 }));

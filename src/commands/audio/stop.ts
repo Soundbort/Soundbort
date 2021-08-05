@@ -18,6 +18,6 @@ registry.addCommand(new TopCommand({
 
         subscription.stop();
 
-        await interaction.reply(replyEmbed("Done did :thumbsup:"));
+        await interaction.reply(replyEmbed("👍 Done did"));
     },
 }));
