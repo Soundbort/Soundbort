@@ -11,6 +11,7 @@ import { ENVIRONMENT, EnvironmentStages } from "../config";
 import { EmbedType, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
 import GuildConfigManager from "./GuildConfigManager";
+import { collectionBlacklistUser } from "../modules/database/models";
 
 const log = Logger.child({ label: "Core" });
 
@@ -147,6 +148,10 @@ export default class Core {
     attachListeners(): void {
         this.client.on("interactionCreate", async interaction => {
             if (!interaction.isCommand()) return;
+
+            if (await collectionBlacklistUser().findOne({ userId: interaction.user.id })) {
+                return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
+            }
 
             try {
                 const command = CommandRegistry.commands.get(interaction.commandName);

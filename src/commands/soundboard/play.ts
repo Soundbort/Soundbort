@@ -11,6 +11,7 @@ import { CmdInstallerArgs } from "../../util/types";
 import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
 import { EmbedType, replyEmbedEphemeral } from "../../util/util";
 import { BUTTON_CUSTOM_ID_START, BUTTON_PREDEF_ID_START } from "../../core/soundboard/methods/list";
+import { collectionBlacklistUser } from "../../modules/database/models";
 
 const log = Logger.child({ label: "Command => play" });
 
@@ -50,6 +51,10 @@ export function install({ client, stats_collector }: CmdInstallerArgs): void {
     client.on("interactionCreate", async interaction => {
         if (!interaction.isButton()) return;
         if (!interaction.inGuild()) return;
+
+        if (await collectionBlacklistUser().findOne({ userId: interaction.user.id })) {
+            return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
+        }
 
         const customId = interaction.customId;
         if (customId.startsWith(BUTTON_CUSTOM_ID_START)) {

@@ -11,6 +11,51 @@ import { EmbedType, isOwner, replyEmbed, replyEmbedEphemeral } from "../util/uti
 import { CustomSample } from "../core/soundboard/sample/CustomSample";
 import SampleID from "../core/soundboard/SampleID";
 import { OWNER_IDS } from "../config";
+import { collectionBlacklistUser } from "../modules/database/models";
+
+const blacklist_add_cmd = new Command({
+    name: "add",
+    description: "Blacklist a user from using this bot.",
+    options: [
+        createStringOption("user-id", "User id to blacklist", true),
+    ],
+    async func(interaction) {
+        if (!isOwner(interaction.user.id)) {
+            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error));
+        }
+
+        const userId = interaction.options.getString("user-id", true);
+
+        await collectionBlacklistUser().updateOne(
+            { userId: userId },
+            { $set: { userId: userId } },
+            { upsert: true },
+        );
+
+        await interaction.reply(replyEmbedEphemeral("Blacklisted user.", EmbedType.Success));
+    },
+});
+
+const blacklist_remove_cmd = new Command({
+    name: "remove",
+    description: "Remove blacklisting of user.",
+    options: [
+        createStringOption("user-id", "User id to remove from blacklist", true),
+    ],
+    async func(interaction) {
+        if (!isOwner(interaction.user.id)) {
+            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error));
+        }
+
+        const userId = interaction.options.getString("user-id", true);
+
+        await collectionBlacklistUser().deleteOne(
+            { userId: userId },
+        );
+
+        await interaction.reply(replyEmbedEphemeral("Removed user from blacklist.", EmbedType.Success));
+    },
+});
 
 const upload_pre_cmd = new Command({
     name: "upload-pre",
@@ -89,6 +134,14 @@ const owner_cmd = new TopCommandGroup({
     name: "owner",
     description: "A set of owner commands.",
     commands: [
+        new CommandGroup({
+            name: "blacklist",
+            description: "Blacklist a user from using this bot.",
+            commands: [
+                blacklist_add_cmd,
+                blacklist_remove_cmd,
+            ],
+        }),
         upload_pre_cmd,
         new CommandGroup({
             name: "delete",

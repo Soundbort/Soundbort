@@ -2,10 +2,15 @@ import { Collection } from "mongodb";
 import { get } from ".";
 import { DbCollection } from "./collections";
 
+import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
 import { ConfigSchema } from "./schemas/ConfigSchema";
 import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
 import { SoundboardPredefinedSampleSchema } from "./schemas/SoundboardPredefinedSampleSchema";
 import { StatsSchema } from "./schemas/StatsSchema";
+
+export function collectionBlacklistUser(): Collection<BlacklistUserSchema> {
+    return get().collection<BlacklistUserSchema>(DbCollection.BlacklistUser);
+}
 
 export function collectionCustomSample(): Collection<SoundboardCustomSampleSchema> {
     return get().collection<SoundboardCustomSampleSchema>(DbCollection.CustomSample);
