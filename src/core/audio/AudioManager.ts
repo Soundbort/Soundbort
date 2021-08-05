@@ -26,12 +26,12 @@ class AudioManager {
         to this voice channel, @discordjs/voice will just return the existing connection for
         us!
         */
-        const voice_channel = Voice.joinVoiceChannel({
+        const voice_connection = Voice.joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
             adapterCreator: channel.guild.voiceAdapterCreator as Voice.DiscordGatewayAdapterCreator,
         });
-        subscription = new AudioSubscription(voice_channel, () => this.subscriptions.delete(member.guild.id));
+        subscription = new AudioSubscription(voice_connection, () => this.subscriptions.delete(member.guild.id));
         this.subscriptions.set(channel.guild.id, subscription);
 
         /*
@@ -56,6 +56,10 @@ class AudioManager {
 
     public get(guildId: Discord.Snowflake): AudioSubscription | undefined {
         return this.subscriptions.get(guildId);
+    }
+
+    public has(guildId: Discord.Snowflake): boolean {
+        return this.subscriptions.has(guildId);
     }
 }
 
