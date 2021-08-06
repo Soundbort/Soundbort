@@ -6,7 +6,7 @@ If you wish to contribute to <NAME>, feel free to fork the repository and submit
 
 You need the following prerequisites for contributing to Soundbort:
 
-* Node.js 16.5.0 (using a version management tool like [nvm](https://github.com/nvm-sh/nvm) is recommended)
+* Node.js 16.6.1 (using a version management tool like [nvm](https://github.com/nvm-sh/nvm) is recommended)
 * build-essentials (apt install build-essential. For dev on Windows use WSL 2 or inform yourself about Node.js package build requirements)
 * ffmpeg (apt install ffmpeg)
 * A MongoDb instance. Either local, or on [cloud.mongodb.com](https://cloud.mongodb.com), which I recommend, because it's easy to setup, doesn't require you to install anything and it has a free plan.
