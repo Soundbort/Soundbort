@@ -19,7 +19,7 @@ const Colors = {
     [EmbedType.Success]: COLOR.SUCCESS,
     [EmbedType.Error]: COLOR.ERROR,
     [EmbedType.Warning]: COLOR.WARNING,
-    [EmbedType.Info]: COLOR.SECONDARY,
+    [EmbedType.Info]: COLOR.INFO,
 };
 const Emoji = {
     [EmbedType.Success]: EMOJI.SUCCESS,
