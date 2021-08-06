@@ -7,8 +7,6 @@ export interface TopCommandGroupOptions {
     name: string;
     description: string;
     commands: (Command | CommandGroup)[];
-    defaultPermission?: boolean,
-    permissions?: Discord.ApplicationCommandPermissions[]
     target?: CommandTarget;
     onGuildCreate?: GuildCreateEventHandler;
 }
@@ -17,16 +15,12 @@ export class TopCommandGroup {
     name: string;
     description: string;
     commands: Map<string, Command | CommandGroup> = new Map();
-    defaultPermission: boolean;
-    permissions: Discord.ApplicationCommandPermissionData[];
     target: CommandTarget;
     onGuildCreate?: GuildCreateEventHandler;
 
-    constructor({ name, description, commands, defaultPermission = true, permissions = [], target = { global: false, guildHidden: false }, onGuildCreate }: TopCommandGroupOptions) {
+    constructor({ name, description, commands, target = { global: false, guildHidden: false }, onGuildCreate }: TopCommandGroupOptions) {
         this.name = name;
         this.description = description;
-        this.defaultPermission = defaultPermission;
-        this.permissions = permissions;
         this.target = target;
         this.onGuildCreate = onGuildCreate;
 
@@ -37,11 +31,6 @@ export class TopCommandGroup {
         if (this.commands.has(command.name)) throw new Error("Command name already exists");
 
         this.commands.set(command.name, command);
-        return this;
-    }
-
-    addPermissions(...perms: Discord.ApplicationCommandPermissions[]): this {
-        this.permissions.push(...perms);
         return this;
     }
 
