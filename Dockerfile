@@ -14,15 +14,13 @@ RUN apt update \
         librsvg2-dev \
         ffmpeg
 
-RUN mkdir -p /app/data && mkdir -p /app/logs && chown -R node:node /app
+RUN mkdir -p /app
 WORKDIR /app
 
-USER node
-
-COPY --chown=node:node package*.json ./
+COPY package*.json ./
 RUN npm install
 
-COPY --chown=node:node . .
+COPY . .
 RUN npm run build || true
 
 VOLUME /app/data
@@ -30,7 +28,7 @@ VOLUME /app/logs
 
 ENV NODE_ENV=production
 ENV NODE_ICU_DATA=/app/node_modules/full-icu
-CMD [ "node", "--unhandled-rejections=strict", "dist/index.js" ]
+CMD [ "node", "dist/index.js" ]
 
 HEALTHCHECK --start-period=5m --interval=30s --timeout=10s CMD npm run health
 # https://docs.docker.com/engine/reference/builder/#healthcheck
