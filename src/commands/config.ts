@@ -49,6 +49,7 @@ const config_cmd = new TopCommandGroup({
             return;
         }
 
+        // maybe not neccessary but need to find out more
         const permissions: Discord.ApplicationCommandPermissionData[] = [{
             id: config.adminRoleId,
             permission: true,
