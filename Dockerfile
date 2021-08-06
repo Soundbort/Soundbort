@@ -14,7 +14,7 @@ RUN apt update \
         librsvg2-dev \
         ffmpeg
 
-RUN mkdir -p /app/node_modules && chown -R node:node /app
+RUN mkdir -p /app/data && mkdir -p /app/logs && chown -R node:node /app
 WORKDIR /app
 
 USER node
@@ -26,6 +26,7 @@ COPY --chown=node:node . .
 RUN npm run build || true
 
 VOLUME /app/data
+VOLUME /app/logs
 
 ENV NODE_ENV=production
 ENV NODE_ICU_DATA=/app/node_modules/full-icu
