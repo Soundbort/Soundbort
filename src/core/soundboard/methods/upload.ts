@@ -75,7 +75,7 @@ async function generateId() {
 }
 
 async function _upload(interaction: Discord.CommandInteraction, name: string, scope: "user" | "server" | "standard"): Promise<any> {
-    await interaction.defer();
+    await interaction.deferReply();
 
     if (!await isEnoughDiskSpace()) {
         return await interaction.editReply(replyEmbed(UploadErrors.OutOfSpace, EmbedType.Error));
