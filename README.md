@@ -10,7 +10,7 @@
 
 ***[Add Soundbort to your server now](https://discord.com/api/oauth2/authorize?client_id=868296331234521099&permissions=2150943808&scope=applications.commands%20bot) and enjoy it's full set of features with low latency.***
 
-##### *[Add Soundbort Staging to your server](https://discord.com/api/oauth2/authorize?client_id=869715767497740378&permissions=2150943808&scope=applications.commands%20bot) if you want the newest of (potentially unstable) features.*
+##### *[Add Soundbort Staging to your server](https://discord.com/api/oauth2/authorize?client_id=869715767497740378&permissions=2150943808&scope=applications.commands%20bot) if you want the newest of (potentially unstable) features and help out with development.*
 </div>
 
 ---
