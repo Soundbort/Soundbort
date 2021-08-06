@@ -4,9 +4,9 @@ LABEL maintainer="Christian Schäfer <lonelessart@gmail.com> (@lonelesscodes)"
 
 RUN apt update \
     && apt upgrade -y \
-    # Install node-canvas dependencies
     && apt install -y \
         build-essential \
+        # Install node-canvas dependencies, to build on unsupported system
         libcairo2-dev \
         libpango1.0-dev \
         libjpeg-dev \
