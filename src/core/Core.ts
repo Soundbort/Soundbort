@@ -137,6 +137,10 @@ export default class Core {
             try {
                 await deployToGuild(guild);
 
+                const config = await GuildConfigManager.findConfig(guild.id);
+                if (config && config.adminRoleId === guild.roles.highest.id) return;
+
+                // reset admin role to the highest role when rejoining
                 // default to the highest role in the server (server with no roles this will be @everyone)
                 await GuildConfigManager.setAdminRole(guild.id, guild.roles.highest.id);
             } catch (error) {
