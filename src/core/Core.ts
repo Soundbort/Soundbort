@@ -27,19 +27,6 @@ export default class Core {
     async setup(): Promise<any> {
         log.info("Client ready. Running preparations...");
 
-        // -- getting-started (hi, invite, github, getting started)
-        /*
-        description: `A getting-started guide that will help you find your way around ${BOT_NAME}.`,
-        func(interaction) {
-            const embed = createEmbed()
-                .setFooter(`${BOT_NAME} v${VERSION}`)
-                .setAuthor(BOT_NAME, (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined);
-        */
-
-        // //// GDPR ////
-        // -- export-data
-        // -- delete-data
-
         // ///////////////////////
 
         const commands_path = path.join(__dirname, "..", "commands");
@@ -69,7 +56,7 @@ export default class Core {
         const timer = nanoTimer();
 
         const files = await walk(commands_path)
-            .then(files => files.filter(file => path.extname(file) === ".ts"));
+            .then(files => files.filter(file => path.extname(file) === ".ts" || path.extname(file) === ".js"));
 
         const install_opts: CmdInstallerArgs = {
             client: this.client,
