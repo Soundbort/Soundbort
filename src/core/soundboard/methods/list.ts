@@ -68,7 +68,8 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
     }
 
     if (samples.total === 0) {
-        return interaction.reply(replyEmbedEphemeral("You don't have any sound clips in your soundboard. Add them with `/upload`.", EmbedType.Info));
+        await reply(replyEmbedEphemeral("You don't have any sound clips in your soundboard. Add them with `/upload`.", EmbedType.Info));
+        return;
     }
 
     if (samples.guild.length > 0 && interaction.guild) {
