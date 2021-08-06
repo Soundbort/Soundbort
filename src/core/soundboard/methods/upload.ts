@@ -19,10 +19,12 @@ const ffprobe = promisify(_ffprobe) as (file: string) => Promise<FfprobeData>;
 
 const log_upload = Logger.child({ label: "Sample => Uploader" });
 
-export const MAX_SAMPLES = 25;
-export const MAX_LEN_NAME = 24;
+// could be 25, but limit to 10 first, so that users can later vote to get more sample slots
+// export const MAX_SAMPLES = 25;
+export const MAX_SAMPLES = 10;
+export const MAX_LEN_NAME = 30;
 export const MAX_SIZE = 4;
-export const MAX_DURATION = 30000;
+export const MAX_DURATION = 30 * 1_000;
 
 export const UploadErrors = {
     OutOfSpace: "Disk space is running out. Please inform the developer.",
