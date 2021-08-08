@@ -3,7 +3,6 @@ FROM node:16.6.1
 LABEL maintainer="Christian Schäfer <lonelessart@gmail.com> (@lonelesscodes)"
 
 RUN apt update \
-    && apt upgrade -y \
     && apt install -y \
         build-essential \
         # Install node-canvas dependencies, to build on unsupported system
