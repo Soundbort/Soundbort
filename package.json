@@ -2,11 +2,11 @@
   "name": "soundbort",
   "version": "0.0.1",
   "description": "Soundboard Discord bot derived from TrixieBot's soundboard implementation!",
-  "homepage": "https://github.com/LonelessCodes/SoundBort",
+  "homepage": "https://github.com/LonelessCodes/Soundbort",
   "author": "Loneless (https://loneless.art)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LonelessCodes/SoundBort.git"
+    "url": "git+https://github.com/LonelessCodes/Soundbort.git"
   },
   "dependencies": {
     "@discordjs/collection": "^0.2.1",
@@ -67,6 +67,7 @@
     "start:watch": "NODE_ENV=development ts-node --project tsconfig.json src/index.ts",
     "start:devel": "NODE_ENV=development node --unhandled-rejections=strict dist/index.js",
     "start": "NODE_ENV=production node dist/index.js",
+    "release": "standard-version",
     "release:major": "standard-version --release-as major",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
@@ -80,6 +81,6 @@
   ],
   "main": "dist/index.js",
   "bugs": {
-    "url": "https://github.com/LonelessCodes/SoundBort/issues"
+    "url": "https://github.com/LonelessCodes/Soundbort/issues"
   }
 }
