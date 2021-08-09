@@ -4,7 +4,7 @@
 
 <div>
 
-<img src="https://discordbots.org/api/widget/868296331234521099.png" alt="Bot stats from top.gg" width="250" style="float:right; margin-left: .5rem" />
+<img src="https://top.gg/api/widget/868296331234521099.svg" alt="Bot stats from top.gg" width="250" style="float:right; margin-left: .5rem" />
 
 ## Using the Official Soundbort
 
