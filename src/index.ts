@@ -25,7 +25,7 @@ const client = new Discord.Client({
     presence: {
         status: "dnd",
         activities: [{
-            name: "/soundbort | Booting...",
+            name: "Booting...",
             type: "PLAYING",
         }],
     },
