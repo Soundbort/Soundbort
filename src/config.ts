@@ -24,10 +24,6 @@ export const DISCORD_TOKEN = _DISCORD_TOKEN;
 // https://cloud.mongodb.com
 export const DB_URI = process.env.SOUNDBORT_DB_URI || "mongodb://localhost:27017/soundbort";
 
-export const INVITE_URL = process.env.SOUNDBORT_INVITE_URL;
-
-export const GITHUB_URL = process.env.SOUNDBORT_GITHUB_URL;
-
 export enum EnvironmentStages {
     DEVEL = "DEVEL",
     STAGING = "STAGING",
