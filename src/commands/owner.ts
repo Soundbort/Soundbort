@@ -107,7 +107,7 @@ const delete_standard_cmd = new Command({
         createStringOption("name", "Name of the standard sample to delete.", true),
     ],
     async func(interaction) {
-        const name = interaction.options.getString("sample", true);
+        const name = interaction.options.getString("name", true);
 
         await SoundboardManager.remove(interaction, name, "standard");
     },
