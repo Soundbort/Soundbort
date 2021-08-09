@@ -8,7 +8,7 @@ import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
 import CommandRegistry from "./CommandRegistry";
 import { ENVIRONMENT, EnvironmentStages } from "../config";
-import { EmbedType, replyEmbedEphemeral } from "../util/util";
+import { EmbedType, logErr, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
 import GuildConfigManager from "./GuildConfigManager";
 import { collectionBlacklistUser } from "../modules/database/models";
@@ -131,7 +131,7 @@ export default class Core {
                 // default to the highest role in the server (server with no roles this will be @everyone)
                 await GuildConfigManager.setAdminRole(guild.id, guild.roles.highest.id);
             } catch (error) {
-                log.error({ error });
+                log.error({ error: logErr(error) });
             }
         });
     }
@@ -154,7 +154,7 @@ export default class Core {
 
                 this.stats_collector.incCalledCommands(interaction.commandName, 1);
             } catch (error) {
-                log.error({ error });
+                log.error({ error: logErr(error) });
 
                 try {
                     const reply = interaction.replied
@@ -162,7 +162,7 @@ export default class Core {
                         : interaction.reply;
                     await reply(replyEmbedEphemeral("Some error happened.", EmbedType.Error));
                 } catch (error) {
-                    log.error({ error });
+                    log.error({ error: logErr(error) });
                 }
             }
         });

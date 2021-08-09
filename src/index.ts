@@ -7,6 +7,7 @@ import { DISCORD_TOKEN } from "./config";
 import { exit } from "./util/exit";
 import Core from "./core/Core";
 import database from "./modules/database/index";
+import { logErr } from "./util/util";
 
 const log = Logger.child({ label: "Index" });
 const djs_log = Logger.child({ label: "discord.js" });
@@ -56,7 +57,7 @@ client.on("debug", message => { djs_log.debug(message); });
 
 client.on("warn", warn => { djs_log.warn(warn); });
 
-client.on("error", error => { djs_log.error(error.stack || error); });
+client.on("error", error => { djs_log.error({ error: logErr(error) }); });
 
 client.on("shardDisconnect", (close_event, shard_id) => { djs_log.info(`Disconnected ID:${shard_id}`, close_event); });
 
@@ -81,6 +82,6 @@ Promise.resolve()
     .then(client => Core.create(client))
     .catch(error => {
         console.error(error);
-        log.error({ error: { stack: error.stack }, message: "Failed to log in" });
+        log.error({ error: logErr(error), message: "Failed to log in" });
         exit(client, 1);
     });

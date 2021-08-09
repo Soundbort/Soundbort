@@ -10,6 +10,7 @@ import Logger from "../log";
 import { CustomSample } from "./soundboard/sample/CustomSample";
 import { collectionStats } from "../modules/database/models";
 import { METRICS_PORT } from "../config";
+import { logErr } from "../util/util";
 
 const log = Logger.child({ label: "Core => StatsCollectorManager" });
 
@@ -24,7 +25,7 @@ server.listen(METRICS_PORT);
 export class StatsCollectorManager extends EventEmitter {
     private job = new CronJob({
         cronTime: "0 */10 * * * *",
-        onTick: () => this.collect().catch(error => log.error({ error })),
+        onTick: () => this.collect().catch(error => log.error({ error: logErr(error) })),
     });
 
     private played_samples = 0;

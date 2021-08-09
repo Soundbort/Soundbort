@@ -62,6 +62,16 @@ export async function fetchMember(
     }
 }
 
+export function logErr(error: Error): Error {
+    const err = {
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+    };
+    Object.setPrototypeOf(err, Error.prototype);
+    return err;
+}
+
 // a function that does nothing (e.g. for Promise.catch() errors we don't care about)
 export function doNothing(): void {
     // Do nothing

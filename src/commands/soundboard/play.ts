@@ -9,7 +9,7 @@ import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
 import Logger from "../../log";
 import { CmdInstallerArgs } from "../../util/types";
 import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
-import { EmbedType, replyEmbedEphemeral } from "../../util/util";
+import { EmbedType, logErr, replyEmbedEphemeral } from "../../util/util";
 import { BUTTON_CUSTOM_ID_START, BUTTON_PREDEF_ID_START } from "../../core/soundboard/methods/list";
 import { collectionBlacklistUser } from "../../modules/database/models";
 
@@ -43,7 +43,7 @@ export function install({ client, stats_collector }: CmdInstallerArgs): void {
 
             return await interaction.reply(replyEmbedEphemeral(`🔊 Playing ${sample.name}`));
         } catch (error) {
-            log.error({ error });
+            log.error({ error: logErr(error) });
             return await interaction.reply(replyEmbedEphemeral("Some error happened and caused some whoopsies", EmbedType.Error));
         }
     }
