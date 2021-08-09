@@ -3,7 +3,7 @@ export const COLOR = {
 
     PRIMARY: 0x6378CA,
     INFO: 0xADBCE6,
-    SUCCESS: 0xF9C784,
+    SUCCESS: 0x62D945,
     WARNING: 0xe6a23c,
     ERROR: 0xd8315b,
 };
