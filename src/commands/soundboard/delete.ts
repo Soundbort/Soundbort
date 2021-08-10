@@ -2,7 +2,7 @@ import registry from "../../core/CommandRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import SoundboardManager from "../../core/soundboard/SoundboardManager";
+import { remove } from "../../core/soundboard/methods/remove";
 
 registry.addCommand(new TopCommand({
     name: "delete",
@@ -18,6 +18,6 @@ registry.addCommand(new TopCommand({
         const name = interaction.options.getString("sample", true);
         const scope = interaction.options.getString("from", false) as ("user" | "server" | null) || "user";
 
-        await SoundboardManager.remove(interaction, name, scope);
+        await remove(interaction, name, scope);
     },
 }));

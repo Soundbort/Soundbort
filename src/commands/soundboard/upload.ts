@@ -2,7 +2,7 @@ import registry from "../../core/CommandRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
-import SoundboardManager from "../../core/soundboard/SoundboardManager";
+import { upload } from "../../core/soundboard/methods/upload";
 
 registry.addCommand(new TopCommand({
     name: "upload",
@@ -18,6 +18,6 @@ registry.addCommand(new TopCommand({
         const name = interaction.options.getString("name", true);
         const scope = interaction.options.getString("to", false) as ("user" | "server" | null) || "user";
 
-        await SoundboardManager.upload(interaction, name, scope);
+        await upload(interaction, name, scope);
     },
 }));
