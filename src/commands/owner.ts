@@ -57,17 +57,23 @@ const blacklist_remove_cmd = new Command({
     },
 });
 
-const upload_pre_cmd = new Command({
-    name: "upload-pre",
+const upload_standard_cmd = new CommandGroup({
+    name: "upload",
     description: "Add a sample to standard soundboard. Upload the audio file first, then call this command.",
-    options: [
-        createStringOption("name", "Name for the sample", true),
-    ],
-    async func(interaction) {
-        const name = interaction.options.getString("name", true);
+    commands: [
+        new Command({
+            name: "standard",
+            description: "Add a sample to standard soundboard. Upload the audio file first, then call this command.",
+            options: [
+                createStringOption("name", "Name for the sample", true),
+            ],
+            async func(interaction) {
+                const name = interaction.options.getString("name", true);
 
-        await SoundboardManager.upload(interaction, name, "standard");
-    },
+                await SoundboardManager.upload(interaction, name, "standard");
+            },
+        }),
+    ],
 });
 
 const delete_extern_cmd = new Command({
@@ -142,7 +148,7 @@ const owner_cmd = new TopCommandGroup({
                 blacklist_remove_cmd,
             ],
         }),
-        upload_pre_cmd,
+        upload_standard_cmd,
         new CommandGroup({
             name: "delete",
             description: "Import a sample to standard soundboard.",
