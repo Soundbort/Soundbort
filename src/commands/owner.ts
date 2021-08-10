@@ -6,13 +6,14 @@ import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
 import { CommandGroup } from "../modules/commands/CommandGroup";
 import { exit } from "../util/exit";
-import SoundboardManager from "../core/soundboard/SoundboardManager";
 import { EmbedType, isOwner, replyEmbed, replyEmbedEphemeral } from "../util/util";
 import { CustomSample } from "../core/soundboard/sample/CustomSample";
 import SampleID from "../core/soundboard/SampleID";
 import { OWNER_IDS } from "../config";
 import { collectionBlacklistUser } from "../modules/database/models";
 import { createUserPermission } from "../modules/commands/options/createPermission";
+import { upload } from "../core/soundboard/methods/upload";
+import { remove } from "../core/soundboard/methods/remove";
 
 const blacklist_add_cmd = new Command({
     name: "add",
@@ -71,7 +72,7 @@ const upload_standard_cmd = new CommandGroup({
             async func(interaction) {
                 const name = interaction.options.getString("name", true);
 
-                await SoundboardManager.upload(interaction, name, "standard");
+                await upload(interaction, name, "standard");
             },
         }),
     ],
@@ -116,7 +117,7 @@ const delete_standard_cmd = new Command({
     async func(interaction) {
         const name = interaction.options.getString("name", true);
 
-        await SoundboardManager.remove(interaction, name, "standard");
+        await remove(interaction, name, "standard");
     },
 });
 
