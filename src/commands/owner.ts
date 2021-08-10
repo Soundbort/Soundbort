@@ -12,6 +12,7 @@ import { CustomSample } from "../core/soundboard/sample/CustomSample";
 import SampleID from "../core/soundboard/SampleID";
 import { OWNER_IDS } from "../config";
 import { collectionBlacklistUser } from "../modules/database/models";
+import { createUserPermission } from "../modules/commands/options/createPermission";
 
 const blacklist_add_cmd = new Command({
     name: "add",
@@ -165,11 +166,7 @@ const owner_cmd = new TopCommandGroup({
         guildHidden: true,
     },
     async onGuildCreate(app_command) {
-        const permissions: Discord.ApplicationCommandPermissionData[] = OWNER_IDS.map(id => ({
-            id: id,
-            type: "USER",
-            permission: true,
-        }));
+        const permissions: Discord.ApplicationCommandPermissionData[] = OWNER_IDS.map(id => createUserPermission(id, true));
         await app_command.permissions.set({ permissions });
     },
 });
