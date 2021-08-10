@@ -1,15 +1,13 @@
-import Discord from "discord.js";
-
 import registry from "../core/CommandRegistry";
 import { createRoleOption } from "../modules/commands/options/createOption";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
 import { BOT_NAME } from "../config";
-import { EmbedType, replyEmbed } from "../util/util";
+import { EmbedType, guessModRole, replyEmbed } from "../util/util";
 import GuildConfigManager from "../core/GuildConfigManager";
 
-const admin_role_cmd = new Command({
-    name: "admin-role",
+const set_admin_role_cmd = new Command({
+    name: "set-admin-role",
     description: `Set the (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
     options: [
         createRoleOption("role", `The (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`, true),
@@ -31,41 +29,47 @@ const admin_role_cmd = new Command({
     },
 });
 
+const show_admin_role_cmd = new Command({
+    name: "show-admin-role",
+    description: `Shows the (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
+    async func(interaction) {
+        if (!interaction.inGuild()) {
+            return;
+        }
+        if (!interaction.guild) {
+            return;
+        }
+
+        const config = await GuildConfigManager.getConfig(interaction.guild);
+        if (!config || !config.adminRoleId) {
+            return;
+        }
+
+        const role = await interaction.guild.roles.fetch(config.adminRoleId);
+
+        await interaction.reply(replyEmbed(`Admin role is ${role?.toString()}`, EmbedType.Info));
+    },
+});
+
 const config_cmd = new TopCommandGroup({
     name: "config",
     description: `Configure ${BOT_NAME} for your server.`,
     commands: [
-        admin_role_cmd,
+        set_admin_role_cmd,
+        show_admin_role_cmd,
     ],
     target: {
         global: false,
-        guildHidden: true,
+        guildHidden: false,
     },
     // called every time the bot starts
     async onGuildCreate(app_command, guild) {
-        const config = await GuildConfigManager.findConfig(guild.id);
-        if (!config || !config.adminRoleId) {
-            await GuildConfigManager.setAdminRole(guild.id, guild.roles.highest.id);
-            return;
-        }
+        const config = await GuildConfigManager.getConfig(guild);
+        if (config && config.adminRoleId) return;
 
-        // maybe not neccessary but need to find out more
-        const permissions: Discord.ApplicationCommandPermissionData[] = [{
-            id: config.adminRoleId,
-            permission: true,
-            type: "ROLE",
-        }];
-        await app_command.permissions.set({ permissions });
+        const guessed_role = guessModRole(guild);
+
+        await GuildConfigManager.setAdminRole(guild.id, guessed_role.id);
     },
 });
 registry.addCommand(config_cmd);
-
-// called every time the role is changed by a moderator, or every time the bot joins a new guild
-GuildConfigManager.onAdminRoleChange(async (guildId, roleId) => {
-    const permissions: Discord.ApplicationCommandPermissionData[] = [{
-        id: roleId,
-        permission: true,
-        type: "ROLE",
-    }];
-    await config_cmd.app_command?.permissions.set({ permissions });
-});

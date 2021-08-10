@@ -1,5 +1,5 @@
 import Discord, { Awaited } from "discord.js";
-import { fetchMember } from "../util/util";
+import { fetchMember, guessModRole } from "../util/util";
 import { collectionConfig } from "../modules/database/models";
 import { ConfigSchema } from "../modules/database/schemas/ConfigSchema";
 
@@ -8,11 +8,11 @@ type OnAdminRoleChangeFunc = (guildId: Discord.Snowflake, roleId: Discord.Snowfl
 class GuildConfigManager {
     private on_admin_role_change_handlers: OnAdminRoleChangeFunc[] = [];
 
-    public async findConfig(guildId: Discord.Snowflake): Promise<ConfigSchema | undefined> {
-        const doc = await collectionConfig().findOne({ guildId: guildId });
-        if (!doc) return;
+    public async getConfig(guild: Discord.Guild): Promise<ConfigSchema | undefined> {
+        const config = await collectionConfig().findOne({ guildId: guild.id });
+        if (!config) return;
 
-        return doc;
+        return config;
     }
 
     public async setAdminRole(guildId: Discord.Snowflake, roleId: Discord.Snowflake): Promise<void> {
@@ -34,11 +34,12 @@ class GuildConfigManager {
         const member = await fetchMember(guild, userId);
         if (!member) return false;
 
-        // if (member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) return true;
-
-        const config = await this.findConfig(guild.id);
+        const config = await this.getConfig(guild);
         if (!config) return false;
         if (!config.adminRoleId) return false;
+
+        if (member.permissions.has(Discord.Permissions.FLAGS.ADMINISTRATOR)) return true;
+
         if (member.roles.cache.has(config.adminRoleId)) return true;
 
         return false;

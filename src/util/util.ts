@@ -6,6 +6,16 @@ export function isOwner(userId: Discord.Snowflake): boolean {
     return OWNER_IDS.includes(userId);
 }
 
+export function guessModRole(guild: Discord.Guild): Discord.Role {
+    for (const [roleId, role] of guild.roles.cache.sort((a, b) => a.comparePositionTo(b))) {
+        console.log(roleId, role.position);
+
+        if (/^(mod(erator|eration)?)|(admin(istrator|istration)?)$/i.test(role.name)) return role;
+    }
+
+    return guild.roles.highest;
+}
+
 export enum EmbedType {
     Basic,
     Success,

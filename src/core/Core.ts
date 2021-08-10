@@ -8,7 +8,7 @@ import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
 import CommandRegistry from "./CommandRegistry";
 import { ENVIRONMENT, EnvironmentStages } from "../config";
-import { EmbedType, logErr, replyEmbedEphemeral } from "../util/util";
+import { EmbedType, guessModRole, logErr, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
 import GuildConfigManager from "./GuildConfigManager";
 import { collectionBlacklistUser } from "../modules/database/models";
@@ -124,12 +124,15 @@ export default class Core {
             try {
                 await deployToGuild(guild);
 
-                const config = await GuildConfigManager.findConfig(guild.id);
-                if (config && config.adminRoleId === guild.roles.highest.id) return;
+                const guessed_role = guessModRole(guild);
+
+                const config = await GuildConfigManager.getConfig(guild);
+                if (config && config.adminRoleId === guessed_role.id) return;
 
                 // reset admin role to the highest role when rejoining
-                // default to the highest role in the server (server with no roles this will be @everyone)
-                await GuildConfigManager.setAdminRole(guild.id, guild.roles.highest.id);
+                // default to the highest role or a role that says "mod", "moderator"
+                // or "admin" in the server (server with no roles this will be @everyone)
+                await GuildConfigManager.setAdminRole(guild.id, guessed_role.id);
             } catch (error) {
                 log.error({ error: logErr(error) });
             }
