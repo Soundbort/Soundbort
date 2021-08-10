@@ -14,3 +14,8 @@ export const EMOJI = {
     WARNING: "⚠️",
     INFO: "❕",
 };
+
+export const BUTTON_IDS = {
+    CUSTOM_PLAY: "sample.custom.",
+    PREDEF_PLAY: "sample.pre.",
+};

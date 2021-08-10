@@ -1,4 +1,5 @@
 import Discord from "discord.js";
+import { BUTTON_IDS } from "../../../const";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../../util/util";
 import { CustomSample, AvailableCustomSamplesResponse } from "../sample/CustomSample";
 import { PredefinedSample } from "../sample/PredefinedSample";
@@ -6,9 +7,6 @@ import { PredefinedSample } from "../sample/PredefinedSample";
 interface AvailableSamplesResponse extends AvailableCustomSamplesResponse {
     standard: PredefinedSample[];
 }
-
-export const BUTTON_CUSTOM_ID_START = "sample.custom.";
-export const BUTTON_PREDEF_ID_START = "sample.pre.";
 
 async function getAllAvailableSamples(guildId: Discord.Snowflake | null, userId: Discord.Snowflake): Promise<AvailableSamplesResponse> {
     const { user, guild } = guildId
@@ -31,7 +29,7 @@ function generateSampleButtons(samples: CustomSample[] | PredefinedSample[]): Di
 
     for (const sample of samples) {
         const button = new Discord.MessageButton()
-            .setCustomId(sample instanceof CustomSample ? BUTTON_CUSTOM_ID_START + sample.id : BUTTON_PREDEF_ID_START + sample.name)
+            .setCustomId(sample instanceof CustomSample ? BUTTON_IDS.CUSTOM_PLAY + sample.id : BUTTON_IDS.PREDEF_PLAY + sample.name)
             .setLabel(sample.name)
             .setStyle("PRIMARY");
 

@@ -10,8 +10,8 @@ import Logger from "../../log";
 import { CmdInstallerArgs } from "../../util/types";
 import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
 import { EmbedType, logErr, replyEmbedEphemeral } from "../../util/util";
-import { BUTTON_CUSTOM_ID_START, BUTTON_PREDEF_ID_START } from "../../core/soundboard/methods/list";
 import { collectionBlacklistUser } from "../../modules/database/models";
+import { BUTTON_IDS } from "../../const";
 
 const log = Logger.child({ label: "Command => play" });
 
@@ -57,16 +57,16 @@ export function install({ client, stats_collector }: CmdInstallerArgs): void {
         }
 
         const customId = interaction.customId;
-        if (customId.startsWith(BUTTON_CUSTOM_ID_START)) {
-            const id = customId.substring(BUTTON_CUSTOM_ID_START.length);
+        if (customId.startsWith(BUTTON_IDS.CUSTOM_PLAY)) {
+            const id = customId.substring(BUTTON_IDS.CUSTOM_PLAY.length);
 
             const sample = await CustomSample.findById(id);
             if (!sample) return;
 
             return await play(interaction, sample);
         }
-        if (customId.startsWith(BUTTON_PREDEF_ID_START)) {
-            const name = customId.substring(BUTTON_PREDEF_ID_START.length);
+        if (customId.startsWith(BUTTON_IDS.PREDEF_PLAY)) {
+            const name = customId.substring(BUTTON_IDS.PREDEF_PLAY.length);
 
             const sample = await PredefinedSample.findByName(name);
             if (!sample) return;

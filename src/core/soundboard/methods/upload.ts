@@ -12,8 +12,9 @@ import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 import SampleID from "../SampleID";
 import { CustomSample } from "../sample/CustomSample";
 import { PredefinedSample } from "../sample/PredefinedSample";
-import { EmbedType, isOwner, replyEmbed } from "../../../util/util";
+import { createEmbed, EmbedType, isOwner, replyEmbed } from "../../../util/util";
 import GuildConfigManager from "../../GuildConfigManager";
+import { BUTTON_IDS } from "../../../const";
 
 const ffprobe = promisify(_ffprobe) as (file: string) => Promise<FfprobeData>;
 
@@ -241,8 +242,10 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
     await interaction.editReply(replyEmbed("🔄 Saving to database and finishing up...", EmbedType.Basic));
 
+    let sample: CustomSample | PredefinedSample;
+
     if (scope !== "standard") {
-        await CustomSample.create({
+        sample = await CustomSample.create({
             scope: scope,
             id: new_id!,
             name: name,
@@ -255,7 +258,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
             modified_at: new Date(),
         });
     } else {
-        await PredefinedSample.create({
+        sample = await PredefinedSample.create({
             name: name,
             orig_filename: attachment.name || undefined,
             plays: 0,
@@ -264,7 +267,22 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         });
     }
 
-    await interaction.editReply(replyEmbed("Successfully added!", EmbedType.Success));
+    const embed = createEmbed("Successfully added!", EmbedType.Success);
+
+    embed.addField("Name", sample.name, true);
+    if ("id" in sample) embed.addField("ID", sample.id);
+    embed.addField("Importable", sample.importable ? "✅" : "❌", true);
+
+    const buttons = [];
+    buttons.push(
+        new Discord.MessageButton()
+            .setCustomId(sample instanceof CustomSample ? BUTTON_IDS.CUSTOM_PLAY + sample.id : BUTTON_IDS.PREDEF_PLAY + sample.name)
+            .setLabel("Play")
+            .setEmoji("🔉")
+            .setStyle("SUCCESS"),
+    );
+
+    await interaction.editReply({ embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)] });
 }
 
 export async function upload(interaction: Discord.CommandInteraction, name: string, scope: "user" | "server" | "standard"): Promise<any> {
