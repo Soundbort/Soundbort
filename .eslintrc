@@ -246,7 +246,7 @@
         ],
         "linebreak-style": [
             "warn",
-            "unix"
+            "windows"
         ],
         "quotes": "off",
         "@typescript-eslint/quotes": [
