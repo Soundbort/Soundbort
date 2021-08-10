@@ -126,7 +126,7 @@ export default class Core {
 
                 const guessed_role = guessModRole(guild);
 
-                const config = await GuildConfigManager.getConfig(guild);
+                const config = await GuildConfigManager.findOrGenConfig(guild);
                 if (config && config.adminRoleId === guessed_role.id) return;
 
                 // reset admin role to the highest role when rejoining

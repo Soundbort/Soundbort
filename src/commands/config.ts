@@ -3,7 +3,7 @@ import { createRoleOption } from "../modules/commands/options/createOption";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
 import { BOT_NAME } from "../config";
-import { EmbedType, guessModRole, replyEmbed } from "../util/util";
+import { EmbedType, replyEmbed } from "../util/util";
 import GuildConfigManager from "../core/GuildConfigManager";
 
 const set_admin_role_cmd = new Command({
@@ -40,8 +40,8 @@ const show_admin_role_cmd = new Command({
             return;
         }
 
-        const config = await GuildConfigManager.getConfig(interaction.guild);
-        if (!config || !config.adminRoleId) {
+        const config = await GuildConfigManager.findOrGenConfig(interaction.guild);
+        if (!config) {
             return;
         }
 
@@ -64,12 +64,8 @@ const config_cmd = new TopCommandGroup({
     },
     // called every time the bot starts
     async onGuildCreate(app_command, guild) {
-        const config = await GuildConfigManager.getConfig(guild);
-        if (config && config.adminRoleId) return;
-
-        const guessed_role = guessModRole(guild);
-
-        await GuildConfigManager.setAdminRole(guild.id, guessed_role.id);
+        // generate config
+        await GuildConfigManager.findOrGenConfig(guild);
     },
 });
 registry.addCommand(config_cmd);
