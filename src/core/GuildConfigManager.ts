@@ -12,6 +12,13 @@ class GuildConfigManager {
         const config = await collectionConfig().findOne({ guildId: guild.id });
         if (!config) return;
 
+        // if old admin role has been deleted, default back to the guessed role
+        if (!config.adminRoleId || !await guild.roles.fetch(config.adminRoleId)) {
+            const guessed_role = guessModRole(guild);
+            config.adminRoleId = guessed_role.id;
+            await this.setAdminRole(guild.id, guessed_role.id);
+        }
+
         return config;
     }
 
