@@ -282,6 +282,21 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
             .setStyle("SUCCESS"),
     );
 
+    // if (sample instanceof CustomSample && sample.importable) {
+    //     buttons.unshift(
+    //         new Discord.MessageButton()
+    //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_USER + sample.id)
+    //             .setLabel("Import User Soundboard")
+    //             .setEmoji("📥")
+    //             .setStyle("PRIMARY"),
+    //         new Discord.MessageButton()
+    //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_SERVER + sample.id)
+    //             .setLabel("Import Server Soundboard")
+    //             .setEmoji("📥")
+    //             .setStyle("PRIMARY"),
+    //     );
+    // }
+
     await interaction.editReply({ embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)] });
 }
 
