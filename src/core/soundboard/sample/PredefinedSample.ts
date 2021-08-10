@@ -46,7 +46,17 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
         log.debug("Playing standard sample %s", this.name);
 
         const resource = this._play(audio_player);
-        await collectionPredefinedSample().updateOne({ name: this.name }, { $inc: { plays: 1 }, $set: { last_played_at: new Date() } });
+
+        const now = new Date();
+
+        await collectionPredefinedSample().updateOne(
+            { name: this.name },
+            { $inc: { plays: 1 }, $set: { last_played_at: now } },
+        );
+
+        this.plays += 1;
+        this.last_played_at = now;
+
         return resource;
     }
 

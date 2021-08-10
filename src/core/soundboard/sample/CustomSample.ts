@@ -54,7 +54,17 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         log.debug("Playing custom sample %s (%s)", this.id, this.name);
 
         const resource = this._play(audio_player);
-        await collectionCustomSample().updateOne({ id: this.id }, { $inc: { plays: 1 }, $set: { last_played_at: new Date() } });
+
+        const now = new Date();
+
+        await collectionCustomSample().updateOne(
+            { id: this.id },
+            { $inc: { plays: 1 }, $set: { last_played_at: now } },
+        );
+
+        this.plays += 1;
+        this.last_played_at = now;
+
         return resource;
     }
 
