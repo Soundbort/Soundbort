@@ -10,28 +10,18 @@ export interface TopCommandGroupOptions {
     target?: CommandTarget;
     onGuildCreate?: GuildCreateEventHandler;
 }
-export class TopCommandGroup {
+
+export class TopCommandGroup extends CommandGroup {
     app_command: Discord.ApplicationCommand | null = null;
-    name: string;
-    description: string;
-    commands: Map<string, Command | CommandGroup> = new Map();
     target: CommandTarget;
+
     onGuildCreate?: GuildCreateEventHandler;
 
     constructor({ name, description, commands, target = { global: false, guildHidden: false }, onGuildCreate }: TopCommandGroupOptions) {
-        this.name = name;
-        this.description = description;
+        super({ name, description, commands });
+
         this.target = target;
         this.onGuildCreate = onGuildCreate;
-
-        for (const command of commands) this.addCommand(command);
-    }
-
-    addCommand(command: Command | CommandGroup): this {
-        if (this.commands.has(command.name)) throw new Error("Command name already exists");
-
-        this.commands.set(command.name, command);
-        return this;
     }
 
     async run(interaction: Discord.CommandInteraction): Promise<void> {

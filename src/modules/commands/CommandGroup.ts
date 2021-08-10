@@ -7,24 +7,18 @@ export interface CommandGroupOptions {
     commands: Command[];
 }
 
-export class CommandGroup {
+export class CommandGroup extends Command {
     type: Discord.ApplicationCommandOptionType = "SUB_COMMAND_GROUP";
-    name: string;
-    description: string;
     commands: Map<string, Command> = new Map();
 
     constructor({ name, description, commands }: CommandGroupOptions) {
-        this.name = name;
-        this.description = description;
+        super({ name, description });
 
-        for (const command of commands) this.addCommand(command);
-    }
+        for (const command of commands) {
+            if (this.commands.has(command.name)) throw new Error("Command name already exists");
 
-    addCommand(command: Command): this {
-        if (this.commands.has(command.name)) throw new Error("Command name already exists");
-
-        this.commands.set(command.name, command);
-        return this;
+            this.commands.set(command.name, command);
+        }
     }
 
     async run(interaction: Discord.CommandInteraction): Promise<void> {
@@ -35,7 +29,7 @@ export class CommandGroup {
         return await command.run(interaction);
     }
 
-    toJSON(): Discord.ApplicationCommandOptionData {
+    toJSON(): any { // need return type any for TopCommandGroup to work
         return {
             type: this.type,
             name: this.name,

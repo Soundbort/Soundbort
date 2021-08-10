@@ -21,14 +21,11 @@ export class Command {
         this.description = description;
         this.func = func;
 
-        for (const command of options) this.addOption(command);
-    }
+        for (const option of options) {
+            if (this.options.has(option.name)) throw new Error("Option name already exists");
 
-    addOption(option: Discord.ApplicationCommandOptionData): this {
-        if (this.options.has(option.name)) throw new Error("Option name already exists");
-
-        this.options.set(option.name, option);
-        return this;
+            this.options.set(option.name, option);
+        }
     }
 
     async run(interaction: Discord.CommandInteraction): Promise<void> {
