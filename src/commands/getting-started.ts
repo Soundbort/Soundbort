@@ -5,6 +5,8 @@ import { CmdInstallerArgs } from "../util/types";
 import { createEmbed } from "../util/util";
 
 export function install({ client }: CmdInstallerArgs): void {
+    const invite_link = `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=2150943744&scope=bot%20applications.commands&redirect_uri=https%3A%2F%2Fsoundbort-guide.loneless.art%2F`;
+
     CommandRegistry.addCommand(new TopCommand({
         name: "getting-started",
         description: `A getting-started guide that will help you find your way around ${BOT_NAME}.`,
@@ -25,7 +27,7 @@ export function install({ client }: CmdInstallerArgs): void {
                     "\n" +
                     ":books: Getting Started Guide: [soundbort-guide.loneless.art](https://soundbort-guide.loneless.art/)\n" +
                     "\n" +
-                    ":inbox_tray: Invite: [invite link](https://discord.com/api/oauth2/authorize?client_id=" + client.user.id + "&permissions=2150943808&scope=applications.commands%20bot)\n" +
+                    `:inbox_tray: Invite: [invite link](${invite_link})\n` +
                     ":money_with_wings: Donate: [ko-fi.com/loneless](https://ko-fi.com/loneless)\n" +
                     ":woman_technologist: Contributing: [github.com/LonelessCodes/trixiebot](https://github.com/LonelessCodes/trixiebot)",
                 )
