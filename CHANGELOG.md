@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.1.1](https://github.com/LonelessCodes/SoundBort/compare/v0.1.0...v0.1.1) (2021-08-11)
+
+
+### Bug Fixes
+
+* fixed guessing mod role by role position ([b108508](https://github.com/LonelessCodes/SoundBort/commit/b1085080553bb0740a6c4c791e27c8633c1f4ab4))
+
 ## 0.1.0 (2021-08-11)
 
 
