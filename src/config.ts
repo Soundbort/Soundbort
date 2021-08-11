@@ -44,7 +44,11 @@ export const ENVIRONMENT = _ENV(process.env.NODE_ENV);
 
 const package_file: PackageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, "..", "package.json"), "utf8"));
 
-export const VERSION = package_file.version as string;
+export const VERSION = package_file.version as string + (
+    ENVIRONMENT !== EnvironmentStages.PROD
+        ? `-${ENVIRONMENT.toLowerCase()}`
+        : ""
+);
 
 export const PROJECT_ROOT = path.resolve(__dirname, "..");
 
