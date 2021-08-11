@@ -7,9 +7,7 @@ export function isOwner(userId: Discord.Snowflake): boolean {
 }
 
 export function guessModRole(guild: Discord.Guild): Discord.Role {
-    for (const [roleId, role] of guild.roles.cache.sort((a, b) => a.comparePositionTo(b))) {
-        console.log(roleId, role.position);
-
+    for (const [, role] of guild.roles.cache.sort((a, b) => b.comparePositionTo(a))) {
         if (/^(mod(erator|eration)?)|(admin(istrator|istration)?)$/i.test(role.name)) return role;
     }
 
