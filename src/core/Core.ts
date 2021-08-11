@@ -24,7 +24,7 @@ export default class Core {
         this.stats_collector = new StatsCollectorManager(this.client);
     }
 
-    async setup(): Promise<any> {
+    async setup(): Promise<void> {
         log.info("Client ready. Running preparations...");
 
         // ///////////////////////
