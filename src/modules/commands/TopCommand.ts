@@ -13,6 +13,8 @@ export class TopCommand extends Command {
 
     onGuildCreate?: GuildCreateEventHandler;
 
+    private _json?: Discord.ApplicationCommandData;
+
     constructor({ name, description, options = [], target = { global: false, guildHidden: false }, func, onGuildCreate }: TopCommandOptions) {
         super({ name, description, options, func });
 
@@ -21,7 +23,10 @@ export class TopCommand extends Command {
     }
 
     toJSON(): Discord.ApplicationCommandData {
-        return {
+        // save calculations when getting json for thousands of guilds at once
+        if (this._json) return this._json;
+
+        return this._json = {
             name: this.name,
             description: this.description,
             options: [...this.options.values()],
