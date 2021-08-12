@@ -19,6 +19,10 @@ const _DISCORD_TOKEN = process.env.SOUNDBORT_DISCORD_TOKEN;
 if (!_DISCORD_TOKEN) throw new Error("No Discord API Token specified in config files");
 export const DISCORD_TOKEN = _DISCORD_TOKEN;
 
+const _OWNER_GUILD_IDS = process.env.SOUNDBORT_OWNER_GUILD_IDS;
+if (!_OWNER_GUILD_IDS) throw new Error("No test guild id is specified.");
+export const OWNER_GUILD_IDS = _OWNER_GUILD_IDS.split(",");
+
 // ////////////// OPTIONAL //////////////
 
 // https://cloud.mongodb.com

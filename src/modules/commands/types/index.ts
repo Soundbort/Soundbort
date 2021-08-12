@@ -9,4 +9,5 @@ export type GuildCreateEventHandler = (app_command: Discord.ApplicationCommand, 
 export interface CommandTarget {
     global: boolean;
     guildHidden: boolean;
+    guild_ids?: Discord.Snowflake[];
 }

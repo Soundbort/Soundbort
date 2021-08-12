@@ -7,7 +7,6 @@ import { StatsCollectorManager } from "./StatsCollectorManager";
 import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
 import CommandRegistry from "./CommandRegistry";
-import { ENVIRONMENT, EnvironmentStages } from "../config";
 import { EmbedType, guessModRole, logErr, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
 import GuildConfigManager from "./GuildConfigManager";
@@ -87,22 +86,20 @@ export default class Core {
         const global_commands = CommandRegistry.commands.filter(command => command.target.global);
         const guild_commands = CommandRegistry.commands.filter(command => !command.target.global);
 
-        const global_commands_data = global_commands.map(command => command.toJSON());
-        const guild_commands_data = guild_commands.map(command => command.toJSON());
-
-        // if development, deploy all commands to guilds, because of global command caching
-        if (ENVIRONMENT === EnvironmentStages.DEVEL) {
-            guild_commands_data.push(...global_commands_data);
-            global_commands_data.splice(0, global_commands_data.length);
-        }
-
         if (this.client.application.partial) await this.client.application.fetch();
 
         // DEPLOY GLOBAL
+        const global_commands_data = global_commands.map(command => command.toJSON());
+
         await this.client.application.commands.set(global_commands_data);
 
         // DEPLOY GUILDS
         const deployToGuild = async (guild: Discord.Guild) => {
+            const guild_commands_data = guild_commands
+                // filter out owner commands in guilds that don't need them
+                .filter(command => !command.target.guild_ids || command.target.guild_ids.includes(guild.id))
+                .map(command => command.toJSON());
+
             const app_commands = await guild.commands.set(guild_commands_data);
 
             for (const [, app_command] of app_commands) {

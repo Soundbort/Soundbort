@@ -26,6 +26,9 @@ registry.addCommand(new TopCommandGroup({
     target: {
         global: false,
         guildHidden: true,
+        // this way, owner commands are only available in specific guilds
+        // (since they are greyed out instead of hidden if users dont have the permissions to use them)
+        guild_ids: OWNER_GUILD_IDS,
     },
     async onGuildCreate(app_command) {
         const permissions: Discord.ApplicationCommandPermissionData[] = OWNER_IDS.map(id => createUserPermission(id, true));
