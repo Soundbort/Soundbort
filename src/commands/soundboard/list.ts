@@ -10,12 +10,13 @@ registry.addCommand(new TopCommand({
     options: [
         createStringOption("from", "What soundboards to output.", false, [
             createChoice("Output all soundboards (standard, server and user soundboards).", "all"),
+            createChoice("Output standard soundboard only.", "standard"),
             createChoice("Output this server's soundboard only.", "server"),
             createChoice("Output your own soundboard only.", "user"),
         ]),
     ],
     async func(interaction) {
-        const scope = interaction.options.getString("from") as ("all" | "server" | "user" | null) || "all";
+        const scope = interaction.options.getString("from") as ("all" | "standard" | "server" | "user" | null) || "all";
 
         await list(interaction, scope);
     },

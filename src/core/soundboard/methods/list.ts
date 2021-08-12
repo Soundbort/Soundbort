@@ -89,6 +89,28 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
     }
 }
 
+async function scopeStandard(interaction: Discord.CommandInteraction): Promise<void> {
+    const client = interaction.client as Discord.Client<true>;
+
+    const standard = await PredefinedSample.getSamples();
+
+    const reply = (opts: Discord.InteractionReplyOptions) => {
+        return interaction.replied ? interaction.channel?.send(opts) : interaction.reply(opts);
+    };
+
+    if (standard.length > 0) {
+        const rows = generateSampleButtons(standard);
+
+        const embed = createEmbed()
+            .setAuthor("Standard Samples", client.user.avatarURL({ dynamic: true, size: 32 }) || undefined)
+            .setDescription("Join a voice channel and click on one of the buttons below. ✨");
+
+        await reply({ embeds: [embed], components: rows });
+    } else {
+        return await interaction.reply(replyEmbedEphemeral("There are no standard samples yet. Ask a developer to add them.", EmbedType.Info));
+    }
+}
+
 async function scopeServer(interaction: Discord.CommandInteraction): Promise<void> {
     const userId = interaction.user.id;
     const guildId = interaction.guildId;
@@ -131,8 +153,9 @@ async function scopeUser(interaction: Discord.CommandInteraction): Promise<void>
     await interaction.reply({ embeds: [embed], components: rows });
 }
 
-export async function list(interaction: Discord.CommandInteraction, scope: "user" | "server" | "all"): Promise<void> {
+export async function list(interaction: Discord.CommandInteraction, scope: "user" | "server" | "standard" | "all"): Promise<void> {
     if (scope === "all") await scopeAll(interaction);
+    else if (scope === "standard") await scopeStandard(interaction);
     else if (scope === "server") await scopeServer(interaction);
     else if (scope === "user") await scopeUser(interaction);
 }
