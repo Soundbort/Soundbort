@@ -147,6 +147,8 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
     // /////////// NAME CHECKS ///////////
 
+    name = name.trim();
+
     if (!name || name === "") {
         return await interaction.editReply(replyEmbed(UploadErrors.NameMissing, EmbedType.Error));
     }
