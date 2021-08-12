@@ -12,6 +12,7 @@ import blacklist_cmd from "./owner_blacklist";
 import upload_standard_cmd from "./owner_upload";
 import delete_cmd from "./owner_delete";
 import backup_cmd from "./owner_backup";
+import import_cmd from "./owner_import";
 
 registry.addCommand(new TopCommandGroup({
     name: "owner",
@@ -20,6 +21,7 @@ registry.addCommand(new TopCommandGroup({
         blacklist_cmd,
         upload_standard_cmd,
         delete_cmd,
+        import_cmd,
         backup_cmd,
         reboot_cmd,
     ],

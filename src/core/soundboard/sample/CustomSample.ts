@@ -82,7 +82,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return this.creatorId === user_guild_id;
     }
 
-    toEmbed({ show_timestamps = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
+    toEmbed({ show_timestamps = true, show_import = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
         const embed = createEmbed(description, type);
 
         embed.addField("Name", this.name, true);
@@ -107,20 +107,20 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
                 .setStyle("SUCCESS"),
         );
 
-        // if (sample instanceof CustomSample && sample.importable) {
-        //     buttons.unshift(
-        //         new Discord.MessageButton()
-        //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_USER + sample.id)
-        //             .setLabel("Import User Soundboard")
-        //             .setEmoji("📥")
-        //             .setStyle("PRIMARY"),
-        //         new Discord.MessageButton()
-        //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_SERVER + sample.id)
-        //             .setLabel("Import Server Soundboard")
-        //             .setEmoji("📥")
-        //             .setStyle("PRIMARY"),
-        //     );
-        // }
+        if (this.importable && show_import) {
+            buttons.unshift(
+                new Discord.MessageButton()
+                    .setCustomId(BUTTON_IDS.IMPORT_USER + this.id)
+                    .setLabel("Import to User Board")
+                    .setEmoji("📥")
+                    .setStyle("SECONDARY"),
+                new Discord.MessageButton()
+                    .setCustomId(BUTTON_IDS.IMPORT_SERVER + this.id)
+                    .setLabel("Import to Server Board")
+                    .setEmoji("📥")
+                    .setStyle("SECONDARY"),
+            );
+        }
 
         return {
             embeds: [embed],
@@ -189,14 +189,12 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     static async findSampleUser(userId: Discord.Snowflake, name: string): Promise<CustomSample | undefined> {
         const cached = cache.find(item => {
             return item.userIds.includes(userId) &&
-                   item.scope === "user" &&
                    item.name === name;
         });
         if (cached) return cached;
 
         const doc = await collectionCustomSample().findOne({
             userIds: userId,
-            scope: "user",
             name: name,
         });
         if (!doc) return;
@@ -210,14 +208,12 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     static async findSampleGuild(guildId: Discord.Snowflake, name: string): Promise<CustomSample | undefined> {
         const cached = cache.find(item => {
             return item.guildIds.includes(guildId) &&
-                   item.scope === "user" &&
                    item.name === name;
         });
         if (cached) return cached;
 
         const doc = await collectionCustomSample().findOne({
             guildIds: guildId,
-            scope: "server",
             name: name,
         });
         if (!doc) return;
@@ -345,7 +341,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
             // can savely remove the id from both owners and guilds, because ids are unique
             await collectionCustomSample().updateOne(
                 { id: sample.id },
-                { $removeFromSet: { userIds: user_guild_id, guildIds: user_guild_id } },
+                { $pull: { userIds: user_guild_id, guildIds: user_guild_id } },
             );
         }
     }

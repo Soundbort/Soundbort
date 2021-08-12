@@ -124,7 +124,7 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
         return samples;
     }
 
-    static async import(sample: AbstractSample): Promise<PredefinedSample | undefined> {
+    static async import(sample: AbstractSample): Promise<PredefinedSample> {
         const file = PredefinedSample.generateFilePath(sample.name);
 
         await fs.ensureDir(path.dirname(file));

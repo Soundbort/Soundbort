@@ -12,6 +12,7 @@ fs.mkdirpSync(BASE);
 
 export interface ToEmbedOptions {
     show_timestamps?: boolean;
+    show_import?: boolean;
     description?: string;
     type?: EmbedType;
 }
