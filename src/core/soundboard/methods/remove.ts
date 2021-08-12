@@ -28,7 +28,7 @@ async function removeServer(interaction: Discord.CommandInteraction, name: strin
     const guildId = interaction.guildId;
 
     if (!guildId || !interaction.guild) {
-        return await interaction.reply(replyEmbedEphemeral("", EmbedType.Error));
+        return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
     }
 
     if (!GuildConfigManager.isModerator(interaction.guild, userId)) {
