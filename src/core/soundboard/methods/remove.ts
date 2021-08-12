@@ -31,7 +31,7 @@ async function removeServer(interaction: Discord.CommandInteraction, name: strin
         return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
     }
 
-    if (!GuildConfigManager.isModerator(interaction.guild, userId)) {
+    if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
         return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
     }
 
