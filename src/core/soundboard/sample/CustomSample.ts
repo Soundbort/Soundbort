@@ -9,7 +9,10 @@ import database from "../../../modules/database";
 import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../../modules/database/schemas/SoundboardCustomSampleSchema";
 import Cache from "../../../modules/Cache";
 import { findAndRemove } from "../../../util/array";
-import { AbstractSample } from "./AbstractSample";
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+import { createEmbed } from "../../../util/util";
+import moment from "moment";
+import { BUTTON_IDS } from "../../../const";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 
@@ -77,6 +80,52 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
     isCreator(user_guild_id: Discord.Snowflake): boolean {
         return this.creatorId === user_guild_id;
+    }
+
+    toEmbed({ show_timestamps = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
+        const embed = createEmbed(description, type);
+
+        embed.addField("Name", this.name, true);
+        embed.addField("ID", this.id, true);
+
+        if (show_timestamps) {
+            embed.addField("Play Count", this.plays.toLocaleString("en"));
+
+            embed.addField("Uploaded", moment(this.created_at).fromNow(), true);
+            embed.addField("Modified", moment(this.modified_at).fromNow(), true);
+            if (this.last_played_at) embed.addField("Last Played", moment(this.last_played_at).fromNow(), true);
+        }
+
+        embed.addField("Importable", this.importable ? "✅" : "❌", true);
+
+        const buttons = [];
+        buttons.push(
+            new Discord.MessageButton()
+                .setCustomId(BUTTON_IDS.CUSTOM_PLAY + this.id)
+                .setLabel("Play")
+                .setEmoji("🔉")
+                .setStyle("SUCCESS"),
+        );
+
+        // if (sample instanceof CustomSample && sample.importable) {
+        //     buttons.unshift(
+        //         new Discord.MessageButton()
+        //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_USER + sample.id)
+        //             .setLabel("Import User Soundboard")
+        //             .setEmoji("📥")
+        //             .setStyle("PRIMARY"),
+        //         new Discord.MessageButton()
+        //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_SERVER + sample.id)
+        //             .setLabel("Import Server Soundboard")
+        //             .setEmoji("📥")
+        //             .setStyle("PRIMARY"),
+        //     );
+        // }
+
+        return {
+            embeds: [embed],
+            components: [new Discord.MessageActionRow().addComponents(buttons)],
+        };
     }
 
     // //////// STATIC DB MANAGEMENT METHODS ////////

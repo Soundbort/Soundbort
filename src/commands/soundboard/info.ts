@@ -1,7 +1,6 @@
 import Discord from "discord.js";
-import moment from "moment";
 
-import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../util/util";
+import { EmbedType, replyEmbedEphemeral } from "../../util/util";
 
 import registry from "../../core/CommandRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
@@ -11,7 +10,6 @@ import { TopCommand } from "../../modules/commands/TopCommand";
 import SampleID from "../../core/soundboard/SampleID";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
 import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
-import { BUTTON_IDS } from "../../const";
 
 async function findSampleByScope(
     guildId: Discord.Snowflake | null,
@@ -36,23 +34,6 @@ async function findSampleByScope(
     return sample;
 }
 
-function createInfoEmbed(sample: CustomSample | PredefinedSample): Discord.MessageEmbed {
-    const embed = createEmbed();
-
-    embed.addField("Name", sample.name, true);
-    if ("id" in sample) embed.addField("ID", sample.id, true);
-
-    embed.addField("Play Count", sample.plays.toLocaleString("en"));
-
-    embed.addField("Uploaded", moment(sample.created_at).fromNow(), true);
-    embed.addField("Modified", moment(sample.modified_at).fromNow(), true);
-    if (sample.last_played_at) embed.addField("Last Played", moment(sample.last_played_at).fromNow(), true);
-
-    embed.addField("Importable", sample.importable ? "✅" : "❌", true);
-
-    return embed;
-}
-
 registry.addCommand(new TopCommand({
     name: "info",
     description: "Display information about a sample.",
@@ -72,15 +53,6 @@ registry.addCommand(new TopCommand({
             return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
         }
 
-        const buttons = [];
-        buttons.push(
-            new Discord.MessageButton()
-                .setCustomId(sample instanceof CustomSample ? BUTTON_IDS.CUSTOM_PLAY + sample.id : BUTTON_IDS.PREDEF_PLAY + sample.name)
-                .setLabel("Play")
-                .setEmoji("🔉")
-                .setStyle("SUCCESS"),
-        );
-
-        await interaction.reply({ embeds: [createInfoEmbed(sample)], components: [new Discord.MessageActionRow().addComponents(buttons)] });
+        await interaction.reply(sample.toEmbed({ show_timestamps: true }));
     },
 }));

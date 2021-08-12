@@ -1,13 +1,17 @@
 import fs from "fs-extra";
 import path from "path";
 import * as Voice from "@discordjs/voice";
+import Discord from "discord.js";
 
 import { collectionPredefinedSample } from "../../../modules/database/models";
 import Logger from "../../../log";
 import database from "../../../modules/database";
 import { SoundboardPredefinedSampleSchema } from "../../../modules/database/schemas/SoundboardPredefinedSampleSchema";
-import { AbstractSample } from "./AbstractSample";
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 import Cache from "../../../modules/Cache";
+import { createEmbed } from "../../../util/util";
+import moment from "moment";
+import { BUTTON_IDS } from "../../../const";
 
 const log = Logger.child({ label: "SampleManager => PredefinedSample" });
 
@@ -59,6 +63,38 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
 
         return resource;
     }
+
+    toEmbed({ show_timestamps = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
+        const embed = createEmbed(description, type);
+
+        embed.addField("Name", this.name, true);
+
+        if (show_timestamps) {
+            embed.addField("Play Count", this.plays.toLocaleString("en"));
+
+            embed.addField("Uploaded", moment(this.created_at).fromNow(), true);
+            embed.addField("Modified", moment(this.modified_at).fromNow(), true);
+            if (this.last_played_at) embed.addField("Last Played", moment(this.last_played_at).fromNow(), true);
+        }
+
+        embed.addField("Importable", this.importable ? "✅" : "❌", true);
+
+        const buttons = [];
+        buttons.push(
+            new Discord.MessageButton()
+                .setCustomId(BUTTON_IDS.PREDEF_PLAY + this.name)
+                .setLabel("Play")
+                .setEmoji("🔉")
+                .setStyle("SUCCESS"),
+        );
+
+        return {
+            embeds: [embed],
+            components: [new Discord.MessageActionRow().addComponents(buttons)],
+        };
+    }
+
+    // //////// STATIC DB MANAGEMENT METHODS ////////
 
     static async findByName(name: string): Promise<PredefinedSample | undefined> {
         const doc = await collectionPredefinedSample().findOne({ name });

@@ -12,9 +12,8 @@ import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 import SampleID from "../SampleID";
 import { CustomSample } from "../sample/CustomSample";
 import { PredefinedSample } from "../sample/PredefinedSample";
-import { createEmbed, EmbedType, isOwner, replyEmbed } from "../../../util/util";
+import { EmbedType, isOwner, replyEmbed } from "../../../util/util";
 import GuildConfigManager from "../../GuildConfigManager";
-import { BUTTON_IDS } from "../../../const";
 
 const ffprobe = promisify(_ffprobe) as (file: string) => Promise<FfprobeData>;
 
@@ -267,37 +266,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         });
     }
 
-    const embed = createEmbed("Successfully added!", EmbedType.Success);
-
-    embed.addField("Name", sample.name, true);
-    if ("id" in sample) embed.addField("ID", sample.id);
-    embed.addField("Importable", sample.importable ? "✅" : "❌", true);
-
-    const buttons = [];
-    buttons.push(
-        new Discord.MessageButton()
-            .setCustomId(sample instanceof CustomSample ? BUTTON_IDS.CUSTOM_PLAY + sample.id : BUTTON_IDS.PREDEF_PLAY + sample.name)
-            .setLabel("Play")
-            .setEmoji("🔉")
-            .setStyle("SUCCESS"),
-    );
-
-    // if (sample instanceof CustomSample && sample.importable) {
-    //     buttons.unshift(
-    //         new Discord.MessageButton()
-    //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_USER + sample.id)
-    //             .setLabel("Import User Soundboard")
-    //             .setEmoji("📥")
-    //             .setStyle("PRIMARY"),
-    //         new Discord.MessageButton()
-    //             .setCustomId(BUTTON_IDS.CUSTOM_IMPORT_SERVER + sample.id)
-    //             .setLabel("Import Server Soundboard")
-    //             .setEmoji("📥")
-    //             .setStyle("PRIMARY"),
-    //     );
-    // }
-
-    await interaction.editReply({ embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)] });
+    await interaction.editReply(sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
 }
 
 export async function upload(interaction: Discord.CommandInteraction, name: string, scope: "user" | "server" | "standard"): Promise<any> {

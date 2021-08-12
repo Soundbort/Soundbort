@@ -1,12 +1,20 @@
 import fs from "fs-extra";
 import path from "path";
 import * as Voice from "@discordjs/voice";
+import Discord from "discord.js";
 
 import { DATA_BASE } from "../../../config";
 import { SoundboardPredefinedSampleSchema } from "../../../modules/database/schemas/SoundboardPredefinedSampleSchema";
+import { EmbedType } from "../../../util/util";
 
 const BASE = path.join(DATA_BASE, "soundboard");
 fs.mkdirpSync(BASE);
+
+export interface ToEmbedOptions {
+    show_timestamps?: boolean;
+    description?: string;
+    type?: EmbedType;
+}
 
 export abstract class AbstractSample implements SoundboardPredefinedSampleSchema {
     abstract readonly importable: boolean;
@@ -45,6 +53,8 @@ export abstract class AbstractSample implements SoundboardPredefinedSampleSchema
     }
 
     abstract play(audio_player: Voice.AudioPlayer): Promise<Voice.AudioResource<AbstractSample>>;
+
+    abstract toEmbed(opts: ToEmbedOptions): Discord.InteractionReplyOptions;
 
     static BASE = BASE;
 }
