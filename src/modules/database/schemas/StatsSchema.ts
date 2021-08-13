@@ -6,6 +6,9 @@ export interface StatsSchema {
     commands: {
         [name: string]: number;
     };
+    buttons?: {
+        [type: number]: number;
+    };
     custom_samples: number;
     played_samples: number;
 

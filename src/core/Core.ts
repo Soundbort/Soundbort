@@ -191,6 +191,9 @@ export default class Core {
                         log.debug("Button '%i' by '%s' (%s) in %s (%s)", decoded.t, interaction.user.tag, interaction.user.id, interaction.channelId, interaction.channel?.type);
 
                         const result = await button_handler.func(interaction, decoded);
+
+                        this.stats_collector.incCalledButtons(decoded.t, 1);
+
                         if (!result || interaction.replied) continue;
 
                         await interaction.reply(result);

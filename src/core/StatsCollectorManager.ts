@@ -30,6 +30,7 @@ export class StatsCollectorManager extends EventEmitter {
 
     private played_samples = 0;
     private commands: { [name: string]: number } = {};
+    private buttons: { [type: number]: number } = {};
 
     public client: Discord.Client<true>;
 
@@ -49,6 +50,10 @@ export class StatsCollectorManager extends EventEmitter {
         this.commands[name] = (this.commands[name] || 0) + inc;
     }
 
+    public incCalledButtons(type: number, inc: number = 1): void {
+        this.buttons[type] = (this.buttons[type] || 0) + inc;
+    }
+
     public async collect(): Promise<void> {
         const ts = new Date();
 
@@ -58,6 +63,8 @@ export class StatsCollectorManager extends EventEmitter {
         // Set all command values to 0, so they can increment themselves later
         const commands = this.commands;
         this.commands = {};
+        const buttons = this.buttons;
+        this.buttons = {};
 
         const custom_samples = await CustomSample.count();
         const played_samples = this.played_samples;
@@ -84,6 +91,7 @@ export class StatsCollectorManager extends EventEmitter {
             guilds,
             voice_connections,
             commands: commands,
+            buttons: buttons,
             custom_samples,
             played_samples,
 
