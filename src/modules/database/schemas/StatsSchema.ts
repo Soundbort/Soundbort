@@ -7,7 +7,7 @@ export interface StatsSchema {
         [name: string]: number;
     };
     buttons?: {
-        [type: number]: number;
+        [type: string]: number;
     };
     custom_samples: number;
     played_samples: number;

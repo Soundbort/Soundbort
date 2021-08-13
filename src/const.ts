@@ -20,11 +20,13 @@ export const EMOJI = {
 //            wrong thing
 
 export enum BUTTON_TYPES {
-    PLAY_CUSTOM = 0,
-    PLAY_STANDA = 1,
+    PLAY_CUSTOM = "0",
+    PLAY_STANDA = "1",
 
-    IMPORT_USER = 2,
-    IMPORT_SERVER = 3,
+    IMPORT_USER = "2",
+    IMPORT_SERVER = "3",
 
-    DELETE = 4,
+    DELETE_ASK = "4",
+    DELETE = "5",
+    DELETE_ABORT = "6",
 }

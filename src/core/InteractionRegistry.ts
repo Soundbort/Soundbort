@@ -1,13 +1,13 @@
 import Discord from "discord.js";
 import qs from "query-string";
-import { BUTTON_TYPES } from "../const";
 
+import { BUTTON_TYPES } from "../const";
 import { TopCommand } from "../modules/commands/TopCommand";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { SimpleFuncReturn } from "../modules/commands/types";
 
-export type ButtonFilter = Record<string, string | number | boolean>;
-export type ButtonParsed = qs.ParsedQuery<string | number | boolean> & { t: BUTTON_TYPES };
+export type ButtonFilter = Record<string, string>;
+export type ButtonParsed = qs.ParsedQuery<string> & { t: BUTTON_TYPES };
 
 export type ButtonHandler = (interaction: Discord.ButtonInteraction, decoded: ButtonParsed) => (Promise<SimpleFuncReturn> | SimpleFuncReturn);
 
@@ -33,7 +33,7 @@ class InteractionRegistry {
     }
 
     public decodeButtonId(id: string): ButtonParsed {
-        return qs.parse(id, { decode: true, parseBooleans: true, parseNumbers: true }) as ButtonParsed;
+        return qs.parse(id, { decode: true }) as ButtonParsed;
     }
 
     public checkButtonFilter(json: ButtonParsed, filter: ButtonFilter): boolean {

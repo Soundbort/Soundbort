@@ -30,7 +30,7 @@ export class StatsCollectorManager extends EventEmitter {
 
     private played_samples = 0;
     private commands: { [name: string]: number } = {};
-    private buttons: { [type: number]: number } = {};
+    private buttons: { [type: string]: number } = {};
 
     public client: Discord.Client<true>;
 
@@ -50,7 +50,7 @@ export class StatsCollectorManager extends EventEmitter {
         this.commands[name] = (this.commands[name] || 0) + inc;
     }
 
-    public incCalledButtons(type: number, inc: number = 1): void {
+    public incCalledButtons(type: string, inc: number = 1): void {
         this.buttons[type] = (this.buttons[type] || 0) + inc;
     }
 
