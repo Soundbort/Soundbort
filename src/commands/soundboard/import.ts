@@ -8,9 +8,18 @@ import { EmbedType, replyEmbedEphemeral } from "../../util/util";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
 import GuildConfigManager from "../../core/GuildConfigManager";
 import { BUTTON_TYPES } from "../../const";
+import { MAX_SAMPLES, UploadErrors } from "../../core/soundboard/methods/upload";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
     const user = interaction.user;
+
+    // is soundboard full?
+    const sample_count = await CustomSample.countUserSamples(user.id);
+    // case "server": sample_count = await CustomSample.countGuildSamples(guildId!); break;
+
+    if (sample_count >= MAX_SAMPLES) {
+        return await interaction.reply(replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error));
+    }
 
     if (await CustomSample.findSampleUser(user.id, sample.name)) {
         return await interaction.reply(replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error));
@@ -32,6 +41,13 @@ async function importServer(interaction: Discord.ButtonInteraction | Discord.Com
 
     if (!await GuildConfigManager.isModerator(guild, user.id)) {
         return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
+    }
+
+    // is soundboard full?
+    const sample_count = await CustomSample.countGuildSamples(guildId);
+
+    if (sample_count >= MAX_SAMPLES) {
+        return await interaction.reply(replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error));
     }
 
     if (await CustomSample.findSampleGuild(guildId, sample.name)) {
