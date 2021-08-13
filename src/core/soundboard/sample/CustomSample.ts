@@ -100,10 +100,12 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         embed.addField("Importable", this.importable ? "✅" : "❌", true);
 
-        const buttons = [];
+        // Action buttons:
+
+        const rows = [];
 
         if (this.importable && show_import) {
-            buttons.push(
+            const import_buttons = [
                 new Discord.MessageButton()
                     .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.IMPORT_USER, id: this.id }))
                     .setLabel("Import to User Board")
@@ -114,16 +116,20 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
                     .setLabel("Import to Server Board")
                     .setEmoji("📥")
                     .setStyle("SECONDARY"),
+            ];
+
+            rows.push(
+                new Discord.MessageActionRow().addComponents(import_buttons),
             );
         }
 
-        buttons.push(
+        const buttons = [
             new Discord.MessageButton()
                 .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_CUSTOM, id: this.id }))
                 .setLabel("Play")
                 .setEmoji("🔉")
                 .setStyle("SUCCESS"),
-        );
+        ];
 
         if (this.deletable && show_delete) {
             buttons.push(
@@ -135,9 +141,13 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
             );
         }
 
+        rows.unshift(
+            new Discord.MessageActionRow().addComponents(buttons),
+        );
+
         return {
             embeds: [embed],
-            components: [new Discord.MessageActionRow().addComponents(buttons)],
+            components: rows,
         };
     }
 
