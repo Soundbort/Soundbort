@@ -27,6 +27,7 @@ export enum BUTTON_TYPES {
     IMPORT_SERVER = "3",
 
     DELETE_ASK = "4",
-    DELETE = "5",
     DELETE_ABORT = "6",
+    DELETE_USER = "5",
+    DELETE_SERVER = "8",
 }

@@ -93,36 +93,50 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction
     const userId = interaction.user.id;
     const guildId = interaction.guildId;
 
-    let sb_name: "personal" | "server" | undefined;
-    if (sample.isInUsers(userId)) sb_name = "personal";
-    if (sample.isInGuilds(guildId)) sb_name = "server";
+    const hasInUser = sample.isInUsers(userId);
+    const hasInGuild = interaction.guild && await GuildConfigManager.isModerator(interaction.guild, userId) && sample.isInGuilds(guildId);
 
-    if (!sb_name) {
-        return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your personal or server soundboards.", EmbedType.Info));
+    if (!hasInUser && !hasInGuild) {
+        return await interaction.reply(replyEmbedEphemeral("You can't delete this sample from your personal or this server's soundboard.", EmbedType.Info));
     }
 
-    const buttons = [
-        new Discord.MessageButton()
-            .setCustomId(InteractionRegistry.encodeButtonId({ ...decoded, t: BUTTON_TYPES.DELETE, did: deletionId }))
-            .setLabel("Delete Anyway")
-            .setEmoji("🗑️")
-            .setStyle("DANGER"),
+    const buttons = [];
+
+    if (hasInUser) {
+        buttons.push(
+            new Discord.MessageButton()
+                .setCustomId(InteractionRegistry.encodeButtonId({ ...decoded, t: BUTTON_TYPES.DELETE_USER, did: deletionId }))
+                .setLabel("Delete From User Board")
+                .setEmoji("🗑️")
+                .setStyle("DANGER"),
+        );
+    }
+    if (hasInGuild) {
+        buttons.push(
+            new Discord.MessageButton()
+                .setCustomId(InteractionRegistry.encodeButtonId({ ...decoded, t: BUTTON_TYPES.DELETE_SERVER, did: deletionId }))
+                .setLabel("Delete From Server Board")
+                .setEmoji("🗑️")
+                .setStyle("DANGER"),
+        );
+    }
+    buttons.push(
         new Discord.MessageButton()
             .setCustomId(InteractionRegistry.encodeButtonId({ ...decoded, t: BUTTON_TYPES.DELETE_ABORT, did: deletionId }))
             .setLabel("Abort")
             .setEmoji("⚪")
             .setStyle("SECONDARY"),
-    ];
+    );
 
     const embed = createEmbed(
-        `Are you sure you want to delete this sample from your ${sb_name} soundboard? ` +
+        "Are you sure you want to delete this sample from your user or server soundboard? " +
         "If you're the creator of this sample, it will be removed from every soundboard it was imported into.",
         EmbedType.Warning,
     );
 
     const replied_msg = await interaction.reply({ embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)], fetchReply: true });
 
-    // as a lil UX sugar, disable buttons once one of them was clicked
+    // as a lil UX sugar, delete dialog once one of the buttons was clicked
 
     if (!interaction.channel) return;
     await interaction.channel.awaitMessageComponent({
@@ -145,37 +159,48 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction
     await interaction.channel.messages.delete(replied_msg.id).catch(doNothing);
 });
 
-InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE }, async (interaction, decoded) => {
-    if (!interaction.inGuild()) return;
-
+InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_USER }, async (interaction, decoded) => {
     const id = decoded.id as string;
 
     const sample = await CustomSample.findById(id);
     if (!sample) return;
 
     const userId = interaction.user.id;
-    if (sample.isInUsers(userId)) {
-        await CustomSample.remove(userId, sample);
-
-        return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
+    if (!sample.isInUsers(userId)) {
+        return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your user soundboard.", EmbedType.Info));
     }
 
+    await CustomSample.remove(userId, sample);
+
+    return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
+});
+
+InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_SERVER }, async (interaction, decoded) => {
+    if (!interaction.inGuild()) return;
+
+    const id = decoded.id as string;
+
+    const userId = interaction.user.id;
     const guildId = interaction.guildId;
-    if (sample.isInGuilds(guildId)) {
-        if (!interaction.guild) {
-            return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
-        }
 
-        if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
-            return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
-        }
-
-        await CustomSample.remove(guildId, sample);
-
-        return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success));
+    if (!interaction.guild) {
+        return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
     }
 
-    return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your soundboards.", EmbedType.Info));
+    if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
+        return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
+    }
+
+    const sample = await CustomSample.findById(id);
+    if (!sample) return;
+
+    if (!sample.isInGuilds(guildId)) {
+        return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your server soundboard.", EmbedType.Info));
+    }
+
+    await CustomSample.remove(guildId, sample);
+
+    return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success));
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ABORT }, async (interaction, decoded) => {
