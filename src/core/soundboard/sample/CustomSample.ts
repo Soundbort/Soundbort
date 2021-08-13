@@ -128,7 +128,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         if (this.deletable && show_delete) {
             buttons.push(
                 new Discord.MessageButton()
-                    .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.DELETE, id: this.id }))
+                    .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.DELETE_ASK, id: this.id }))
                     .setLabel("Delete")
                     .setEmoji("🗑️")
                     .setStyle("DANGER"),
