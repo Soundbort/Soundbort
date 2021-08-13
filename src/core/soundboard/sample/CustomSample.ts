@@ -12,7 +12,8 @@ import { findAndRemove } from "../../../util/array";
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 import { createEmbed } from "../../../util/util";
 import moment from "moment";
-import { BUTTON_IDS } from "../../../const";
+import InteractionRegistry from "../../InteractionRegistry";
+import { BUTTON_TYPES } from "../../../const";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 
@@ -104,12 +105,12 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         if (this.importable && show_import) {
             buttons.push(
                 new Discord.MessageButton()
-                    .setCustomId(BUTTON_IDS.IMPORT_USER + this.id)
+                    .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.IMPORT_USER, id: this.id }))
                     .setLabel("Import to User Board")
                     .setEmoji("📥")
                     .setStyle("SECONDARY"),
                 new Discord.MessageButton()
-                    .setCustomId(BUTTON_IDS.IMPORT_SERVER + this.id)
+                    .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.IMPORT_SERVER, id: this.id }))
                     .setLabel("Import to Server Board")
                     .setEmoji("📥")
                     .setStyle("SECONDARY"),
@@ -118,7 +119,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         buttons.push(
             new Discord.MessageButton()
-                .setCustomId(BUTTON_IDS.CUSTOM_PLAY + this.id)
+                .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_CUSTOM, id: this.id }))
                 .setLabel("Play")
                 .setEmoji("🔉")
                 .setStyle("SUCCESS"),
@@ -127,7 +128,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         if (this.deletable && show_delete) {
             buttons.push(
                 new Discord.MessageButton()
-                    .setCustomId(BUTTON_IDS.DELETE + this.id)
+                    .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.DELETE, id: this.id }))
                     .setLabel("Delete")
                     .setEmoji("🗑️")
                     .setStyle("DANGER"),

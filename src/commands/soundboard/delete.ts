@@ -4,14 +4,12 @@ import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import { CmdInstallerArgs } from "../../util/types";
-import { collectionBlacklistUser } from "../../modules/database/models";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
-import { BUTTON_IDS } from "../../const";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
 import GuildConfigManager from "../../core/GuildConfigManager";
 import SampleID from "../../core/soundboard/SampleID";
+import { BUTTON_TYPES } from "../../const";
 
 async function removeServer(interaction: Discord.CommandInteraction, name: string) {
     const userId = interaction.user.id;
@@ -83,45 +81,35 @@ InteractionRegistry.addCommand(new TopCommand({
     },
 }));
 
-export function install({ client }: CmdInstallerArgs): void {
-    client.on("interactionCreate", async interaction => {
-        if (!interaction.isButton()) return;
-        if (!interaction.inGuild()) return;
+InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE }, async (interaction, decoded) => {
+    if (!interaction.inGuild()) return;
 
-        if (await collectionBlacklistUser().findOne({ userId: interaction.user.id })) {
-            return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
+    const id = decoded.id as string;
+
+    const sample = await CustomSample.findById(id);
+    if (!sample) return;
+
+    const userId = interaction.user.id;
+    if (sample.isInUsers(userId)) {
+        await CustomSample.remove(userId, sample);
+
+        return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
+    }
+
+    const guildId = interaction.guildId;
+    if (sample.isInGuilds(guildId)) {
+        if (!interaction.guild) {
+            return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
         }
 
-        const customId = interaction.customId;
-        if (customId.startsWith(BUTTON_IDS.DELETE)) {
-            const id = customId.substring(BUTTON_IDS.DELETE.length);
-
-            const sample = await CustomSample.findById(id);
-            if (!sample) return;
-
-            const userId = interaction.user.id;
-            if (sample.isInUsers(userId)) {
-                await CustomSample.remove(userId, sample);
-
-                return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
-            }
-
-            const guildId = interaction.guildId;
-            if (sample.isInGuilds(guildId)) {
-                if (!interaction.guild) {
-                    return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
-                }
-
-                if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
-                    return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
-                }
-
-                await CustomSample.remove(guildId, sample);
-
-                return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success));
-            }
-
-            return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your soundboards.", EmbedType.Info));
+        if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
+            return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
         }
-    });
-}
+
+        await CustomSample.remove(guildId, sample);
+
+        return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success));
+    }
+
+    return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your soundboards.", EmbedType.Info));
+});

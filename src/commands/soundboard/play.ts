@@ -10,12 +10,11 @@ import Logger from "../../log";
 import { CmdInstallerArgs } from "../../util/types";
 import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
 import { EmbedType, logErr, replyEmbedEphemeral } from "../../util/util";
-import { collectionBlacklistUser } from "../../modules/database/models";
-import { BUTTON_IDS } from "../../const";
+import { BUTTON_TYPES } from "../../const";
 
 const log = Logger.child({ label: "Command => play" });
 
-export function install({ client, stats_collector }: CmdInstallerArgs): void {
+export function install({ stats_collector }: CmdInstallerArgs): void {
     async function play(interaction: Discord.CommandInteraction | Discord.ButtonInteraction, sample: CustomSample | PredefinedSample): Promise<void> {
         try {
             // shouldn't true, but Typescript wants it
@@ -48,31 +47,28 @@ export function install({ client, stats_collector }: CmdInstallerArgs): void {
         }
     }
 
-    client.on("interactionCreate", async interaction => {
-        if (!interaction.isButton()) return;
+    InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_CUSTOM }, async (interaction, decoded) => {
         if (!interaction.inGuild()) return;
 
-        if (await collectionBlacklistUser().findOne({ userId: interaction.user.id })) {
-            return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
-        }
+        console.log(decoded);
+        const id = decoded.id as string;
 
-        const customId = interaction.customId;
-        if (customId.startsWith(BUTTON_IDS.CUSTOM_PLAY)) {
-            const id = customId.substring(BUTTON_IDS.CUSTOM_PLAY.length);
+        const sample = await CustomSample.findById(id);
+        if (!sample) return;
 
-            const sample = await CustomSample.findById(id);
-            if (!sample) return;
+        return await play(interaction, sample);
+    });
 
-            return await play(interaction, sample);
-        }
-        if (customId.startsWith(BUTTON_IDS.PREDEF_PLAY)) {
-            const name = customId.substring(BUTTON_IDS.PREDEF_PLAY.length);
+    InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_STANDA }, async (interaction, decoded) => {
+        if (!interaction.inGuild()) return;
 
-            const sample = await PredefinedSample.findByName(name);
-            if (!sample) return;
+        console.log(decoded);
+        const name = decoded.n as string;
 
-            return await play(interaction, sample);
-        }
+        const sample = await PredefinedSample.findByName(name);
+        if (!sample) return;
+
+        return await play(interaction, sample);
     });
 
     InteractionRegistry.addCommand(new TopCommand({

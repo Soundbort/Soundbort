@@ -2,16 +2,17 @@ import fs from "fs-extra";
 import path from "path";
 import * as Voice from "@discordjs/voice";
 import Discord from "discord.js";
+import moment from "moment";
 
-import { collectionPredefinedSample } from "../../../modules/database/models";
+import InteractionRegistry from "../../InteractionRegistry";
+import { createEmbed } from "../../../util/util";
+import { BUTTON_TYPES } from "../../../const";
 import Logger from "../../../log";
 import database from "../../../modules/database";
+import { collectionPredefinedSample } from "../../../modules/database/models";
 import { SoundboardPredefinedSampleSchema } from "../../../modules/database/schemas/SoundboardPredefinedSampleSchema";
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 import Cache from "../../../modules/Cache";
-import { createEmbed } from "../../../util/util";
-import moment from "moment";
-import { BUTTON_IDS } from "../../../const";
 
 const log = Logger.child({ label: "SampleManager => PredefinedSample" });
 
@@ -83,7 +84,7 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
         const buttons = [];
         buttons.push(
             new Discord.MessageButton()
-                .setCustomId(BUTTON_IDS.PREDEF_PLAY + this.name)
+                .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_STANDA, n: this.name }))
                 .setLabel("Play")
                 .setEmoji("🔉")
                 .setStyle("SUCCESS"),

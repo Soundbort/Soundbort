@@ -4,12 +4,10 @@ import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import { CmdInstallerArgs } from "../../util/types";
-import { collectionBlacklistUser } from "../../modules/database/models";
 import { EmbedType, replyEmbedEphemeral } from "../../util/util";
-import { BUTTON_IDS } from "../../const";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
 import GuildConfigManager from "../../core/GuildConfigManager";
+import { BUTTON_TYPES } from "../../const";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
     const user = interaction.user;
@@ -73,31 +71,24 @@ InteractionRegistry.addCommand(new TopCommand({
     },
 }));
 
-export function install({ client }: CmdInstallerArgs): void {
-    client.on("interactionCreate", async interaction => {
-        if (!interaction.isButton()) return;
-        if (!interaction.inGuild()) return;
+InteractionRegistry.addButton({ t: BUTTON_TYPES.IMPORT_USER }, async (interaction, decoded) => {
+    if (!interaction.inGuild()) return;
 
-        if (await collectionBlacklistUser().findOne({ userId: interaction.user.id })) {
-            return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
-        }
+    const id = decoded.id as string;
 
-        const customId = interaction.customId;
-        if (customId.startsWith(BUTTON_IDS.IMPORT_USER)) {
-            const id = customId.substring(BUTTON_IDS.IMPORT_USER.length);
+    const sample = await CustomSample.findById(id);
+    if (!sample) return;
 
-            const sample = await CustomSample.findById(id);
-            if (!sample) return;
+    return await importUser(interaction, sample);
+});
 
-            return await importUser(interaction, sample);
-        }
-        if (customId.startsWith(BUTTON_IDS.IMPORT_SERVER)) {
-            const id = customId.substring(BUTTON_IDS.IMPORT_SERVER.length);
+InteractionRegistry.addButton({ t: BUTTON_TYPES.IMPORT_SERVER }, async (interaction, decoded) => {
+    if (!interaction.inGuild()) return;
 
-            const sample = await CustomSample.findById(id);
-            if (!sample) return;
+    const id = decoded.id as string;
 
-            return await importServer(interaction, sample);
-        }
-    });
-}
+    const sample = await CustomSample.findById(id);
+    if (!sample) return;
+
+    return await importServer(interaction, sample);
+});

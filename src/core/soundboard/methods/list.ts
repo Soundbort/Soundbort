@@ -1,6 +1,7 @@
 import Discord from "discord.js";
-import { BUTTON_IDS } from "../../../const";
+import { BUTTON_TYPES } from "../../../const";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../../util/util";
+import InteractionRegistry from "../../InteractionRegistry";
 import { CustomSample, AvailableCustomSamplesResponse } from "../sample/CustomSample";
 import { PredefinedSample } from "../sample/PredefinedSample";
 
@@ -29,7 +30,10 @@ function generateSampleButtons(samples: CustomSample[] | PredefinedSample[]): Di
 
     for (const sample of samples) {
         const button = new Discord.MessageButton()
-            .setCustomId(sample instanceof CustomSample ? BUTTON_IDS.CUSTOM_PLAY + sample.id : BUTTON_IDS.PREDEF_PLAY + sample.name)
+            .setCustomId(sample instanceof CustomSample
+                ? InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_CUSTOM, id: sample.id })
+                : InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_STANDA, n: sample.name }),
+            )
             .setLabel(sample.name)
             .setStyle("PRIMARY");
 

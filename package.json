@@ -30,6 +30,7 @@
     "nanoid": "^3.1.23",
     "node-fetch": "^2.6.1",
     "prism-media": "^1.3.1",
+    "query-string": "^7.0.1",
     "read-chunk": "^3.2.0",
     "temp": "^0.9.4",
     "tweetnacl": "^1.0.3",

@@ -15,10 +15,16 @@ export const EMOJI = {
     INFO: "❕",
 };
 
-export const BUTTON_IDS = {
-    CUSTOM_PLAY: "sample.custom.",
-    PREDEF_PLAY: "sample.pre.",
-    IMPORT_USER: "import.user",
-    IMPORT_SERVER: "import.server",
-    DELETE: "delete.",
-};
+// Important: Don't change these enum values! They are important
+//            to keep old buttons working and not doing the completely
+//            wrong thing
+
+export enum BUTTON_TYPES {
+    PLAY_CUSTOM = 0,
+    PLAY_STANDA = 1,
+
+    IMPORT_USER = 2,
+    IMPORT_SERVER = 3,
+
+    DELETE = 4,
+}
