@@ -33,6 +33,7 @@
     "query-string": "^7.0.1",
     "read-chunk": "^3.2.0",
     "temp": "^0.9.4",
+    "topgg-autoposter": "^2.0.0",
     "tweetnacl": "^1.0.3",
     "utf-8-validate": "^5.0.5",
     "winston": "^3.3.3",

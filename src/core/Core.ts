@@ -1,5 +1,6 @@
 import Discord from "discord.js";
 import path from "path";
+import topGGStatsPoster from "topgg-autoposter";
 
 import nanoTimer from "../modules/nanoTimer";
 import Logger from "../log";
@@ -7,6 +8,7 @@ import { StatsCollectorManager } from "./StatsCollectorManager";
 import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
 import InteractionRegistry from "./InteractionRegistry";
+import { TOP_GG_TOKEN } from "../config";
 import { EmbedType, guessModRole, logErr, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
 import GuildConfigManager from "./GuildConfigManager";
@@ -22,6 +24,16 @@ export default class Core {
     constructor(client: Discord.Client<true>) {
         this.client = client;
         this.stats_collector = new StatsCollectorManager(this.client);
+
+        if (TOP_GG_TOKEN) {
+            topGGStatsPoster(TOP_GG_TOKEN, this.client)
+                .on("posted", () => {
+                    log.debug("Posted stats to Top.gg!");
+                })
+                .on("error", error => {
+                    log.error("Top.gg posting error", { error });
+                });
+        }
     }
 
     async setup(): Promise<void> {

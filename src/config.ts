@@ -44,6 +44,8 @@ const _ENV = (node_env: string | undefined): EnvironmentStages => {
 
 export const ENVIRONMENT = _ENV(process.env.NODE_ENV);
 
+export const TOP_GG_TOKEN = process.env.SOUNDBORT_TOP_GG_TOKEN;
+
 // ////////////// INFO //////////////
 
 const package_file: PackageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, "..", "package.json"), "utf8"));
