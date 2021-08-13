@@ -32,6 +32,7 @@ export interface AvailableCustomSamplesResponse {
 
 export class CustomSample extends AbstractSample implements SoundboardCustomSampleSchema {
     readonly importable = true;
+    readonly deletable = true;
 
     scope: SoundboardCustomSampleScope;
     id: string;
@@ -82,7 +83,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return this.creatorId === user_guild_id;
     }
 
-    toEmbed({ show_timestamps = true, show_import = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
+    toEmbed({ show_timestamps = true, show_import = true, show_delete = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
         const embed = createEmbed(description, type);
 
         embed.addField("Name", this.name, true);
@@ -99,16 +100,9 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         embed.addField("Importable", this.importable ? "✅" : "❌", true);
 
         const buttons = [];
-        buttons.push(
-            new Discord.MessageButton()
-                .setCustomId(BUTTON_IDS.CUSTOM_PLAY + this.id)
-                .setLabel("Play")
-                .setEmoji("🔉")
-                .setStyle("SUCCESS"),
-        );
 
         if (this.importable && show_import) {
-            buttons.unshift(
+            buttons.push(
                 new Discord.MessageButton()
                     .setCustomId(BUTTON_IDS.IMPORT_USER + this.id)
                     .setLabel("Import to User Board")
@@ -119,6 +113,24 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
                     .setLabel("Import to Server Board")
                     .setEmoji("📥")
                     .setStyle("SECONDARY"),
+            );
+        }
+
+        buttons.push(
+            new Discord.MessageButton()
+                .setCustomId(BUTTON_IDS.CUSTOM_PLAY + this.id)
+                .setLabel("Play")
+                .setEmoji("🔉")
+                .setStyle("SUCCESS"),
+        );
+
+        if (this.deletable && show_delete) {
+            buttons.push(
+                new Discord.MessageButton()
+                    .setCustomId(BUTTON_IDS.DELETE + this.id)
+                    .setLabel("Delete")
+                    .setEmoji("🗑️")
+                    .setStyle("DANGER"),
             );
         }
 

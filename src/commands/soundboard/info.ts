@@ -10,6 +10,7 @@ import { TopCommand } from "../../modules/commands/TopCommand";
 import SampleID from "../../core/soundboard/SampleID";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
 import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
+import GuildConfigManager from "../../core/GuildConfigManager";
 
 async function findSampleByScope(
     guildId: Discord.Snowflake | null,
@@ -53,6 +54,17 @@ registry.addCommand(new TopCommand({
             return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
         }
 
-        await interaction.reply(sample.toEmbed({ show_timestamps: true }));
+        const show_delete = sample instanceof CustomSample &&
+            // has sample in user soundboard?
+            (sample.isInUsers(interaction.user.id) ||
+            (!interaction.guildId || (
+                // has sample in server soundboard?
+                sample.isInGuilds(interaction.guildId) &&
+                interaction.guild &&
+                // is a moderator? can remove sample?
+                await GuildConfigManager.isModerator(interaction.guild, interaction.user.id))
+            ));
+
+        await interaction.reply(sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete }));
     },
 }));

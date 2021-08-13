@@ -13,12 +13,14 @@ fs.mkdirpSync(BASE);
 export interface ToEmbedOptions {
     show_timestamps?: boolean;
     show_import?: boolean;
+    show_delete?: boolean;
     description?: string;
     type?: EmbedType;
 }
 
 export abstract class AbstractSample implements SoundboardPredefinedSampleSchema {
     abstract readonly importable: boolean;
+    abstract readonly deletable: boolean;
 
     name: string;
     plays: number;

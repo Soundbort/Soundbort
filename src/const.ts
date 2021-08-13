@@ -20,4 +20,5 @@ export const BUTTON_IDS = {
     PREDEF_PLAY: "sample.pre.",
     IMPORT_USER: "import.user",
     IMPORT_SERVER: "import.server",
+    DELETE: "delete.",
 };

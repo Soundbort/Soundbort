@@ -82,3 +82,46 @@ registry.addCommand(new TopCommand({
         else await removeServer(interaction, name);
     },
 }));
+
+export function install({ client }: CmdInstallerArgs): void {
+    client.on("interactionCreate", async interaction => {
+        if (!interaction.isButton()) return;
+        if (!interaction.inGuild()) return;
+
+        if (await collectionBlacklistUser().findOne({ userId: interaction.user.id })) {
+            return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
+        }
+
+        const customId = interaction.customId;
+        if (customId.startsWith(BUTTON_IDS.DELETE)) {
+            const id = customId.substring(BUTTON_IDS.DELETE.length);
+
+            const sample = await CustomSample.findById(id);
+            if (!sample) return;
+
+            const userId = interaction.user.id;
+            if (sample.isInUsers(userId)) {
+                await CustomSample.remove(userId, sample);
+
+                return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
+            }
+
+            const guildId = interaction.guildId;
+            if (sample.isInGuilds(guildId)) {
+                if (!interaction.guild) {
+                    return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
+                }
+
+                if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
+                    return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
+                }
+
+                await CustomSample.remove(guildId, sample);
+
+                return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success));
+            }
+
+            return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your soundboards.", EmbedType.Info));
+        }
+    });
+}

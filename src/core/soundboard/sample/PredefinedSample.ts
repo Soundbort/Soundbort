@@ -23,6 +23,7 @@ database.onConnect(async () => {
 
 export class PredefinedSample extends AbstractSample implements SoundboardPredefinedSampleSchema {
     readonly importable: boolean = false;
+    readonly deletable = false;
 
     name: string;
     plays: number;
