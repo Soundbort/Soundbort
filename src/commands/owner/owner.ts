@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommandGroup } from "../../modules/commands/TopCommandGroup";
 import { OWNER_IDS, OWNER_GUILD_IDS } from "../../config";
 import { createUserPermission } from "../../modules/commands/options/createPermission";
@@ -14,7 +14,7 @@ import delete_cmd from "./owner_delete";
 import backup_cmd from "./owner_backup";
 import import_cmd from "./owner_import";
 
-registry.addCommand(new TopCommandGroup({
+InteractionRegistry.addCommand(new TopCommandGroup({
     name: "owner",
     description: "A set of owner commands.",
     commands: [

@@ -1,11 +1,11 @@
 import Discord from "discord.js";
 
 import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
-registry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new TopCommand({
     name: "join",
     description: "Join the voice channel you are in.",
     async func(interaction: Discord.CommandInteraction) {

@@ -6,7 +6,7 @@ import Logger from "../log";
 import { StatsCollectorManager } from "./StatsCollectorManager";
 import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
-import CommandRegistry from "./CommandRegistry";
+import InteractionRegistry from "./InteractionRegistry";
 import { EmbedType, guessModRole, logErr, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
 import GuildConfigManager from "./GuildConfigManager";
@@ -79,12 +79,12 @@ export default class Core {
 
         const install_time = nanoTimer.diff(timer) / nanoTimer.NS_PER_SEC;
 
-        log.info(`Commands installed. files:${files.length} commands:${CommandRegistry.commands.size} install_time:${install_time.toFixed(3)}s`);
+        log.info(`Commands installed. files:${files.length} commands:${InteractionRegistry.commands.size} install_time:${install_time.toFixed(3)}s`);
     }
 
     async deployCommands(): Promise<void> {
-        const global_commands = CommandRegistry.commands.filter(command => command.target.global);
-        const guild_commands = CommandRegistry.commands.filter(command => !command.target.global);
+        const global_commands = InteractionRegistry.commands.filter(command => command.target.global);
+        const guild_commands = InteractionRegistry.commands.filter(command => !command.target.global);
 
         if (this.client.application.partial) await this.client.application.fetch();
 
@@ -145,7 +145,7 @@ export default class Core {
             }
 
             try {
-                const command = CommandRegistry.commands.get(interaction.commandName);
+                const command = InteractionRegistry.commands.get(interaction.commandName);
                 if (!command) return await interaction.reply(replyEmbedEphemeral("This command doesn't exist anymore or some other thing screwed up.", EmbedType.Error));
 
                 log.debug("Command '%s' by '%s' (%s) in %s (%s)", command.name, interaction.user.tag, interaction.user.id, interaction.channelId, interaction.channel?.type);

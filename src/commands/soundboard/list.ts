@@ -1,10 +1,10 @@
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { list } from "../../core/soundboard/methods/list";
 
-registry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new TopCommand({
     name: "list",
     description: "Generate a list of all accessable samples with clickable buttons to trigger them.",
     options: [

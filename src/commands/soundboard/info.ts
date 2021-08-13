@@ -2,7 +2,7 @@ import Discord from "discord.js";
 
 import { EmbedType, replyEmbedEphemeral } from "../../util/util";
 
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
@@ -35,7 +35,7 @@ async function findSampleByScope(
     return sample;
 }
 
-registry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new TopCommand({
     name: "info",
     description: "Display information about a sample.",
     options: [

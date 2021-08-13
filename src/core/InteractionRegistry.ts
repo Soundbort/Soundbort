@@ -2,7 +2,7 @@ import { Collection } from "discord.js";
 import { TopCommand } from "../modules/commands/TopCommand";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 
-class CommandRegistry {
+class InteractionRegistry {
     public commands: Collection<string, TopCommand | TopCommandGroup> = new Collection();
 
     public addCommand(command: TopCommand | TopCommandGroup): void {
@@ -12,4 +12,4 @@ class CommandRegistry {
     }
 }
 
-export default new CommandRegistry();
+export default new InteractionRegistry();

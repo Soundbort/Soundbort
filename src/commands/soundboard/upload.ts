@@ -1,10 +1,10 @@
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { upload } from "../../core/soundboard/methods/upload";
 
-registry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new TopCommand({
     name: "upload",
     description: "Add a sound sample to your soundboard. Upload the audio file first, then call this command.",
     options: [

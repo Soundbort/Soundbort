@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
@@ -64,7 +64,7 @@ async function removeUser(interaction: Discord.CommandInteraction, name: string)
     return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
 }
 
-registry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new TopCommand({
     name: "delete",
     description: "Remove a sample from one of your soundboards.",
     options: [

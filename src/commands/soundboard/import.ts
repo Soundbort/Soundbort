@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
@@ -45,7 +45,7 @@ async function importServer(interaction: Discord.ButtonInteraction | Discord.Com
     await interaction.reply(sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success }));
 }
 
-registry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new TopCommand({
     name: "import",
     description: "Import a sample from another user or server to your or your server's soundboard.",
     options: [

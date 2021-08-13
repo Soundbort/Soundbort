@@ -1,11 +1,11 @@
 import Discord from "discord.js";
 
 import AudioManager from "../../core/audio/AudioManager";
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
-registry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new TopCommand({
     name: "stop",
     description: "Stops all currently playing audio.",
     async func(interaction: Discord.CommandInteraction) {

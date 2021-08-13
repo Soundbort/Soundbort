@@ -1,5 +1,5 @@
 import { BOT_NAME, VERSION } from "../config";
-import CommandRegistry from "../core/CommandRegistry";
+import InteractionRegistry from "../core/InteractionRegistry";
 import { TopCommand } from "../modules/commands/TopCommand";
 import { CmdInstallerArgs } from "../util/types";
 import { createEmbed } from "../util/util";
@@ -7,7 +7,7 @@ import { createEmbed } from "../util/util";
 export function install({ client }: CmdInstallerArgs): void {
     const invite_link = `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=2150943744&scope=bot%20applications.commands&redirect_uri=https%3A%2F%2Fsoundbort-guide.loneless.art%2F`;
 
-    CommandRegistry.addCommand(new TopCommand({
+    InteractionRegistry.addCommand(new TopCommand({
         name: "getting-started",
         description: `A getting-started guide that will help you find your way around ${BOT_NAME}.`,
         target: {

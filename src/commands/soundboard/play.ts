@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import registry from "../../core/CommandRegistry";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
@@ -75,7 +75,7 @@ export function install({ client, stats_collector }: CmdInstallerArgs): void {
         }
     });
 
-    registry.addCommand(new TopCommand({
+    InteractionRegistry.addCommand(new TopCommand({
         name: "play",
         description: "Joins the voice channel if needed and plays the sound sample.",
         options: [

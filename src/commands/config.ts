@@ -1,4 +1,4 @@
-import registry from "../core/CommandRegistry";
+import InteractionRegistry from "../core/InteractionRegistry";
 import { createRoleOption } from "../modules/commands/options/createOption";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
@@ -51,7 +51,7 @@ const show_admin_role_cmd = new Command({
     },
 });
 
-const config_cmd = new TopCommandGroup({
+InteractionRegistry.addCommand(new TopCommandGroup({
     name: "config",
     description: `Configure ${BOT_NAME} for your server.`,
     commands: [
@@ -67,5 +67,4 @@ const config_cmd = new TopCommandGroup({
         // generate config
         await GuildConfigManager.findOrGenConfig(guild);
     },
-});
-registry.addCommand(config_cmd);
+}));
