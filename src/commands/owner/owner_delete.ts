@@ -3,9 +3,8 @@ import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { EmbedType, isOwner, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
-import { remove } from "../../core/soundboard/methods/remove";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import SampleID from "../../core/soundboard/SampleID";
+import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
 
 const delete_extern_cmd = new Command({
     name: "extern",
@@ -20,10 +19,6 @@ const delete_extern_cmd = new Command({
         }
 
         const id = interaction.options.getString("id", true);
-
-        if (!SampleID.isId(id)) {
-            return await interaction.reply(replyEmbedEphemeral(`${id} is not a valid id.`, EmbedType.Error));
-        }
 
         const sample = await CustomSample.findById(id);
         if (!sample) {
@@ -45,7 +40,20 @@ const delete_standard_cmd = new Command({
     async func(interaction) {
         const name = interaction.options.getString("name", true);
 
-        await remove(interaction, name, "standard");
+        const userId = interaction.user.id;
+
+        if (!isOwner(userId)) {
+            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't remove standard samples.", EmbedType.Error));
+        }
+
+        const sample = await PredefinedSample.findByName(name);
+        if (!sample) {
+            return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
+        }
+
+        await PredefinedSample.remove(sample);
+
+        return await interaction.reply(replyEmbed(`Removed ${sample.name} from standard soundboard!`, EmbedType.Success));
     },
 });
 
