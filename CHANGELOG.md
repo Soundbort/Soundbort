@@ -1,5 +1,17 @@
 # Changelog
 
+### [0.2.1](https://github.com/LonelessCodes/SoundBort/compare/v0.2.0...v0.2.1) (2021-08-14)
+
+
+### Bug Fixes
+
+* fixed wrong repo url in /getting-started command ([23192fe](https://github.com/LonelessCodes/SoundBort/commit/23192fec818b7eabb68c5dcccba274bb9f5b7596))
+
+
+### Improvements
+
+* better error logging? ([2ef0fe4](https://github.com/LonelessCodes/SoundBort/commit/2ef0fe40419dc46e1a0ec416e5d4210a8456ff76))
+
 ## [0.2.0](https://github.com/LonelessCodes/SoundBort/compare/v0.1.1...v0.2.0) (2021-08-14)
 
 
