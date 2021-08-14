@@ -2,6 +2,7 @@ import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 import { AudioSubscription } from "./AudioSubscription";
 import Logger from "../../log";
+import { logErr } from "../../util/util";
 
 const log = Logger.child({ label: "Audio" });
 
@@ -43,7 +44,7 @@ class AudioManager {
             await Voice.entersState(subscription.voice_connection, Voice.VoiceConnectionStatus.Ready, 20e3);
             return subscription;
         } catch (error) {
-            log.warn({ error });
+            log.warn({ error: logErr(error) });
             /*
             At this point, the voice connection has not entered the Ready state. We should make
             sure to destroy it, and propagate the error by throwing it, so that the calling function

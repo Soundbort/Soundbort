@@ -72,6 +72,7 @@ export async function fetchMember(
 
 export function logErr(error: Error): Error {
     const err = {
+        ...error,
         message: error.message,
         name: error.name,
         stack: error.stack,

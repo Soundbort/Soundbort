@@ -1,6 +1,7 @@
 import * as Voice from "@discordjs/voice";
 import Logger from "../../log";
 import { timeout } from "../../util/promises";
+import { logErr } from "../../util/util";
 
 const log = Logger.child({ label: "Audio => AudioSubscription" });
 
@@ -19,7 +20,7 @@ export class AudioSubscription {
         });
         this._onDestroyed = onDestroyed;
 
-        this.voice_connection.on("error", error => { log.warn({ error }); });
+        this.voice_connection.on("error", error => { log.warn({ error: logErr(error) }); });
         this.voice_connection.on("stateChange", async (oldState: Voice.VoiceConnectionState, newState: Voice.VoiceConnectionState) => {
             if (newState.status === Voice.VoiceConnectionStatus.Disconnected) {
                 if (newState.reason === Voice.VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
@@ -83,7 +84,7 @@ export class AudioSubscription {
             }
         });
 
-        this.audio_player.on("error", error => { log.warn({ error }); });
+        this.audio_player.on("error", error => { log.warn({ error: logErr(error) }); });
 
         this.voice_connection.subscribe(this.audio_player);
     }

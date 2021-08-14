@@ -31,7 +31,7 @@ export default class Core {
                     log.debug("Posted stats to Top.gg!");
                 })
                 .on("error", error => {
-                    log.error("Top.gg posting error", { error });
+                    log.error("Top.gg posting error", { error: logErr(error) });
                 });
         }
     }

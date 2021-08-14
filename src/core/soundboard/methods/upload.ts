@@ -12,7 +12,7 @@ import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 import SampleID from "../SampleID";
 import { CustomSample } from "../sample/CustomSample";
 import { PredefinedSample } from "../sample/PredefinedSample";
-import { EmbedType, isOwner, replyEmbed } from "../../../util/util";
+import { EmbedType, isOwner, logErr, replyEmbed } from "../../../util/util";
 import GuildConfigManager from "../../GuildConfigManager";
 
 const ffprobe = promisify(_ffprobe) as (file: string) => Promise<FfprobeData>;
@@ -207,7 +207,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
             return await interaction.editReply(replyEmbed(UploadErrors.TooLong, EmbedType.Error));
         }
     } catch (error) {
-        log_upload.debug({ error });
+        log_upload.debug({ error: logErr(error) });
         return await interaction.editReply(replyEmbed(UploadErrors.FfProbeError, EmbedType.Error));
     }
 
@@ -237,7 +237,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     try {
         await convertAudio(temp_file, sample_file);
     } catch (error) {
-        log_upload.debug({ error });
+        log_upload.debug({ error: logErr(error) });
         return await interaction.editReply(replyEmbed(UploadErrors.ConversionError, EmbedType.Error));
     }
 
@@ -275,7 +275,7 @@ export async function upload(interaction: Discord.CommandInteraction, name: stri
     try {
         await _upload(interaction, name, scope);
     } catch (error) {
-        log_upload.debug({ error });
+        log_upload.debug({ error: logErr(error) });
         await interaction.editReply(replyEmbed(UploadErrors.General, EmbedType.Error));
     } finally {
         await temp.cleanup();

@@ -44,7 +44,7 @@ process.on("SIGINT", signal => {
 });
 
 process.on("uncaughtException", error => {
-    log.debug(`Uncaught Exception: ${error.message}`, { error });
+    log.debug(`Uncaught Exception: ${error.message}`, { error: logErr(error) });
     exit(client, 1);
 });
 

@@ -3,6 +3,7 @@ import { Db, Collection, MongoClient } from "mongodb";
 
 import { BOT_NAME, DB_URI } from "../../config";
 import Logger from "../../log";
+import { logErr } from "../../util/util";
 
 export type QueueFunction = () => Awaited<void>;
 
@@ -26,7 +27,7 @@ export async function connect(): Promise<MongoClient> {
         try {
             await func();
         } catch (error) {
-            log.warn("Error in db.onConnect function", { error });
+            log.warn("Error in db.onConnect function", { error: logErr(error) });
         }
     }
 
@@ -43,7 +44,7 @@ export function onConnect(func: QueueFunction): void {
     else {
         Promise.resolve(func())
             .catch(error => {
-                log.warn("Error in db.onConnect function", { error });
+                log.warn("Error in db.onConnect function", { error: logErr(error) });
             });
     }
 }
