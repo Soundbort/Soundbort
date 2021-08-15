@@ -63,7 +63,7 @@ interface ChartOptionsIntern extends ChartOptions {
     increment_y: number;
 }
 
-function drawLegendY(ctx: CanvasRenderingContext2D, { height, y: _y, increment_y }: ChartOptionsIntern) {
+function drawLegendY(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.save();
 
     ctx.fillStyle = LEGEND_TEXT_COLOR;
@@ -78,8 +78,8 @@ function drawLegendY(ctx: CanvasRenderingContext2D, { height, y: _y, increment_y
     }[] = [];
 
     let legend_width = 0;
-    for (let y = 0; y <= _y.max; y += increment_y) {
-        if (y < _y.min) continue;
+    for (let y = 0; y <= opts.y.max; y += opts.increment_y) {
+        if (y < opts.y.min) continue;
 
         const label = y.toLocaleString("en");
         const label_width = ctx.measureText(label).width;
@@ -93,27 +93,28 @@ function drawLegendY(ctx: CanvasRenderingContext2D, { height, y: _y, increment_y
     }
 
     for (const legend of y_legend) {
-        const draw_y = height - ((legend.y - _y.min) / _y.diff * height);
+        const draw_y = opts.height - ((legend.y - opts.y.min) / opts.y.diff * opts.height);
         ctx.fillText(legend.label, legend_width, draw_y);
     }
 
     ctx.restore();
+
     return legend_width;
 }
 
-function drawGrid(ctx: CanvasRenderingContext2D, { width, height, y: _y, increment_y }: ChartOptionsIntern) {
+function drawGrid(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.save();
     ctx.strokeStyle = LEGEND_TEXT_COLOR;
     ctx.globalAlpha = 0.5;
 
-    for (let y = 0; y <= _y.max; y += increment_y) {
-        if (y < _y.min) continue;
+    for (let y = 0; y <= opts.y.max; y += opts.increment_y) {
+        if (y < opts.y.min) continue;
 
-        const draw_y = height - ((y - _y.min) / _y.diff * height);
+        const draw_y = opts.height - ((y - opts.y.min) / opts.y.diff * opts.height);
 
         ctx.beginPath();
         ctx.moveTo(0, draw_y);
-        ctx.lineTo(width, draw_y);
+        ctx.lineTo(opts.width, draw_y);
         ctx.stroke();
     }
 
@@ -136,7 +137,7 @@ function createTimeWindowTable(x_diff: number): ResolutionXTable {
     ].reverse() as ResolutionXTable;
 }
 
-function drawLegendX(ctx: CanvasRenderingContext2D, { width, height, x: _x }: ChartOptionsIntern) {
+function drawLegendX(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.save();
 
     ctx.strokeStyle = LEGEND_TEXT_COLOR;
@@ -145,7 +146,7 @@ function drawLegendX(ctx: CanvasRenderingContext2D, { width, height, x: _x }: Ch
     ctx.font = `${FONT_SIZE}px ${FONT}, sans-serif`;
     ctx.textAlign = "center";
 
-    const resolution_x_table = createTimeWindowTable(_x.diff);
+    const resolution_x_table = createTimeWindowTable(opts.x.diff);
 
     let diff_x_match;
     for (const item of resolution_x_table) {
@@ -158,13 +159,13 @@ function drawLegendX(ctx: CanvasRenderingContext2D, { width, height, x: _x }: Ch
     const [_timespan_ratio, _max_divider, format_x, _legend_increment_begin] = diff_x_match;
     const max_divider = _max_divider * _timespan_ratio;
 
-    const increment_end = moment(_x.max).startOf(_legend_increment_begin).valueOf();
+    const increment_end = moment(opts.x.max).startOf(_legend_increment_begin).valueOf();
 
     const padding = 8;
     const test_label = moment("23:59", "HH:mm").format(format_x);
     const element_width = ctx.measureText(test_label).width + padding;
 
-    const max_elements = Math.max(1, Math.floor(width / element_width));
+    const max_elements = Math.max(1, Math.floor(opts.width / element_width));
 
     let recommended_elements: number = 1;
     for (let i = 1; i <= max_divider; i++) {
@@ -174,7 +175,7 @@ function drawLegendX(ctx: CanvasRenderingContext2D, { width, height, x: _x }: Ch
         }
     }
 
-    const delta_legend_x = _x.diff / recommended_elements;
+    const delta_legend_x = opts.x.diff / recommended_elements;
 
     const legende_x: {
         x: number;
@@ -183,10 +184,10 @@ function drawLegendX(ctx: CanvasRenderingContext2D, { width, height, x: _x }: Ch
         label: string;
     }[] = [];
 
-    for (let x = increment_end; x >= _x.min; x -= delta_legend_x) {
+    for (let x = increment_end; x >= opts.x.min; x -= delta_legend_x) {
         const label = moment(x).format(format_x);
         const label_width = ctx.measureText(label).width;
-        const draw_x = (x - _x.min) / _x.diff * width;
+        const draw_x = (x - opts.x.min) / opts.x.diff * opts.width;
 
         legende_x.push({
             x: x,
@@ -199,8 +200,8 @@ function drawLegendX(ctx: CanvasRenderingContext2D, { width, height, x: _x }: Ch
     ctx.globalAlpha = 0.5;
     for (const legend of legende_x) {
         ctx.beginPath();
-        ctx.moveTo(legend.draw_x, height - FONT_SIZE - LEGEND_PADDING);
-        ctx.lineTo(legend.draw_x, height - FONT_SIZE - 2);
+        ctx.moveTo(legend.draw_x, opts.height - FONT_SIZE - LEGEND_PADDING);
+        ctx.lineTo(legend.draw_x, opts.height - FONT_SIZE - 2);
         ctx.stroke();
     }
 
@@ -212,17 +213,17 @@ function drawLegendX(ctx: CanvasRenderingContext2D, { width, height, x: _x }: Ch
 
     const legend_end = lastItem(legende_x);
     const item_x_end = legend_end.draw_x + (legend_end.width / 2);
-    const overshoot_end = Math.max(0, item_x_end - width);
+    const overshoot_end = Math.max(0, item_x_end - opts.width);
 
     ctx.globalAlpha = 1;
     for (const legend of legende_x) {
-        ctx.fillText(legend.label, legend.draw_x + overshoot_start - overshoot_end, height);
+        ctx.fillText(legend.label, legend.draw_x + overshoot_start - overshoot_end, opts.height);
     }
 
     ctx.restore();
 }
 
-function drawLine(ctx: CanvasRenderingContext2D, { width, height, x: _x, y: _y }: ChartOptionsIntern, data: ChartOptionsData) {
+function drawLine(ctx: CanvasRenderingContext2D, data: ChartOptionsData, opts: ChartOptionsIntern) {
     ctx.save();
     ctx.strokeStyle = data.color;
     ctx.lineJoin = "round";
@@ -231,37 +232,37 @@ function drawLine(ctx: CanvasRenderingContext2D, { width, height, x: _x, y: _y }
     ctx.beginPath();
 
     if (data.points.length > 1) {
-        const data_per_pix = Math.max(1, (data.points.length - 1) / width);
+        const data_per_pix = Math.max(1, (data.points.length - 1) / opts.width);
 
-        const draw_y = height - ((data.points[0].y - _y.min) / _y.diff * height);
+        const draw_y = opts.height - ((data.points[0].y - opts.y.min) / opts.y.diff * opts.height);
         ctx.moveTo(0, draw_y);
 
         for (let i = 1; i < data.points.length; i += data_per_pix) {
             const curr = data.points[Math.floor(i)];
-            if (curr.x < _x.min) continue;
-            if (curr.x > _x.max) break;
+            if (curr.x < opts.x.min) continue;
+            if (curr.x > opts.x.max) break;
 
-            const draw_y = height - ((curr.y - _y.min) / _y.diff * height);
-            const draw_x = Math.round((curr.x - _x.min) / _x.diff * width);
+            const draw_y = opts.height - ((curr.y - opts.y.min) / opts.y.diff * opts.height);
+            const draw_x = Math.round((curr.x - opts.x.min) / opts.x.diff * opts.width);
 
             ctx.lineTo(draw_x, draw_y);
         }
     } else if (data.points.length === 1) {
-        const draw_y = height - (((data.points[0].y - _y.min) / _y.diff) * height);
+        const draw_y = opts.height - (((data.points[0].y - opts.y.min) / opts.y.diff) * opts.height);
         ctx.moveTo(0, draw_y);
-        ctx.lineTo(width, draw_y);
+        ctx.lineTo(opts.width, draw_y);
     } else {
-        ctx.moveTo(0, height);
-        ctx.lineTo(width, height);
+        ctx.moveTo(0, opts.height);
+        ctx.lineTo(opts.width, opts.height);
     }
 
     ctx.stroke();
 
-    ctx.lineTo(width, height);
-    ctx.lineTo(0, height);
+    ctx.lineTo(opts.width, opts.height);
+    ctx.lineTo(0, opts.height);
     ctx.closePath();
 
-    const gradient = ctx.createLinearGradient(0, 0, 0, height);
+    const gradient = ctx.createLinearGradient(0, 0, 0, opts.height);
 
     const rgb = color(data.color);
     gradient.addColorStop(0, rgb.alpha(0.2).string());
@@ -274,21 +275,30 @@ function drawLine(ctx: CanvasRenderingContext2D, { width, height, x: _x, y: _y }
     ctx.restore();
 }
 
-function drawLineChart(ctx: CanvasRenderingContext2D, chart_data_intern: ChartOptionsIntern): void {
-    const { height, width } = chart_data_intern;
-
+function drawLineChart(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern): void {
     ctx.lineWidth = 1;
 
-    const legend_y_width = drawLegendY(ctx, { ...chart_data_intern, height: height - LABEL_X_HEIGHT });
+    const legend_y_width = drawLegendY(ctx, { ...opts, height: opts.height - LABEL_X_HEIGHT });
 
     ctx.save();
     ctx.translate(legend_y_width + LEGEND_PADDING, 0);
 
-    drawGrid(ctx, { ...chart_data_intern, width: width - (legend_y_width + LEGEND_PADDING), height: height - LABEL_X_HEIGHT });
-    drawLegendX(ctx, { ...chart_data_intern, width: width - (legend_y_width + LEGEND_PADDING) });
+    drawGrid(ctx, {
+        ...opts,
+        width: opts.width - (legend_y_width + LEGEND_PADDING),
+        height: opts.height - LABEL_X_HEIGHT,
+    });
+    drawLegendX(ctx, {
+        ...opts,
+        width: opts.width - (legend_y_width + LEGEND_PADDING),
+    });
 
-    for (const data of chart_data_intern.data) {
-        drawLine(ctx, { ...chart_data_intern, width: width - (legend_y_width + 8), height: height - LABEL_X_HEIGHT }, data);
+    for (const data of opts.data) {
+        drawLine(ctx, data, {
+            ...opts,
+            width: opts.width - (legend_y_width + 8),
+            height: opts.height - LABEL_X_HEIGHT,
+        });
     }
 
     ctx.restore();
@@ -331,14 +341,17 @@ function fixInputsXY(data: ChartOptionsData[], xy: ChartOptionsAxies | undefined
 
     let xy_min = (!xy || typeof xy.min === "undefined") ? xy_min_data : xy.min;
     let xy_max = (!xy || typeof xy.max === "undefined") ? xy_max_data : xy.max;
-    let xy_diff = xy_max - xy_min;
-    const xy_window_padding = 1;
-    const xy_middle = Math.max(xy_window_padding, xy_min + (xy_diff / 2));
 
+    // ensure a minimum distance between min and max
+    const xy_window_padding = 1;
+    const xy_middle = Math.max(
+        xy_window_padding,
+        xy_min + ((xy_max - xy_min) / 2), // larp at 50%
+    );
     xy_min = Math.min(xy_min, xy_middle - xy_window_padding);
     xy_max = Math.max(xy_max, xy_middle + xy_window_padding);
 
-    xy_diff = xy_max - xy_min;
+    const xy_diff = xy_max - xy_min;
 
     return {
         min: xy_min,
@@ -355,8 +368,6 @@ export function lineGraph(opts: ChartOptions): Buffer {
     const y_exp = Math.round(Math.log10(y_delta_legend));
     const y_round = Math.pow(10, y_exp);
     const y_increment = Math.round(y_delta_legend / y_round) * y_round;
-
-    console.log({ y, y_delta_legend, y_exp, y_round, y_increment });
 
     const width = 400;
     const height = 200;
