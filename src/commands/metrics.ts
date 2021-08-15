@@ -1,47 +1,80 @@
 import Discord from "discord.js";
 import color from "color";
+import os from "os";
+import { time } from "@discordjs/builders";
 
 import InteractionRegistry from "../core/InteractionRegistry";
 import { BOT_NAME, VERSION } from "../config";
 import { TopCommand } from "../modules/commands/TopCommand";
-import { createEmbed } from "../util/util";
+import { createEmbed, EmbedType, replyEmbedEphemeral } from "../util/util";
 import { CmdInstallerArgs } from "../util/types";
 import type { ChartOptionsData } from "../modules/charts/line";
 import charts from "../modules/charts";
 import { COLOR } from "../const";
 
 export function install({ stats_collector }: CmdInstallerArgs): void {
-    // -- metrics (incl ping with graphs usw)
     InteractionRegistry.addCommand(new TopCommand({
         name: "metrics",
         description: "Display bot metrics and health statistics for anyone interested.",
         async func(interaction) {
-            const embed = createEmbed()
-                .setFooter(`${BOT_NAME} v${VERSION}`)
-                .setAuthor(BOT_NAME, (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined);
-
-            // embed.addField("Banner", "![Banner](https://github.com/LonelessCodes/Soundbort/blob/main/assets/readme_banner.jpg)");
+            const embeds: Discord.MessageEmbed[] = [];
+            const files: Discord.MessageAttachment[] = [];
 
             const stats = await stats_collector.getStats(24 * 60 * 60 * 1000);
 
-            const files: Discord.MessageAttachment[] = [];
+            if (stats.length === 0) {
+                return await interaction.reply(replyEmbedEphemeral("The bot hasn't collected any statistics in the last 24 hours.", EmbedType.Warning));
+            }
 
-            // PING
+            const aggregation = stats_collector.aggregateStatsArray(stats);
 
-            const ping_data: ChartOptionsData = {
-                color: color(COLOR.SUCCESS, "rgb").string(),
+            const cpu_data: ChartOptionsData[] = [{
+                color: color(COLOR.ERROR, "rgb").string(),
+                label: "1 min",
                 points: stats.map(doc => ({
                     x: doc._id.getTime(),
-                    y: doc.ping,
+                    y: doc.cpu_load_avg[0] * 100,
                 })),
-            };
+            }, {
+                color: color(COLOR.WARNING, "rgb").string(),
+                label: "5 min",
+                points: stats.map(doc => ({
+                    x: doc._id.getTime(),
+                    y: doc.cpu_load_avg[1] * 100,
+                })),
+            }, {
+                color: color(COLOR.PRIMARY, "rgb").string(),
+                label: "15 min",
+                points: stats.map(doc => ({
+                    x: doc._id.getTime(),
+                    y: doc.cpu_load_avg[2] * 100,
+                })),
+            }];
 
-            const ping_buffer = Buffer.from(await charts.lineGraph({
-                data: [ping_data],
-                title: "Ping",
+            const cpu_buffer = Buffer.from(await charts.lineGraph({
+                data: cpu_data,
+                title: "CPU Load Average",
+                y: {
+                    label_suffix: "%",
+                },
             }));
 
-            files.push(new Discord.MessageAttachment(ping_buffer, "ping.png"));
+            files.push(new Discord.MessageAttachment(cpu_buffer, "cpu_load_avg.png"));
+
+            embeds.push(createEmbed(`**Last updated**: ${time(aggregation._id, "R")}`)
+                .setAuthor(BOT_NAME, (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined)
+                .addField("Bot Version", VERSION, true)
+                .addField("Node.js Version", process.version.substr(1), true)
+                .addField("Discord.js Version", Discord.version, true)
+
+                .addField("Uptime", time(new Date(Date.now() - Math.round(process.uptime() * 1000))), true)
+
+                .addField("Memory Usage", `${(aggregation.memory_usage * 100).toFixed(0)} %`, true)
+                .addField("CPU Load Average", aggregation.cpu_load_avg.map(v => `${(v * 100).toFixed(0)} %`).join(" / "), true)
+                .addField("CPU Cores", os.cpus().length.toLocaleString("en"), true)
+
+                .setFooter(`${BOT_NAME} v${VERSION}`)
+                .setImage("attachment://cpu_load_avg.png"));
 
             // GUILDS
 
@@ -55,28 +88,15 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
             const guild_buffer = Buffer.from(await charts.lineGraph({
                 data: [guild_data],
-                title: "Total Servers",
             }));
 
             files.push(new Discord.MessageAttachment(guild_buffer, "guild.png"));
 
-            // PLAYED SAMPLES
-
-            const samples_data: ChartOptionsData = {
-                color: color(COLOR.ERROR, "rgb").string(),
-                points: stats.map(doc => ({
-                    x: doc._id.getTime(),
-                    // y: Object.keys(doc.commands).reduce((acc, key) => acc + doc.commands[key], 0),
-                    y: doc.played_samples,
-                })),
-            };
-
-            const samples_buffer = Buffer.from(await charts.lineGraph({
-                data: [samples_data],
-                title: "Played Samples",
-            }));
-
-            files.push(new Discord.MessageAttachment(samples_buffer, "samples_played.png"));
+            embeds.push(createEmbed(undefined, EmbedType.Basic)
+                .setTitle("Total Servers")
+                .addField("Total Servers", interaction.client.guilds.cache.size.toLocaleString("en"), true)
+                .addField("Total Large Servers", interaction.client.guilds.cache.filter(g => g.large).size.toLocaleString("en"), true)
+                .setImage("attachment://guild.png"));
 
             // VOICE CONNECTIONS
 
@@ -90,29 +110,65 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
             const vc_buffer = Buffer.from(await charts.lineGraph({
                 data: [vc_data],
-                title: "Connected Voice Channels",
             }));
 
             files.push(new Discord.MessageAttachment(vc_buffer, "voice_connections.png"));
 
-            // // test dataset code
-            // const _data_start = Date.now();
-            // const _data_delta = 60 * 1000;
-            // const _time_window = 24 * 60 * 60 * 1000;
+            const top_voice_connections = Math.max(...stats.map(doc => doc.voice_connections));
+            embeds.push(createEmbed(undefined, EmbedType.Warning)
+                .setTitle("Connected Voice Channels")
+                .addField("Active", aggregation.voice_connections.toLocaleString("en"), true)
+                .addField("Top 24h", top_voice_connections.toLocaleString("en"), true)
+                .setImage("attachment://voice_connections.png"));
 
-            // const data: ChartOptionsData = {
-            //     color: color(COLOR.PRIMARY, "rgb").string(),
-            //     points: new Array((_time_window / _data_delta) + 1)
-            //         .fill({ x: 0, y: 0 })
-            //         .map((val, index) => {
-            //             return {
-            //                 x: _data_start - _time_window + (index * _data_delta),
-            //                 y: 100 + Math.floor(Math.random() * 40),
-            //             };
-            //         }),
-            // };
+            // PLAYED SAMPLES
 
-            return { embeds: [embed], files };
+            const samples_data: ChartOptionsData = {
+                color: color(COLOR.ERROR, "rgb").string(),
+                points: stats.map(doc => ({
+                    x: doc._id.getTime(),
+                    y: doc.played_samples,
+                })),
+            };
+
+            const samples_buffer = Buffer.from(await charts.lineGraph({
+                data: [samples_data],
+            }));
+
+            files.push(new Discord.MessageAttachment(samples_buffer, "samples_played.png"));
+
+            embeds.push(createEmbed(undefined, EmbedType.Error)
+                .setTitle("Played Samples")
+                .addField("In the last 24 hours", aggregation.played_samples.toLocaleString("en") + " played", true)
+                .addField("Total User/Server Samples", aggregation.custom_samples.toLocaleString("en"), true)
+                .setImage("attachment://samples_played.png"));
+
+            // PING
+
+            const ping_data: ChartOptionsData = {
+                color: color(COLOR.SUCCESS, "rgb").string(),
+                points: stats.map(doc => ({
+                    x: doc._id.getTime(),
+                    y: doc.ping,
+                })),
+            };
+
+            const ping_buffer = Buffer.from(await charts.lineGraph({
+                data: [ping_data],
+                y: {
+                    label_suffix: "ms",
+                },
+            }));
+
+            files.push(new Discord.MessageAttachment(ping_buffer, "ping.png"));
+
+            embeds.push(createEmbed(undefined, EmbedType.Success)
+                .setTitle("Ping")
+                .addField("Last ping", interaction.client.ws.ping.toLocaleString("en") + " ms", true)
+                .addField("Average ping 24h", aggregation.ping.toLocaleString("en") + " ms", true)
+                .setImage("attachment://ping.png"));
+
+            return { embeds, files };
         },
     }));
 }
