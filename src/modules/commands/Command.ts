@@ -34,7 +34,8 @@ export class Command {
         const result = await this.func(interaction);
         if (!result || interaction.replied) return;
 
-        await interaction.reply(result);
+        if (interaction.deferred) await interaction.editReply(result);
+        else await interaction.reply(result);
     }
 
     toJSON(): any { // need return type any for TopCommand to work
