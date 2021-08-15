@@ -2,6 +2,7 @@ import { createCanvas, CanvasRenderingContext2D, registerFont } from "canvas";
 import path from "path";
 import color from "color";
 import moment from "moment";
+
 import { lastItem } from "../../util/array";
 import { PROJECT_ROOT } from "../../config";
 import { COLOR } from "../../const";
@@ -321,50 +322,42 @@ function drawBG(ctx: CanvasRenderingContext2D, { width, height }: { width: numbe
     ctx.restore();
 }
 
+function fixInputsXY(data: ChartOptionsData[], xy: ChartOptionsAxies | undefined, axies: "x" | "y") {
+    const xy_min_data = axies === "y"
+        ? 0
+        : Math.min(...data.map(data => data.points[0][axies]));
+    const xy_max_data = axies === "y"
+        ? Math.max(...data.map(data => Math.max(...data.points.map(p => p.y))))
+        : Math.max(...data.map(data => lastItem(data.points)[axies]));
+
+    let xy_min = (!xy || typeof xy.min === "undefined") ? xy_min_data : xy.min;
+    let xy_max = (!xy || typeof xy.max === "undefined") ? xy_max_data : xy.max;
+    let xy_diff = xy_max - xy_min;
+    const xy_window_padding = 1;
+    const xy_middle = Math.max(xy_window_padding, xy_min + (xy_diff / 2));
+
+    xy_min = Math.min(xy_min, xy_middle - xy_window_padding);
+    xy_max = Math.max(xy_max, xy_middle + xy_window_padding);
+
+    xy_diff = xy_max - xy_min;
+
+    return {
+        min: xy_min,
+        max: xy_max,
+        diff: xy_diff,
+    };
+}
+
 export function lineGraph(opts: ChartOptions): Buffer {
-    const x_min_data = Math.min(...opts.data.map(data => data.points[0].x));
-    const x_max_data = Math.min(...opts.data.map(data => lastItem(data.points).x));
-
-    let x_min = (!opts.x || typeof opts.x.min === "undefined") ? x_min_data : opts.x.min;
-    let x_max = (!opts.x || typeof opts.x.max === "undefined") ? x_max_data : opts.x.max;
-    let x_diff = x_max - x_min;
-    const x_window_padding = 1;
-    const x_middle = x_min + (x_diff / 2);
-
-    x_min = Math.min(x_min, x_middle - x_window_padding);
-    x_max = Math.max(x_max, x_middle + x_window_padding);
-
-    x_diff = x_max - x_min;
-
-    const x = {
-        min: x_min,
-        max: x_max,
-        diff: x_diff,
-    };
-
-    const y_max_data = Math.max(...opts.data.map(data => Math.max(...data.points.map(p => p.y))));
-
-    let y_min = (!opts.y || typeof opts.y.min === "undefined") ? 0 : opts.y.min;
-    let y_max = (!opts.y || typeof opts.y.max === "undefined") ? y_max_data : opts.y.max;
-    let y_diff = y_max - y_min;
-    const y_window_padding = 1;
-    const y_middle = Math.max(y_window_padding, y_min + (y_diff / 2));
-
-    y_min = Math.min(y_min, y_middle - y_window_padding);
-    y_max = Math.max(y_max, y_middle + y_window_padding);
-
-    y_diff = y_max - y_min;
-
-    const y = {
-        min: y_min,
-        max: y_max,
-        diff: y_diff,
-    };
+    const x = fixInputsXY(opts.data, opts.x, "x");
+    const y = fixInputsXY(opts.data, opts.y, "y");
 
     const y_delta_legend = (y.diff) / Math.min(y.diff, 5);
     const y_exp = Math.round(Math.log10(y_delta_legend));
     const y_round = Math.pow(10, y_exp);
     const y_increment = Math.round(y_delta_legend / y_round) * y_round;
+
+    console.log({ y, y_delta_legend, y_exp, y_round, y_increment });
 
     const width = 400;
     const height = 200;
@@ -400,16 +393,6 @@ export function lineGraph(opts: ChartOptions): Buffer {
 
     // can't call toBuffer() with callback, because it will break
     // the process in Node 16
-    // return new Promise((resolve, reject) => {
-    //     canvas.toBuffer(
-    //         (err, buffer) => {
-    //             if (err) reject(err);
-    //             else resolve(buffer);
-    //         },
-    //         "image/png",
-    //         { compressionLevel: 9 },
-    //     );
-    // });
     return canvas.toBuffer(
         "image/png",
         { compressionLevel: 9 },
