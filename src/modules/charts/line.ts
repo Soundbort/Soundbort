@@ -400,7 +400,7 @@ export function lineGraph(opts: ChartOptions): Buffer {
     const y = fixInputsXY(opts.data, opts.y, "y");
 
     const y_delta_legend = (y.diff) / Math.min(y.diff, 5);
-    const y_exp = Math.round(Math.log10(y_delta_legend));
+    const y_exp = Math.floor(Math.log10(y_delta_legend));
     const y_round = Math.pow(10, y_exp);
     const y_increment = Math.round(y_delta_legend / y_round) * y_round;
 
