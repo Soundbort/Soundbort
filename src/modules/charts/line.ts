@@ -23,17 +23,21 @@ const FONT_SIZE = 10;
 const TITLE_FONT_SIZE = 14;
 const LABEL_X_HEIGHT = FONT_SIZE + LEGEND_PADDING;
 
+type ResolutionXTable = [number, number, string, moment.unitOfTime.StartOf][];
+
 export interface ChartOptionsData {
     points: {
         x: number;
         y: number;
     }[];
     color: string;
+    label?: string;
 }
 
 export interface ChartOptionsAxies {
     min?: number;
     max?: number;
+    label_suffix?: string;
 }
 
 export interface ChartOptions {
@@ -43,22 +47,18 @@ export interface ChartOptions {
     y?: ChartOptionsAxies;
 }
 
-type ResolutionXTable = [number, number, string, moment.unitOfTime.StartOf][];
+interface ChartOptionsInternAxies extends ChartOptionsAxies {
+    min: number;
+    max: number;
+    diff: number;
+}
 
 interface ChartOptionsIntern extends ChartOptions {
     width: number;
     height: number;
 
-    x: {
-        min: number;
-        max: number;
-        diff: number;
-    };
-    y: {
-        min: number;
-        max: number;
-        diff: number;
-    };
+    x: ChartOptionsInternAxies;
+    y: ChartOptionsInternAxies;
 
     increment_y: number;
 }
@@ -88,7 +88,9 @@ function drawLegendY(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     for (let y = 0; y <= opts.y.max; y += opts.increment_y) {
         if (y < opts.y.min) continue;
 
-        const label = y.toLocaleString("en");
+        let label = y.toLocaleString("en");
+        if (opts.y.label_suffix) label += " " + opts.y.label_suffix;
+
         const label_width = ctx.measureText(label).width;
         if (label_width > legend_width) legend_width = label_width;
 
@@ -166,7 +168,8 @@ function drawLegendX(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     const increment_end = moment(opts.x.max).startOf(_legend_increment_begin).valueOf();
 
     const padding = 8;
-    const test_label = moment("23:59", "HH:mm").format(format_x);
+    let test_label = moment("23:59", "HH:mm").format(format_x);
+    if (opts.x.label_suffix) test_label += " " + opts.x.label_suffix;
     const element_width = ctx.measureText(test_label).width + padding;
 
     const max_elements = Math.max(1, Math.floor(opts.width / element_width));
@@ -189,7 +192,8 @@ function drawLegendX(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     }[] = [];
 
     for (let x = increment_end; x >= opts.x.min; x -= delta_legend_x) {
-        const label = moment(x).format(format_x);
+        let label = moment(x).format(format_x);
+        if (opts.x.label_suffix) label += " " + opts.x.label_suffix;
         const label_width = ctx.measureText(label).width;
         const draw_x = (x - opts.x.min) / opts.x.diff * opts.width;
 
@@ -334,7 +338,34 @@ function drawBG(ctx: CanvasRenderingContext2D, { width, height }: { width: numbe
     ctx.restore();
 }
 
-function fixInputsXY(data: ChartOptionsData[], xy: ChartOptionsAxies | undefined, axies: "x" | "y") {
+function drawDataLabels(ctx: CanvasRenderingContext2D, data_arr: ChartOptionsData[]): void {
+    ctx.save();
+
+    ctx.translate(0, (FONT_SIZE / 2));
+
+    let x_offset = 0;
+    for (const data of data_arr) {
+        if (!data.label) continue;
+
+        ctx.fillStyle = data.color;
+        ctx.beginPath();
+        ctx.arc(x_offset + (FONT_SIZE / 2), 0, (FONT_SIZE / 2), 0, 2 * Math.PI, false);
+        ctx.fill();
+
+        x_offset += (FONT_SIZE / 2) + LEGEND_PADDING;
+
+        ctx.fillStyle = LEGEND_TEXT_COLOR;
+        ctx.font = `${FONT_SIZE}px ${FONT}, sans-serif`;
+        ctx.textBaseline = "middle";
+        ctx.fillText(data.label, x_offset, 0);
+
+        x_offset += ctx.measureText(data.label).width + (LEGEND_PADDING * 2);
+    }
+
+    ctx.restore();
+}
+
+function fixInputsXY(data: ChartOptionsData[], xy: ChartOptionsAxies | undefined, axies: "x" | "y"): ChartOptionsInternAxies {
     const xy_min_data = axies === "y"
         ? 0
         : Math.min(...data.map(data => data.points[0][axies]));
@@ -360,6 +391,7 @@ function fixInputsXY(data: ChartOptionsData[], xy: ChartOptionsAxies | undefined
         min: xy_min,
         max: xy_max,
         diff: xy_diff,
+        label_suffix: xy?.label_suffix,
     };
 }
 
@@ -372,37 +404,52 @@ export function lineGraph(opts: ChartOptions): Buffer {
     const y_round = Math.pow(10, y_exp);
     const y_increment = Math.round(y_delta_legend / y_round) * y_round;
 
+    const has_data_labels = opts.data.some(data => typeof data.label === "string");
+
+    let title_height = 0;
+    if (opts.title) {
+        title_height += TITLE_FONT_SIZE + (LEGEND_PADDING * 2);
+    }
+    let label_height = 0;
+    if (has_data_labels) {
+        label_height += FONT_SIZE + (LEGEND_PADDING * 2);
+    }
+
     const width = 400;
-    const height = 200;
+    const height = 170;
+
     const canvas = createCanvas(
         Math.round(width * SCALE),
-        Math.round(height * SCALE),
+        Math.round((height + title_height + label_height) * SCALE),
     );
     const ctx = canvas.getContext("2d");
 
     ctx.scale(SCALE, SCALE);
 
-    drawBG(ctx, { width, height });
+    drawBG(ctx, { width: canvas.width / SCALE, height: canvas.height / SCALE });
 
     ctx.translate(GRAPH_PADDING, GRAPH_PADDING);
 
-    let y_offset = 0;
     if (opts.title) {
         drawTitle(ctx, opts.title);
-        y_offset = TITLE_FONT_SIZE + (LEGEND_PADDING * 2);
     }
 
-    ctx.translate(0, y_offset);
+    ctx.translate(0, title_height);
 
     const chart_data_intern: ChartOptionsIntern = {
         width: width - (GRAPH_PADDING * 2),
-        height: (opts.title ? height - y_offset : canvas.height) - (GRAPH_PADDING * 2.5),
+        height: height - (GRAPH_PADDING * 2),
         data: opts.data,
         x, y,
         increment_y: y_increment,
     };
 
     drawLineChart(ctx, chart_data_intern);
+
+    if (has_data_labels) {
+        ctx.translate(0, (height - (GRAPH_PADDING * 2)) + (LEGEND_PADDING * 2));
+        drawDataLabels(ctx, opts.data);
+    }
 
     // can't call toBuffer() with callback, because it will break
     // the process in Node 16
