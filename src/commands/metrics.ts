@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import Discord from "discord.js";
 import color from "color";
 import os from "os";
@@ -10,7 +11,7 @@ import { createEmbed, EmbedType, replyEmbedEphemeral } from "../util/util";
 import { CmdInstallerArgs } from "../util/types";
 import type { ChartOptionsData } from "../modules/charts/line";
 import charts from "../modules/charts";
-import { COLOR } from "../const";
+import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../const";
 
 export function install({ stats_collector }: CmdInstallerArgs): void {
     InteractionRegistry.addCommand(new TopCommand({
@@ -67,7 +68,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
                 .addField("Node.js Version", process.version.substr(1), true)
                 .addField("Discord.js Version", Discord.version, true)
 
-                .addField("Uptime", time(new Date(Date.now() - Math.round(process.uptime() * 1000))), true)
+                .addField("Uptime", time(new Date(Date.now() - Math.round(process.uptime() * 1000)), "R"), true)
 
                 .addField("Memory Usage", `${(aggregation.memory_usage * 100).toFixed(0)} %`, true)
                 .addField("CPU Load Average", aggregation.cpu_load_avg.map(v => `${(v * 100).toFixed(0)} %`).join(" / "), true)
@@ -121,7 +122,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
                 .addField("Top 24h", top_voice_connections.toLocaleString("en"), true)
                 .setImage("attachment://voice_connections.png"));
 
-            // PLAYED SAMPLES
+            // INTERACTIONS
 
             const samples_data: ChartOptionsData = {
                 color: color(COLOR.ERROR, "rgb").string(),
@@ -137,11 +138,29 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
             files.push(new Discord.MessageAttachment(samples_buffer, "samples_played.png"));
 
-            embeds.push(createEmbed(undefined, EmbedType.Error)
-                .setTitle("Played Samples")
-                .addField("In the last 24 hours", aggregation.played_samples.toLocaleString("en") + " played", true)
-                .addField("Total User/Server Samples", aggregation.custom_samples.toLocaleString("en"), true)
-                .setImage("attachment://samples_played.png"));
+            const commands_used = Object.keys(aggregation.commands)
+                .sort((a, b) => aggregation.commands[b] - aggregation.commands[a])
+                .map(name => {
+                    return `**${name}**: ${aggregation.commands[name].toLocaleString("en")}`;
+                })
+                .join("\n");
+            const buttons_used = aggregation.buttons && Object.keys(aggregation.buttons)
+                .sort((a, b) => aggregation.buttons![b] - aggregation.buttons![a])
+                .map(type => {
+                    return `**${BUTTON_TYPES_NAMES[type as BUTTON_TYPES]}**: ${aggregation.buttons![type].toLocaleString("en")}`;
+                })
+                .join("\n");
+
+            const interactions_embed = createEmbed(undefined, EmbedType.Error)
+                .setTitle("Interactions in the last 24 hours")
+                .setImage("attachment://samples_played.png");
+            if (commands_used) interactions_embed.addField("Commands used", commands_used, true);
+            if (buttons_used) interactions_embed.addField("Buttons used", buttons_used, true);
+            interactions_embed
+                .addField("Samples played", aggregation.played_samples.toLocaleString("en") + " played", true)
+                .addField("Total User/Server Samples", aggregation.custom_samples.toLocaleString("en"), true);
+
+            embeds.push(interactions_embed);
 
             // PING
 
