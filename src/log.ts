@@ -1,4 +1,4 @@
-import { ENVIRONMENT } from "./config";
+import { ENVIRONMENT, EnvironmentStages } from "./config";
 
 import chalk from "chalk";
 import winston from "winston";
@@ -29,9 +29,9 @@ const rotate_file_opts = {
 };
 
 const Logger = winston.createLogger({
-    level: ENVIRONMENT === "DEVEL"
-        ? "debug"
-        : "warn",
+    level: ENVIRONMENT === EnvironmentStages.PROD
+        ? "warn"
+        : "debug",
     levels,
     format: winston.format.combine(
         winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
