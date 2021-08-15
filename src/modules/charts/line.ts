@@ -7,8 +7,8 @@ import { lastItem } from "../../util/array";
 import { PROJECT_ROOT } from "../../config";
 import { COLOR } from "../../const";
 
-registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Regular.ttf"), { family: "Roboto-Regular" });
-registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Bold.ttf"), { family: "Roboto-Bold" });
+registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
+registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
 const WHITE_COLOR = color(COLOR.WHITE, "rgb").string();
 const LEGEND_TEXT_COLOR = color(COLOR.TEXT, "rgb").mix(color(COLOR.WHITE, "rgb"), 0.4).string();
@@ -18,8 +18,7 @@ const SCALE = 2;
 const BORDER_RADIUS = 12;
 const GRAPH_PADDING = 16;
 const LEGEND_PADDING = 8;
-const FONT = "Roboto-Regular";
-const FONT_BOLD = "Roboto-Bold";
+const FONT = "Roboto";
 const FONT_SIZE = 10;
 const TITLE_FONT_SIZE = 14;
 const LABEL_X_HEIGHT = FONT_SIZE + LEGEND_PADDING;
@@ -299,7 +298,7 @@ function drawTitle(ctx: CanvasRenderingContext2D, title: string): void {
     ctx.save();
 
     ctx.fillStyle = TEXT_COLOR;
-    ctx.font = `${TITLE_FONT_SIZE}px ${FONT_BOLD}, sans-serif`;
+    ctx.font = `bold ${TITLE_FONT_SIZE}px ${FONT}, sans-serif`;
     ctx.textBaseline = "top";
 
     ctx.fillText(title, 0, 0);
