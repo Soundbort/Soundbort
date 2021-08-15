@@ -11,6 +11,7 @@ import { CustomSample } from "./soundboard/sample/CustomSample";
 import { collectionStats } from "../modules/database/models";
 import { METRICS_PORT } from "../config";
 import { logErr } from "../util/util";
+import { lastItem } from "../util/array";
 
 const log = Logger.child({ label: "Core => StatsCollectorManager" });
 
@@ -55,7 +56,7 @@ export class StatsCollectorManager extends EventEmitter {
     }
 
     public async collect(): Promise<void> {
-        const ts = new Date();
+        const ts = new Date(Math.floor(Date.now() / 1000) * 1000); // round timestamp to the second
 
         const guilds = this.client.guilds.cache.size;
         const voice_connections = this.client.guilds.cache.reduce((acc, curr) => acc + (curr.me?.voice.channelId ? 1 : 0), 0);
@@ -111,16 +112,58 @@ export class StatsCollectorManager extends EventEmitter {
         );
     }
 
-    public getStats(timespan: number): Promise<StatsSchema[]> {
+    public getStats(timespan: number | Date): Promise<StatsSchema[]> {
         const now = new Date();
         return collectionStats()
             .find({
                 _id: {
                     $lte: now,
-                    $gte: new Date(now.getTime() - timespan),
+                    $gt: timespan instanceof Date
+                        ? timespan
+                        : new Date(now.getTime() - timespan - (10 * 60 * 1000)),
                 },
             })
             .sort("_id", 1)
             .toArray();
+    }
+
+    public aggregateStatsArray(docs: StatsSchema[]): StatsSchema {
+        const commands = docs.reduce<StatsSchema["commands"]>((acc, curr) => {
+            for (const key in curr.commands) {
+                acc[key] = (acc[key] || 0) + curr.commands[key];
+            }
+            return acc;
+        }, {});
+        const buttons = docs.reduce<Required<StatsSchema>["buttons"]>((acc, curr) => {
+            if (!curr.buttons) return acc;
+
+            for (const key in curr.buttons) {
+                acc[key] = (acc[key] || 0) + curr.buttons[key];
+            }
+            return acc;
+        }, {});
+
+        const played_samples = docs.reduce((acc, curr) => acc + curr.played_samples, 0);
+        const ping = docs.reduce((acc, curr) => acc + curr.ping, 0) / docs.length;
+
+        const result = {
+            ...lastItem(docs),
+            commands,
+            buttons,
+            ping,
+            played_samples,
+        };
+
+        return result;
+    }
+
+    public aggregateCummulativeStats(since: Date): Promise<StatsSchema>
+    public aggregateCummulativeStats(timespan: number): Promise<StatsSchema>
+    public async aggregateCummulativeStats(timespan: number | Date): Promise<StatsSchema> {
+        // refactor this to use the MongoDb aggregation pipeline at some point
+
+        const docs = await this.getStats(timespan);
+
+        return this.aggregateStatsArray(docs);
     }
 }
