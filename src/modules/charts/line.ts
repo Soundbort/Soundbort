@@ -63,6 +63,13 @@ interface ChartOptionsIntern extends ChartOptions {
     increment_y: number;
 }
 
+function strokeLine(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number): void {
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+}
+
 function drawLegendY(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.save();
 
@@ -112,10 +119,7 @@ function drawGrid(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
 
         const draw_y = opts.height - ((y - opts.y.min) / opts.y.diff * opts.height);
 
-        ctx.beginPath();
-        ctx.moveTo(0, draw_y);
-        ctx.lineTo(opts.width, draw_y);
-        ctx.stroke();
+        strokeLine(ctx, 0, draw_y, opts.width, draw_y);
     }
 
     ctx.restore();
@@ -199,10 +203,10 @@ function drawLegendX(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
 
     ctx.globalAlpha = 0.5;
     for (const legend of legende_x) {
-        ctx.beginPath();
-        ctx.moveTo(legend.draw_x, opts.height - FONT_SIZE - LEGEND_PADDING);
-        ctx.lineTo(legend.draw_x, opts.height - FONT_SIZE - 2);
-        ctx.stroke();
+        strokeLine(ctx,
+            legend.draw_x, opts.height - FONT_SIZE - LEGEND_PADDING,
+            legend.draw_x, opts.height - FONT_SIZE - 2,
+        );
     }
 
     legende_x.sort((a, b) => a.x - b.x);
@@ -322,7 +326,6 @@ function drawBG(ctx: CanvasRenderingContext2D, { width, height }: { width: numbe
     ctx.fillStyle = WHITE_COLOR;
     ctx.strokeStyle = WHITE_COLOR;
     ctx.lineJoin = "round";
-    ctx.lineCap = "round";
     ctx.lineWidth = BORDER_RADIUS * 2;
 
     ctx.strokeRect(BORDER_RADIUS, BORDER_RADIUS, width - (BORDER_RADIUS * 2), height - (BORDER_RADIUS * 2));
