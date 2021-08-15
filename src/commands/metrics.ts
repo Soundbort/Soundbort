@@ -18,6 +18,8 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
         name: "metrics",
         description: "Display bot metrics and health statistics for anyone interested.",
         async func(interaction) {
+            await interaction.deferReply();
+
             const embeds: Discord.MessageEmbed[] = [];
             const files: Discord.MessageAttachment[] = [];
 
