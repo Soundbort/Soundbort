@@ -1,6 +1,8 @@
 export const COLOR = {
-    TEXT: 0x2f3136,
-    WHITE: 0xffffff,
+    // TEXT: 0x2f3136,
+    // WHITE: 0xffffff,
+    CHART_FG: 0xffffff,
+    CHART_BG: 0x2f3136,
 
     PRIMARY: 0x6378CA,
     INFO: 0xADBCE6,

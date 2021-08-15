@@ -10,9 +10,9 @@ import { COLOR } from "../../const";
 registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
 registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
-const WHITE_COLOR = color(COLOR.WHITE, "rgb").string();
-const LEGEND_TEXT_COLOR = color(COLOR.TEXT, "rgb").mix(color(COLOR.WHITE, "rgb"), 0.4).string();
-const TEXT_COLOR = color(COLOR.TEXT, "rgb").string();
+const WHITE_COLOR = color(COLOR.CHART_BG, "rgb").string();
+const LEGEND_TEXT_COLOR = color(COLOR.CHART_FG, "rgb").mix(color(COLOR.CHART_BG, "rgb"), 0.4).string();
+const TEXT_COLOR = color(COLOR.CHART_FG, "rgb").string();
 
 const SCALE = 2;
 const BORDER_RADIUS = 12;
