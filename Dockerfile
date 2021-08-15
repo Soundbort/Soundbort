@@ -1,4 +1,4 @@
-FROM node:16.6.1
+FROM node:16.6.2
 
 LABEL maintainer="Christian Schäfer <lonelessart@gmail.com> (@lonelesscodes)"
 
