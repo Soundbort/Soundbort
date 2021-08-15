@@ -50,7 +50,6 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
     InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_CUSTOM }, async (interaction, decoded) => {
         if (!interaction.inGuild()) return;
 
-        console.log(decoded);
         const id = decoded.id as string;
 
         const sample = await CustomSample.findById(id);
@@ -62,7 +61,6 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
     InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_STANDA }, async (interaction, decoded) => {
         if (!interaction.inGuild()) return;
 
-        console.log(decoded);
         const name = decoded.n as string;
 
         const sample = await PredefinedSample.findByName(name);
