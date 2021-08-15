@@ -1,5 +1,6 @@
 export const COLOR = {
-    EMBED_BG: 0x2f3136,
+    TEXT: 0x2f3136,
+    WHITE: 0xffffff,
 
     PRIMARY: 0x6378CA,
     INFO: 0xADBCE6,
@@ -31,3 +32,14 @@ export enum BUTTON_TYPES {
     DELETE_USER = "5",
     DELETE_SERVER = "8",
 }
+
+export const BUTTON_TYPES_NAMES = {
+    [BUTTON_TYPES.PLAY_CUSTOM]: "play",
+    [BUTTON_TYPES.PLAY_STANDA]: "play",
+    [BUTTON_TYPES.IMPORT_USER]: "import to user",
+    [BUTTON_TYPES.IMPORT_SERVER]: "import to server",
+    [BUTTON_TYPES.DELETE_ASK]: "delete dialog",
+    [BUTTON_TYPES.DELETE_ABORT]: "delete abort",
+    [BUTTON_TYPES.DELETE_USER]: "delete from user",
+    [BUTTON_TYPES.DELETE_SERVER]: "delete from server",
+};

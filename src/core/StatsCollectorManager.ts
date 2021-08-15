@@ -55,7 +55,7 @@ export class StatsCollectorManager extends EventEmitter {
     }
 
     public async collect(): Promise<void> {
-        const ts = new Date();
+        const ts = new Date(Math.floor(Date.now() / 1000) * 1000); // round timestamp to the second
 
         const guilds = this.client.guilds.cache.size;
         const voice_connections = this.client.guilds.cache.reduce((acc, curr) => acc + (curr.me?.voice.channelId ? 1 : 0), 0);
@@ -117,7 +117,7 @@ export class StatsCollectorManager extends EventEmitter {
             .find({
                 _id: {
                     $lte: now,
-                    $gte: new Date(now.getTime() - timespan),
+                    $gt: new Date(now.getTime() - timespan - (10 * 60 * 1000)),
                 },
             })
             .sort("_id", 1)
