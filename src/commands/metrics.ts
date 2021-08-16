@@ -17,6 +17,10 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
     InteractionRegistry.addCommand(new TopCommand({
         name: "metrics",
         description: "Display bot metrics and health statistics for anyone interested.",
+        target: {
+            global: true,
+            guildHidden: false,
+        },
         async func(interaction) {
             await interaction.deferReply();
 
