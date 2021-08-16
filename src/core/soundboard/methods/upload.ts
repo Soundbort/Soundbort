@@ -77,24 +77,26 @@ async function generateId() {
 async function _upload(interaction: Discord.CommandInteraction, name: string, scope: "user" | "server" | "standard"): Promise<any> {
     await interaction.deferReply();
 
+    const error = (desc: string) => interaction.editReply(replyEmbed(desc, EmbedType.Error));
+
     if (!await isEnoughDiskSpace()) {
-        return await interaction.editReply(replyEmbed(UploadErrors.OutOfSpace, EmbedType.Error));
+        return await error(UploadErrors.OutOfSpace);
     }
 
     const userId = interaction.user.id;
 
     if (scope === "server") {
         if (!interaction.inGuild()) {
-            return await interaction.editReply(replyEmbed(UploadErrors.NotInGuild, EmbedType.Error));
+            return await error(UploadErrors.NotInGuild);
         }
 
         if (!interaction.guild || !await GuildConfigManager.isModerator(interaction.guild, userId)) {
-            return await interaction.editReply(replyEmbed(UploadErrors.NotModerator, EmbedType.Error));
+            return await error(UploadErrors.NotModerator);
         }
     }
 
     if (scope === "standard" && !isOwner(userId)) {
-        return await interaction.editReply(replyEmbed(UploadErrors.NotOwner, EmbedType.Error));
+        return await error(UploadErrors.NotOwner);
     }
 
     const guildId = interaction.guildId;
@@ -108,14 +110,14 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     }
 
     if (sample_count >= MAX_SAMPLES) {
-        return await interaction.editReply(replyEmbed(UploadErrors.TooManySamples, EmbedType.Error));
+        return await error(UploadErrors.TooManySamples);
     }
 
     // weird error. Probably caching with DM channels
     // channelId tho is not null
     const channel = interaction.channel;
     if (!channel) {
-        return await interaction.editReply(replyEmbed(UploadErrors.NoChannel, EmbedType.Error));
+        return await error(UploadErrors.NoChannel);
     }
 
     // /////////// ATTACHMENT CHECKS ///////////
@@ -130,19 +132,19 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
     // Does message with attachment exist?
     if (!message) {
-        return await interaction.editReply(replyEmbed(UploadErrors.FileMissing, EmbedType.Error));
+        return await error(UploadErrors.FileMissing);
     }
 
     const attachment = message.attachments.first() as Discord.MessageAttachment;
 
     if (attachment.contentType && attachment.contentType.split("/")[0] !== "audio") {
-        return await interaction.editReply(replyEmbed(UploadErrors.UnsupportedType, EmbedType.Error));
+        return await error(UploadErrors.UnsupportedType);
     }
 
     const extname = attachment.name ? path.extname(attachment.name) : undefined;
 
     if (attachment.size > 1000 * 1000 * MAX_SIZE) {
-        return await interaction.editReply(replyEmbed(UploadErrors.TooLarge, EmbedType.Error));
+        return await error(UploadErrors.TooLarge);
     }
 
     // /////////// NAME CHECKS ///////////
@@ -150,15 +152,15 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     name = name.trim();
 
     if (!name || name === "") {
-        return await interaction.editReply(replyEmbed(UploadErrors.NameMissing, EmbedType.Error));
+        return await error(UploadErrors.NameMissing);
     }
 
     if (name.length > MAX_LEN_NAME) {
-        return await interaction.editReply(replyEmbed(UploadErrors.NameOutOfRange, EmbedType.Error));
+        return await error(UploadErrors.NameOutOfRange);
     }
 
     if (!/^[a-zA-Z0-9 .,_-]*$/.test(name)) {
-        return await interaction.editReply(replyEmbed(UploadErrors.InvalidName, EmbedType.Error));
+        return await error(UploadErrors.InvalidName);
     }
 
     let name_exists = false;
@@ -168,7 +170,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         case "standard": name_exists = !!await PredefinedSample.findByName(name); break;
     }
     if (name_exists) {
-        return await interaction.editReply(replyEmbed(UploadErrors.NameExists, EmbedType.Error));
+        return await error(UploadErrors.NameExists);
     }
 
     // /////////// DOWNLOADING FILE ///////////
@@ -183,7 +185,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     try {
         await downloadFile(attachment.url, temp_file);
     } catch {
-        return await interaction.editReply(replyEmbed(UploadErrors.DownloadFailed, EmbedType.Error));
+        return await error(UploadErrors.DownloadFailed);
     }
 
     // /////////// CHECKING FILE ///////////
@@ -194,21 +196,21 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         const data = await ffprobe(temp_file);
 
         if (!data.streams.some(stream => stream.codec_type === "audio" && stream.channels)) {
-            return await interaction.editReply(replyEmbed(UploadErrors.NoStreams, EmbedType.Error));
+            return await error(UploadErrors.NoStreams);
         }
 
         const duration = data.format.duration;
         // if duration undefined and duration === 0
         if (!duration) {
-            return await interaction.editReply(replyEmbed(UploadErrors.NoDuration, EmbedType.Error));
+            return await error(UploadErrors.NoDuration);
         }
 
         if (duration * 1000 > MAX_DURATION) {
-            return await interaction.editReply(replyEmbed(UploadErrors.TooLong, EmbedType.Error));
+            return await error(UploadErrors.TooLong);
         }
     } catch (error) {
         log_upload.debug({ error: logErr(error) });
-        return await interaction.editReply(replyEmbed(UploadErrors.FfProbeError, EmbedType.Error));
+        return await error(UploadErrors.FfProbeError);
     }
 
     // /////////// CONVERTING FILE ///////////
@@ -222,7 +224,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         new_id = await generateId();
 
         if (!new_id) {
-            return await interaction.editReply(replyEmbed(UploadErrors.IdGeneration, EmbedType.Error));
+            return await error(UploadErrors.IdGeneration);
         }
 
         sample_file = CustomSample.generateFilePath(new_id);
@@ -238,7 +240,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         await convertAudio(temp_file, sample_file);
     } catch (error) {
         log_upload.debug({ error: logErr(error) });
-        return await interaction.editReply(replyEmbed(UploadErrors.ConversionError, EmbedType.Error));
+        return await error(UploadErrors.ConversionError);
     }
 
     await interaction.editReply(replyEmbed("🔄 Saving to database and finishing up...", EmbedType.Basic));
