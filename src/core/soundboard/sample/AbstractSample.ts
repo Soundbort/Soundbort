@@ -60,4 +60,5 @@ export abstract class AbstractSample implements SoundboardPredefinedSampleSchema
     abstract toEmbed(opts: ToEmbedOptions): Discord.InteractionReplyOptions;
 
     static BASE = BASE;
+    static EXT = ".ogg";
 }

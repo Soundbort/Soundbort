@@ -159,7 +159,7 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
     }
 
     static generateFilePath(name: string): string {
-        return path.join(PredefinedSample.BASE, name + ".ogg");
+        return path.join(PredefinedSample.BASE, name + PredefinedSample.EXT);
     }
 
     static BASE = path.join(AbstractSample.BASE, "standard");

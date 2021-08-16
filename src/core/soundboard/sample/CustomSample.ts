@@ -383,6 +383,6 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     }
 
     static generateFilePath(id: string): string {
-        return path.join(CustomSample.BASE, id + ".ogg");
+        return path.join(CustomSample.BASE, id + CustomSample.EXT);
     }
 }
