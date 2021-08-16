@@ -36,8 +36,8 @@ export enum BUTTON_TYPES {
 }
 
 export const BUTTON_TYPES_NAMES = {
-    [BUTTON_TYPES.PLAY_CUSTOM]: "play",
-    [BUTTON_TYPES.PLAY_STANDA]: "play",
+    [BUTTON_TYPES.PLAY_CUSTOM]: "play user/server",
+    [BUTTON_TYPES.PLAY_STANDA]: "play standard",
     [BUTTON_TYPES.IMPORT_USER]: "import to user",
     [BUTTON_TYPES.IMPORT_SERVER]: "import to server",
     [BUTTON_TYPES.DELETE_ASK]: "delete dialog",
