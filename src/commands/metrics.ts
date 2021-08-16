@@ -146,10 +146,10 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
                     return `**${name}**: ${aggregation.commands[name].toLocaleString("en")}`;
                 })
                 .join("\n");
-            const buttons_used = aggregation.buttons && Object.keys(aggregation.buttons)
-                .sort((a, b) => aggregation.buttons![b] - aggregation.buttons![a])
+            const buttons_used = Object.keys(aggregation.buttons)
+                .sort((a, b) => aggregation.buttons[b] - aggregation.buttons[a])
                 .map(type => {
-                    return `**${BUTTON_TYPES_NAMES[type as BUTTON_TYPES]}**: ${aggregation.buttons![type].toLocaleString("en")}`;
+                    return `**${BUTTON_TYPES_NAMES[type as BUTTON_TYPES]}**: ${aggregation.buttons[type].toLocaleString("en")}`;
                 })
                 .join("\n");
 

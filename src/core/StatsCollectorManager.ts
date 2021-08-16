@@ -135,8 +135,6 @@ export class StatsCollectorManager extends EventEmitter {
             return acc;
         }, {});
         const buttons = docs.reduce<Required<StatsSchema>["buttons"]>((acc, curr) => {
-            if (!curr.buttons) return acc;
-
             for (const key in curr.buttons) {
                 acc[key] = (acc[key] || 0) + curr.buttons[key];
             }
