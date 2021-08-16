@@ -126,19 +126,29 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
             // INTERACTIONS
 
-            const samples_data: ChartOptionsData = {
+            const commands_data: ChartOptionsData = {
                 color: color(COLOR.ERROR, "rgb").string(),
+                label: "Commands called",
                 points: stats.map(doc => ({
                     x: doc._id.getTime(),
-                    y: doc.played_samples,
+                    // y: doc.played_samples,
+                    y: Object.keys(doc.commands).reduce((acc, key) => acc + doc.commands[key], 0),
+                })),
+            };
+            const buttons_data: ChartOptionsData = {
+                color: color(COLOR.PRIMARY, "rgb").string(),
+                label: "Buttons clicked",
+                points: stats.map(doc => ({
+                    x: doc._id.getTime(),
+                    y: Object.keys(doc.buttons).reduce((acc, key) => acc + doc.buttons[key], 0),
                 })),
             };
 
-            const samples_buffer = Buffer.from(await charts.lineGraph({
-                data: [samples_data],
+            const interactions_buffer = Buffer.from(await charts.lineGraph({
+                data: [commands_data, buttons_data],
             }));
 
-            files.push(new Discord.MessageAttachment(samples_buffer, "samples_played.png"));
+            files.push(new Discord.MessageAttachment(interactions_buffer, "samples_played.png"));
 
             const commands_used = Object.keys(aggregation.commands)
                 .sort((a, b) => aggregation.commands[b] - aggregation.commands[a])
@@ -153,16 +163,13 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
                 })
                 .join("\n");
 
-            const interactions_embed = createEmbed(undefined, EmbedType.Error)
+            embeds.push(createEmbed(undefined, EmbedType.Error)
                 .setTitle("Interactions in the last 24 hours")
-                .setImage("attachment://samples_played.png");
-            if (commands_used) interactions_embed.addField("Commands used", commands_used, true);
-            if (buttons_used) interactions_embed.addField("Buttons used", buttons_used, true);
-            interactions_embed
+                .setImage("attachment://samples_played.png")
+                .addField("Commands used", commands_used || "none", true)
+                .addField("Buttons used", buttons_used || "none", true)
                 .addField("Samples played", aggregation.played_samples.toLocaleString("en") + " played", true)
-                .addField("Total User/Server Samples", aggregation.custom_samples.toLocaleString("en"), true);
-
-            embeds.push(interactions_embed);
+                .addField("Total User/Server Samples", aggregation.custom_samples.toLocaleString("en"), true));
 
             // PING
 
@@ -186,7 +193,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
             embeds.push(createEmbed(undefined, EmbedType.Success)
                 .setTitle("Ping")
                 .addField("Last ping", interaction.client.ws.ping.toLocaleString("en") + " ms", true)
-                .addField("Average ping 24h", aggregation.ping.toLocaleString("en") + " ms", true)
+                .addField("Average ping 24h", Math.round(aggregation.ping).toLocaleString("en") + " ms", true)
                 .setImage("attachment://ping.png"));
 
             return { embeds, files };
