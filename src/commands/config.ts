@@ -25,7 +25,7 @@ const set_admin_role_cmd = new Command({
 
         await GuildConfigManager.setAdminRole(interaction.guildId, role.id);
 
-        await interaction.reply(replyEmbed("Set the role!", EmbedType.Success));
+        return replyEmbed("Set the role!", EmbedType.Success);
     },
 });
 
@@ -47,7 +47,7 @@ const show_admin_role_cmd = new Command({
 
         const role = await interaction.guild.roles.fetch(config.adminRoleId);
 
-        await interaction.reply(replyEmbed(`Admin role is ${role?.toString()}`, EmbedType.Info));
+        return replyEmbed(`Admin role is ${role?.toString()}`, EmbedType.Info);
     },
 });
 

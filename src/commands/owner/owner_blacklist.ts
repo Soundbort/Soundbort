@@ -12,7 +12,7 @@ const blacklist_add_cmd = new Command({
     ],
     async func(interaction) {
         if (!isOwner(interaction.user.id)) {
-            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error));
+            return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
         }
 
         const userId = interaction.options.getString("user-id", true);
@@ -23,7 +23,7 @@ const blacklist_add_cmd = new Command({
             { upsert: true },
         );
 
-        await interaction.reply(replyEmbedEphemeral("Blacklisted user.", EmbedType.Success));
+        return replyEmbedEphemeral("Blacklisted user.", EmbedType.Success);
     },
 });
 
@@ -35,7 +35,7 @@ const blacklist_remove_cmd = new Command({
     ],
     async func(interaction) {
         if (!isOwner(interaction.user.id)) {
-            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error));
+            return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
         }
 
         const userId = interaction.options.getString("user-id", true);
@@ -44,7 +44,7 @@ const blacklist_remove_cmd = new Command({
             { userId: userId },
         );
 
-        await interaction.reply(replyEmbedEphemeral("Removed user from blacklist.", EmbedType.Success));
+        return replyEmbedEphemeral("Removed user from blacklist.", EmbedType.Success);
     },
 });
 

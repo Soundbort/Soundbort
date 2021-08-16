@@ -27,10 +27,11 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
             const embeds: Discord.MessageEmbed[] = [];
             const files: Discord.MessageAttachment[] = [];
 
-            const stats = await stats_collector.getStats(24 * 60 * 60 * 1000);
+            const time_window = 24 * 60 * 60 * 1000;
+            const stats = await stats_collector.getStats(time_window);
 
             if (stats.length === 0) {
-                return await interaction.reply(replyEmbedEphemeral("The bot hasn't collected any statistics in the last 24 hours.", EmbedType.Warning));
+                return replyEmbedEphemeral("The bot hasn't collected any statistics in the last 24 hours.", EmbedType.Warning);
             }
 
             const aggregation = stats_collector.aggregateStatsArray(stats);

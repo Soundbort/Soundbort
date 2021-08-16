@@ -15,19 +15,18 @@ async function importUser(interaction: Discord.ButtonInteraction | Discord.Comma
 
     // is soundboard full?
     const sample_count = await CustomSample.countUserSamples(user.id);
-    // case "server": sample_count = await CustomSample.countGuildSamples(guildId!); break;
 
     if (sample_count >= MAX_SAMPLES) {
-        return await interaction.reply(replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error));
+        return replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error);
     }
 
     if (await CustomSample.findSampleUser(user.id, sample.name)) {
-        return await interaction.reply(replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error));
+        return replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error);
     }
 
     await CustomSample.import(user, sample);
 
-    await interaction.reply(sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success }));
+    return sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
 }
 
 async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
@@ -36,27 +35,27 @@ async function importServer(interaction: Discord.ButtonInteraction | Discord.Com
     const user = interaction.user;
 
     if (!guildId || !guild) {
-        return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
+        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
     }
 
     if (!await GuildConfigManager.isModerator(guild, user.id)) {
-        return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
+        return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
     }
 
     // is soundboard full?
     const sample_count = await CustomSample.countGuildSamples(guildId);
 
     if (sample_count >= MAX_SAMPLES) {
-        return await interaction.reply(replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error));
+        return replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error);
     }
 
     if (await CustomSample.findSampleGuild(guildId, sample.name)) {
-        return await interaction.reply(replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error));
+        return replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error);
     }
 
     await CustomSample.import(guild, sample);
 
-    await interaction.reply(sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success }));
+    return sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
 }
 
 InteractionRegistry.addCommand(new TopCommand({
@@ -75,15 +74,15 @@ InteractionRegistry.addCommand(new TopCommand({
 
         const sample = await CustomSample.findById(id);
         if (!sample) {
-            return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with id ${id}`, EmbedType.Error));
+            return replyEmbedEphemeral(`Couldn't find sample with id ${id}`, EmbedType.Error);
         }
 
         if (!sample.importable) {
-            return await interaction.reply(replyEmbedEphemeral("This sample is marked as not importable.", EmbedType.Error));
+            return replyEmbedEphemeral("This sample is marked as not importable.", EmbedType.Error);
         }
 
-        if (scope === "user") await importUser(interaction, sample);
-        else await importServer(interaction, sample);
+        if (scope === "user") return await importUser(interaction, sample);
+        return await importServer(interaction, sample);
     },
 }));
 

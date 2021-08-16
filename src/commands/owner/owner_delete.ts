@@ -15,19 +15,19 @@ const delete_extern_cmd = new Command({
     async func(interaction) {
         const userId = interaction.user.id;
         if (!isOwner(userId)) {
-            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error));
+            return replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error);
         }
 
         const id = interaction.options.getString("id", true);
 
         const sample = await CustomSample.findById(id);
         if (!sample) {
-            return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with id ${id}`, EmbedType.Error));
+            return replyEmbedEphemeral(`Couldn't find sample with id ${id}`, EmbedType.Error);
         }
 
         await CustomSample.removeCompletely(sample);
 
-        return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
+        return replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success);
     },
 });
 
@@ -43,17 +43,17 @@ const delete_standard_cmd = new Command({
         const userId = interaction.user.id;
 
         if (!isOwner(userId)) {
-            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't remove standard samples.", EmbedType.Error));
+            return replyEmbedEphemeral("You're not a bot developer, you can't remove standard samples.", EmbedType.Error);
         }
 
         const sample = await PredefinedSample.findByName(name);
         if (!sample) {
-            return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
+            return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
         }
 
         await PredefinedSample.remove(sample);
 
-        return await interaction.reply(replyEmbed(`Removed ${sample.name} from standard soundboard!`, EmbedType.Success));
+        return replyEmbed(`Removed ${sample.name} from standard soundboard!`, EmbedType.Success);
     },
 });
 

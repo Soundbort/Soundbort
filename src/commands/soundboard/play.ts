@@ -15,7 +15,7 @@ import { BUTTON_TYPES } from "../../const";
 const log = Logger.child({ label: "Command => play" });
 
 export function install({ stats_collector }: CmdInstallerArgs): void {
-    async function play(interaction: Discord.CommandInteraction | Discord.ButtonInteraction, sample: CustomSample | PredefinedSample): Promise<void> {
+    async function play(interaction: Discord.CommandInteraction | Discord.ButtonInteraction, sample: CustomSample | PredefinedSample) {
         try {
             // shouldn't true, but Typescript wants it
             if (!interaction.inGuild()) return;
@@ -27,23 +27,23 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
             const subscription = await AudioManager.join(member);
             if (subscription === JoinFailureTypes.FailedNotInVoiceChannel) {
-                return await interaction.reply(replyEmbedEphemeral("You need to join a voice channel first!", EmbedType.Info));
+                return replyEmbedEphemeral("You need to join a voice channel first!", EmbedType.Info);
             }
             if (subscription === JoinFailureTypes.FailedTryAgain) {
-                return await interaction.reply(replyEmbedEphemeral("Connecting to the voice channel failed. Try again later.", EmbedType.Error));
+                return replyEmbedEphemeral("Connecting to the voice channel failed. Try again later.", EmbedType.Error);
             }
             if (AudioManager.has(interaction.guildId) && interaction.guild?.me?.voice.channelId && member.voice.channelId !== interaction.guild.me.voice.channelId) {
-                return await interaction.reply(replyEmbedEphemeral("You need to be in the same voice channel as the bot!", EmbedType.Info));
+                return replyEmbedEphemeral("You need to be in the same voice channel as the bot!", EmbedType.Info);
             }
 
             await sample.play(subscription.audio_player);
 
             stats_collector.incPlayedSamples(1);
 
-            return await interaction.reply(replyEmbedEphemeral(`🔊 Playing ${sample.name}`));
+            return replyEmbedEphemeral(`🔊 Playing ${sample.name}`);
         } catch (error) {
             log.error({ error: logErr(error) });
-            return await interaction.reply(replyEmbedEphemeral("Some error happened and caused some whoopsies", EmbedType.Error));
+            return replyEmbedEphemeral("Some error happened and caused some whoopsies", EmbedType.Error);
         }
     }
 
@@ -77,7 +77,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
         ],
         async func(interaction) {
             if (!interaction.inGuild()) {
-                return await interaction.reply(replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error));
+                return replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error);
             }
 
             const name = interaction.options.getString("sample", true);
@@ -90,10 +90,10 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
             }
 
             if (!sample) {
-                return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id '${name}'`, EmbedType.Error));
+                return replyEmbedEphemeral(`Couldn't find sample with name or id '${name}'`, EmbedType.Error);
             }
 
-            await play(interaction, sample);
+            return await play(interaction, sample);
         },
     }));
 }

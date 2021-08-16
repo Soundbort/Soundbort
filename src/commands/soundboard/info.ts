@@ -51,7 +51,7 @@ InteractionRegistry.addCommand(new TopCommand({
 
         const sample = await findSampleByScope(interaction.guildId, interaction.user.id, name, scope);
         if (!sample) {
-            return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
+            return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
         }
 
         const show_delete = sample instanceof CustomSample &&
@@ -65,6 +65,6 @@ InteractionRegistry.addCommand(new TopCommand({
                 await GuildConfigManager.isModerator(interaction.guild, interaction.user.id))
             ));
 
-        await interaction.reply(sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete }));
+        return sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
     },
 }));
