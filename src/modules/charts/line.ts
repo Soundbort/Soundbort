@@ -175,11 +175,8 @@ function drawLegendX(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     const max_elements = Math.max(1, Math.floor(opts.width / element_width));
 
     let recommended_elements: number = 1;
-    for (let i = 1; i <= _max_divider; i++) {
-        const next_val = _max_divider / i;
-        if (next_val !== Math.floor(next_val)) continue;
-
-        recommended_elements = max_divider / i;
+    for (let i = 1; i <= max_divider; i++) {
+        recommended_elements = Math.floor(max_divider / i);
         if (recommended_elements <= max_elements) {
             break;
         }
