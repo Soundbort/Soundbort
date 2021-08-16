@@ -134,6 +134,7 @@ function createTimeWindowTable(x_diff: number): ResolutionXTable {
         [x_diff / (1000 * 10), 10, "mm:ss.SS", "second"], // 10 seconds
         [x_diff / (1000 * 60), 60, "H:mm:ss", "second"], // minutes
         [x_diff / (1000 * 60 * 60), 60, "HH:mm", "minute"], // hours
+        [x_diff / (1000 * 60 * 60 * 12), 12, "HH:mm", "hour"], // days
         [x_diff / (1000 * 60 * 60 * 24), 24, "HH:mm", "hour"], // days
         [x_diff / (1000 * 60 * 60 * 24 * 3), 24, "dd H:mm", "hour"], // 3 days
         [x_diff / (1000 * 60 * 60 * 24 * 7), 7 * 4, "dd H:mm", "day"], // weeks
