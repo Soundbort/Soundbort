@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.3.0](https://github.com/LonelessCodes/SoundBort/compare/v0.2.1...v0.3.0) (2021-08-16)
+
+
+### Features
+
+* add metrics/stats command baseline ([da52a69](https://github.com/LonelessCodes/SoundBort/commit/da52a69400f837fd4204d0dd8efac8efdc0bbeb3))
+* **lineGraph:** add displayable labels to each dataset ([6739078](https://github.com/LonelessCodes/SoundBort/commit/673907868d2572798139f10f9044e93ceb6e5009))
+
+
+### Bug Fixes
+
+* **Command.ts:** fixed error when replying to deffered interaction ([e31cea7](https://github.com/LonelessCodes/SoundBort/commit/e31cea7e01b3380498c7be46e50ab9a26970a9ab))
+* fixed x axies time intervals ([435ccc3](https://github.com/LonelessCodes/SoundBort/commit/435ccc324b9a85dc6fe1c4573e6b1f873a59f868))
+* **lineGraph:** fixed infinite loop ([a192b02](https://github.com/LonelessCodes/SoundBort/commit/a192b0251e885c051434dee683e7cec413ba2ba1))
+* **metrics command:** defer reply ([8de06f4](https://github.com/LonelessCodes/SoundBort/commit/8de06f4c9a07c6683befb63c4e2735bb525bba12))
+
+
+### Improvements
+
+* get /metrics command into shape ([82663f6](https://github.com/LonelessCodes/SoundBort/commit/82663f6dc3ec29f3639d6b7fbe29340405b95cce))
+* show command and button uses in /metrics command ([7e88d4a](https://github.com/LonelessCodes/SoundBort/commit/7e88d4ae7ca5650a4d5880bb38e28edb8926f2e7))
+
+
+### Changes
+
+* added "buttons" fields to all db documents without one, so remove optional flag ([7faf1b9](https://github.com/LonelessCodes/SoundBort/commit/7faf1b91ce2bd37a244fa8e2f9ce942e926c26b8))
+* show command and button interactions in graph instead of played samples, because it makes more sense in context ([5f24794](https://github.com/LonelessCodes/SoundBort/commit/5f247943cd9dc5175b3fd2dda4f60269a0883371))
+
 ### [0.2.1](https://github.com/LonelessCodes/SoundBort/compare/v0.2.0...v0.2.1) (2021-08-14)
 
 
