@@ -3,10 +3,10 @@ import { BUTTON_TYPES } from "../../../const";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../../util/util";
 import InteractionRegistry from "../../InteractionRegistry";
 import { CustomSample, AvailableCustomSamplesResponse } from "../sample/CustomSample";
-import { PredefinedSample } from "../sample/PredefinedSample";
+import { StandardSample } from "../sample/StandardSample";
 
 interface AvailableSamplesResponse extends AvailableCustomSamplesResponse {
-    standard: PredefinedSample[];
+    standard: StandardSample[];
 }
 
 async function getAllAvailableSamples(guildId: Discord.Snowflake | null, userId: Discord.Snowflake): Promise<AvailableSamplesResponse> {
@@ -14,7 +14,7 @@ async function getAllAvailableSamples(guildId: Discord.Snowflake | null, userId:
         ? { user: await CustomSample.getUserSamples(userId), guild: await CustomSample.getGuildSamples(guildId) }
         : { user: await CustomSample.getUserSamples(userId), guild: [] };
 
-    const standard = await PredefinedSample.getSamples();
+    const standard = await StandardSample.getSamples();
 
     return {
         total: user.length + guild.length,
@@ -24,7 +24,7 @@ async function getAllAvailableSamples(guildId: Discord.Snowflake | null, userId:
     };
 }
 
-function generateSampleButtons(samples: CustomSample[] | PredefinedSample[]): Discord.MessageActionRow[] {
+function generateSampleButtons(samples: CustomSample[] | StandardSample[]): Discord.MessageActionRow[] {
     const rows: Discord.MessageActionRow[] = [];
     let i = 0;
 
@@ -96,7 +96,7 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
 async function scopeStandard(interaction: Discord.CommandInteraction): Promise<void> {
     const client = interaction.client as Discord.Client<true>;
 
-    const standard = await PredefinedSample.getSamples();
+    const standard = await StandardSample.getSamples();
 
     const reply = (opts: Discord.InteractionReplyOptions) => {
         return interaction.replied ? interaction.channel?.send(opts) : interaction.reply(opts);

@@ -12,7 +12,7 @@ import { TOP_GG_TOKEN } from "../config";
 import { EmbedType, guessModRole, logErr, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
 import GuildConfigManager from "./GuildConfigManager";
-import { collectionBlacklistUser } from "../modules/database/models";
+import * as models from "../modules/database/models";
 import { BUTTON_TYPES } from "../const";
 
 const log = Logger.child({ label: "Core" });
@@ -155,7 +155,7 @@ export default class Core {
 
     attachListeners(): void {
         this.client.on("interactionCreate", async interaction => {
-            if (await collectionBlacklistUser().findOne({ userId: interaction.user.id })) {
+            if (await models.blacklist_user.findOne({ userId: interaction.user.id })) {
                 if (!interaction.isCommand() && !interaction.isButton()) return;
 
                 return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));

@@ -1,7 +1,7 @@
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { EmbedType, isOwner, replyEmbedEphemeral } from "../../util/util";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
+import { StandardSample } from "../../core/soundboard/sample/StandardSample";
 import { Command } from "../../modules/commands/Command";
 
 export default new Command({
@@ -26,11 +26,11 @@ export default new Command({
             return replyEmbedEphemeral("This sample is marked as not importable.", EmbedType.Error);
         }
 
-        if (await PredefinedSample.findByName(sample.name)) {
+        if (await StandardSample.findByName(sample.name)) {
             return replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error);
         }
 
-        const new_sample = await PredefinedSample.import(sample);
+        const new_sample = await StandardSample.import(sample);
 
         return new_sample.toEmbed({ description: `Successfully imported sample "${new_sample.name}."`, type: EmbedType.Success });
     },

@@ -12,7 +12,7 @@ import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 
 import SampleID from "../SampleID";
 import { CustomSample } from "../sample/CustomSample";
-import { PredefinedSample } from "../sample/PredefinedSample";
+import { StandardSample } from "../sample/StandardSample";
 import { EmbedType, isOwner, logErr, replyEmbed } from "../../../util/util";
 import GuildConfigManager from "../../GuildConfigManager";
 
@@ -108,7 +108,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     switch (scope) {
         case "user": sample_count = await CustomSample.countUserSamples(userId); break;
         case "server": sample_count = await CustomSample.countGuildSamples(guildId!); break;
-        case "standard": sample_count = await PredefinedSample.countSamples(); break;
+        case "standard": sample_count = await StandardSample.countSamples(); break;
     }
 
     if (sample_count >= MAX_SAMPLES) {
@@ -169,7 +169,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     switch (scope) {
         case "user": name_exists = !!await CustomSample.findSampleUser(userId, name); break;
         case "server": name_exists = !!await CustomSample.findSampleGuild(guildId!, name); break;
-        case "standard": name_exists = !!await PredefinedSample.findByName(name); break;
+        case "standard": name_exists = !!await StandardSample.findByName(name); break;
     }
     if (name_exists) {
         return await failed(UploadErrors.NameExists);
@@ -245,9 +245,9 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
         await CustomSample.ensureDir();
     } else {
-        sample_file = PredefinedSample.generateFilePath(name);
+        sample_file = StandardSample.generateFilePath(name);
 
-        await PredefinedSample.ensureDir();
+        await StandardSample.ensureDir();
     }
 
     await fs.move(temp_conversion_file, sample_file);
@@ -256,7 +256,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
     await status("Saving to database and finishing up...");
 
-    let sample: CustomSample | PredefinedSample;
+    let sample: CustomSample | StandardSample;
 
     if (scope !== "standard") {
         sample = await CustomSample.create({
@@ -272,7 +272,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
             modified_at: new Date(),
         });
     } else {
-        sample = await PredefinedSample.create({
+        sample = await StandardSample.create({
             name: name,
             orig_filename: attachment.name || undefined,
             plays: 0,

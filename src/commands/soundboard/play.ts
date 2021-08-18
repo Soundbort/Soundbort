@@ -8,14 +8,14 @@ import SampleID from "../../core/soundboard/SampleID";
 import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
 import Logger from "../../log";
 import { CmdInstallerArgs } from "../../util/types";
-import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
+import { StandardSample } from "../../core/soundboard/sample/StandardSample";
 import { EmbedType, logErr, replyEmbedEphemeral } from "../../util/util";
 import { BUTTON_TYPES } from "../../const";
 
 const log = Logger.child({ label: "Command => play" });
 
 export function install({ stats_collector }: CmdInstallerArgs): void {
-    async function play(interaction: Discord.CommandInteraction | Discord.ButtonInteraction, sample: CustomSample | PredefinedSample) {
+    async function play(interaction: Discord.CommandInteraction | Discord.ButtonInteraction, sample: CustomSample | StandardSample) {
         try {
             // shouldn't true, but Typescript wants it
             if (!interaction.inGuild()) return;
@@ -63,7 +63,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
         const name = decoded.n as string;
 
-        const sample = await PredefinedSample.findByName(name);
+        const sample = await StandardSample.findByName(name);
         if (!sample) return;
 
         return await play(interaction, sample);
@@ -83,7 +83,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
             const name = interaction.options.getString("sample", true).trim();
 
             let sample = await CustomSample.findByName(interaction.guildId, interaction.user.id, name) ||
-                         await PredefinedSample.findByName(name);
+                         await StandardSample.findByName(name);
 
             if (!sample && SampleID.isId(name)) {
                 sample = await CustomSample.findById(name);

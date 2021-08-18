@@ -1,7 +1,7 @@
 import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
-import { collectionBlacklistUser } from "../../modules/database/models";
+import * as models from "../../modules/database/models";
 import { EmbedType, isOwner, replyEmbedEphemeral } from "../../util/util";
 
 const blacklist_add_cmd = new Command({
@@ -17,7 +17,7 @@ const blacklist_add_cmd = new Command({
 
         const userId = interaction.options.getString("user-id", true).trim();
 
-        await collectionBlacklistUser().updateOne(
+        await models.blacklist_user.updateOne(
             { userId: userId },
             { $set: { userId: userId } },
             { upsert: true },
@@ -40,7 +40,7 @@ const blacklist_remove_cmd = new Command({
 
         const userId = interaction.options.getString("user-id", true).trim();
 
-        await collectionBlacklistUser().deleteOne(
+        await models.blacklist_user.deleteOne(
             { userId: userId },
         );
 

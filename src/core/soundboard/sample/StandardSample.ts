@@ -9,20 +9,17 @@ import { createEmbed } from "../../../util/util";
 import { BUTTON_TYPES } from "../../../const";
 import Logger from "../../../log";
 import database from "../../../modules/database";
-import { collectionPredefinedSample } from "../../../modules/database/models";
-import { SoundboardPredefinedSampleSchema } from "../../../modules/database/schemas/SoundboardPredefinedSampleSchema";
+import * as models from "../../../modules/database/models";
+import { SoundboardStandardSampleSchema } from "../../../modules/database/schemas/SoundboardStandardSampleSchema";
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
-import Cache from "../../../modules/Cache";
 
-const log = Logger.child({ label: "SampleManager => PredefinedSample" });
-
-const cache = new Cache<string, PredefinedSample>({ maxSize: 1000 });
+const log = Logger.child({ label: "SampleManager => StandardSample" });
 
 database.onConnect(async () => {
-    await collectionPredefinedSample().createIndex({ name: 1 }, { unique: true });
+    await models.standard_sample.collection.createIndex({ name: 1 }, { unique: true });
 });
 
-export class PredefinedSample extends AbstractSample implements SoundboardPredefinedSampleSchema {
+export class StandardSample extends AbstractSample implements SoundboardStandardSampleSchema {
     readonly importable: boolean = false;
     readonly deletable = false;
 
@@ -33,7 +30,7 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
     modified_at: Date;
     last_played_at: Date | undefined;
 
-    constructor(doc: SoundboardPredefinedSampleSchema) {
+    constructor(doc: SoundboardStandardSampleSchema) {
         super(doc);
 
         this.name = doc.name;
@@ -45,7 +42,7 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
     }
 
     get file(): string {
-        return PredefinedSample.generateFilePath(this.name);
+        return StandardSample.generateFilePath(this.name);
     }
 
     async play(audio_player: Voice.AudioPlayer): Promise<Voice.AudioResource<AbstractSample>> {
@@ -55,7 +52,7 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
 
         const now = new Date();
 
-        await collectionPredefinedSample().updateOne(
+        await models.standard_sample.updateOne(
             { name: this.name },
             { $inc: { plays: 1 }, $set: { last_played_at: now } },
         );
@@ -98,41 +95,36 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
 
-    static async findByName(name: string): Promise<PredefinedSample | undefined> {
-        const doc = await collectionPredefinedSample().findOne({ name });
+    static async findByName(name: string): Promise<StandardSample | undefined> {
+        const doc = await models.standard_sample.findOne({ name });
         if (!doc) return;
 
-        return new PredefinedSample(doc);
+        return new StandardSample(doc);
     }
 
     static async countSamples(): Promise<number> {
-        return await collectionPredefinedSample().countDocuments({});
+        return await models.standard_sample.count({});
     }
 
-    static async getSamples(): Promise<PredefinedSample[]> {
-        const docs = await collectionPredefinedSample()
-            .find({})
-            .toArray();
+    static async getSamples(): Promise<StandardSample[]> {
+        const docs = await models.standard_sample.findMany({});
 
-        const samples: PredefinedSample[] = [];
+        const samples: StandardSample[] = [];
 
         for (const doc of docs) {
-            const sample = new PredefinedSample(doc);
-
-            samples.push(sample);
-            cache.set(sample.name, sample);
+            samples.push(new StandardSample(doc));
         }
 
         return samples;
     }
 
-    static async import(sample: AbstractSample): Promise<PredefinedSample> {
-        const file = PredefinedSample.generateFilePath(sample.name);
+    static async import(sample: AbstractSample): Promise<StandardSample> {
+        const file = StandardSample.generateFilePath(sample.name);
 
         await fs.ensureDir(path.dirname(file));
         await fs.copyFile(sample.file, file);
 
-        const new_sample = await PredefinedSample.create({
+        const new_sample = await StandardSample.create({
             name: sample.name,
             plays: 0,
             orig_filename: sample.orig_filename,
@@ -143,23 +135,23 @@ export class PredefinedSample extends AbstractSample implements SoundboardPredef
         return new_sample;
     }
 
-    static async create(doc: SoundboardPredefinedSampleSchema): Promise<PredefinedSample> {
-        await collectionPredefinedSample().insertOne(doc);
+    static async create(doc: SoundboardStandardSampleSchema): Promise<StandardSample> {
+        const new_doc = await models.standard_sample.insertOne(doc);
 
-        return new PredefinedSample(doc);
+        return new StandardSample(new_doc);
     }
 
-    static async remove(sample: PredefinedSample): Promise<void> {
-        await collectionPredefinedSample().deleteOne({ name: sample.name });
+    static async remove(sample: StandardSample): Promise<void> {
+        await models.standard_sample.deleteOne({ name: sample.name });
         await fs.unlink(sample.file);
     }
 
     static async ensureDir(): Promise<void> {
-        await fs.ensureDir(PredefinedSample.BASE, 0o0777);
+        await fs.ensureDir(StandardSample.BASE, 0o0777);
     }
 
     static generateFilePath(name: string): string {
-        return path.join(PredefinedSample.BASE, name + PredefinedSample.EXT);
+        return path.join(StandardSample.BASE, name + StandardSample.EXT);
     }
 
     static BASE = path.join(AbstractSample.BASE, "standard");

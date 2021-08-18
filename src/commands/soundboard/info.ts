@@ -9,7 +9,7 @@ import { TopCommand } from "../../modules/commands/TopCommand";
 
 import SampleID from "../../core/soundboard/SampleID";
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
+import { StandardSample } from "../../core/soundboard/sample/StandardSample";
 import GuildConfigManager from "../../core/GuildConfigManager";
 
 async function findSampleByScope(
@@ -17,11 +17,11 @@ async function findSampleByScope(
     userId: Discord.Snowflake,
     name: string,
     scope: "user" | "server" | null,
-): Promise<CustomSample | PredefinedSample | undefined> {
-    let sample: CustomSample | PredefinedSample | undefined;
+): Promise<CustomSample | StandardSample | undefined> {
+    let sample: CustomSample | StandardSample | undefined;
     if (!scope) {
         sample = await CustomSample.findByName(guildId, userId, name) ||
-                 await PredefinedSample.findByName(name);
+                 await StandardSample.findByName(name);
     } else if (scope === "user") {
         sample = await CustomSample.findSampleUser(userId, name);
     } else if (guildId) {
