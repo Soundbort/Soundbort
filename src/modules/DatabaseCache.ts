@@ -1,9 +1,7 @@
-import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OnlyFieldsOfType, OptionalId, PullOperator, SetFields, UpdateFilter } from "mongodb";
-import { Except, RequireAtLeastOne } from "type-fest";
+import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OptionalId, UpdateFilter } from "mongodb";
+import { Except } from "type-fest";
 import Cache, { CacheOptions } from "./Cache";
 import database from "./database";
-
-export type CacheCreateAsFunc<T, C> = (doc: T) => C;
 
 export interface DatabaseCacheOptions<KeyName> extends CacheOptions {
     indexName: KeyName;
@@ -20,14 +18,6 @@ export type CacheFilter<T> =
     }
     & Partial<{
         $or: CacheFilter<T>[]
-    }>;
-
-export type CacheUpdateFilter<T> =
-    RequireAtLeastOne<{
-        $set: Partial<T> & Record<string, any>;
-        $inc: OnlyFieldsOfType<T, number | undefined>;
-        $addToSet: SetFields<T>;
-        $pull: PullOperator<T>;
     }>;
 
 /**
