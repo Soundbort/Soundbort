@@ -127,7 +127,11 @@ export default class Core {
         };
 
         for (const [, guild] of this.client.guilds.cache) {
-            await deployToGuild(guild);
+            try {
+                await deployToGuild(guild);
+            } catch (error) {
+                log.error({ error: logErr(error) });
+            }
         }
 
         this.client.on("guildCreate", async guild => {
