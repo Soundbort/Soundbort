@@ -45,7 +45,7 @@ export default class DatabaseCache<
     private _filter(item: TSchema, filter: CacheFilter<TSchema>): boolean {
         const requirements: boolean[] = [];
 
-        const filter_keys = Object.keys(filter);
+        const filter_keys = Object.keys(filter).filter(key => !/^\$/g.test(key));
         if (filter_keys.length > 0) {
             requirements.push(
                 filter_keys.every(key => {
@@ -68,9 +68,16 @@ export default class DatabaseCache<
     }
 
     private _findOne(filter: CacheFilter<TSchema>): TSchema | undefined {
+        // find documents quicker if filter includes index key
         if (typeof filter[this.index_name] !== "undefined") {
             const return_val = this.cache.get(filter[this.index_name] as KeyType);
-            if (return_val) return return_val;
+            if (return_val) {
+                // it was found in cache! does it match the rest of the filters?
+                if (this._filter(return_val, filter)) return return_val;
+                // else directly return, because since this was an indexed field search,
+                // the answer won't be in other parts of the cache
+                return;
+            }
         }
 
         return this.cache.find(item => {
@@ -96,7 +103,7 @@ export default class DatabaseCache<
 
     async findMany(filter: Filter<TSchema>, cursor_func?: (cursor: FindCursor<TSchema>) => void, options?: FindOptions<TSchema>): Promise<TSchema[]> {
         const cursor = this.collection.find(filter, options);
-        cursor_func && cursor_func(cursor);
+        if (cursor_func) cursor_func(cursor);
         const docs = await cursor.toArray();
 
         for (const doc of docs) {
@@ -137,7 +144,11 @@ export default class DatabaseCache<
     }
 
     async replaceOne(filter: CacheFilter<TSchema>, replacement: TSchema, opts: FindOneAndReplaceOptions = {}): Promise<TSchema | undefined> {
-        const result = await this.collection.findOneAndReplace(filter, replacement, { ...opts, returnDocument: "after" });
+        const result = await this.collection.findOneAndReplace(
+            filter,
+            replacement,
+            { ...opts, returnDocument: "after" },
+        );
 
         if (result.value) {
             this.cache.set(result.value[this.index_name], result.value);
