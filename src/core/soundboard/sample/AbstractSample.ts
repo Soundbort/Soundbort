@@ -4,7 +4,7 @@ import * as Voice from "@discordjs/voice";
 import Discord from "discord.js";
 
 import { DATA_BASE } from "../../../config";
-import { SoundboardPredefinedSampleSchema } from "../../../modules/database/schemas/SoundboardPredefinedSampleSchema";
+import { SoundboardStandardSampleSchema } from "../../../modules/database/schemas/SoundboardStandardSampleSchema";
 import { EmbedType } from "../../../util/util";
 
 const BASE = path.join(DATA_BASE, "soundboard");
@@ -18,7 +18,7 @@ export interface ToEmbedOptions {
     type?: EmbedType;
 }
 
-export abstract class AbstractSample implements SoundboardPredefinedSampleSchema {
+export abstract class AbstractSample implements SoundboardStandardSampleSchema {
     abstract readonly importable: boolean;
     abstract readonly deletable: boolean;
 
@@ -29,7 +29,7 @@ export abstract class AbstractSample implements SoundboardPredefinedSampleSchema
     modified_at: Date;
     last_played_at: Date | undefined;
 
-    constructor(doc: SoundboardPredefinedSampleSchema) {
+    constructor(doc: SoundboardStandardSampleSchema) {
         this.name = doc.name;
         this.plays = doc.plays;
         this.orig_filename = doc.orig_filename || undefined;

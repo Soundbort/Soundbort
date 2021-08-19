@@ -1,4 +1,4 @@
-export interface SoundboardPredefinedSampleSchema {
+export interface SoundboardStandardSampleSchema {
     name: string;
     orig_filename?: string;
     plays: number;

@@ -8,7 +8,7 @@ import database from "../modules/database";
 import { StatsSchema } from "../modules/database/schemas/StatsSchema";
 import Logger from "../log";
 import { CustomSample } from "./soundboard/sample/CustomSample";
-import { collectionStats } from "../modules/database/models";
+import * as models from "../modules/database/models";
 import { METRICS_PORT } from "../config";
 import { logErr } from "../util/util";
 import { lastItem } from "../util/array";
@@ -107,14 +107,14 @@ export class StatsCollectorManager extends EventEmitter {
 
         this.emit("collect", doc);
 
-        await collectionStats().insertOne(
+        await models.stats.collection.insertOne(
             doc,
         );
     }
 
     public getStats(timespan: number | Date): Promise<StatsSchema[]> {
         const now = new Date();
-        return collectionStats()
+        return models.stats.collection
             .find({
                 _id: {
                     $lte: now,

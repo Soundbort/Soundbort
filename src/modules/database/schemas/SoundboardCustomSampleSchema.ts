@@ -1,8 +1,8 @@
-import { SoundboardPredefinedSampleSchema } from "./SoundboardPredefinedSampleSchema";
+import { SoundboardStandardSampleSchema } from "./SoundboardStandardSampleSchema";
 
 export type SoundboardCustomSampleScope = "user" | "server";
 
-export interface SoundboardCustomSampleSchema extends SoundboardPredefinedSampleSchema {
+export interface SoundboardCustomSampleSchema extends SoundboardStandardSampleSchema {
     id: string;
     creatorId: string;
     scope: SoundboardCustomSampleScope;

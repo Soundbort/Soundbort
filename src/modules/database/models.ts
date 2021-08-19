@@ -1,29 +1,18 @@
-import { Collection } from "mongodb";
-import { get } from ".";
+import DatabaseCache from "../DatabaseCache";
 import { DbCollection } from "./collections";
 
 import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
 import { ConfigSchema } from "./schemas/ConfigSchema";
 import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
-import { SoundboardPredefinedSampleSchema } from "./schemas/SoundboardPredefinedSampleSchema";
+import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema";
 import { StatsSchema } from "./schemas/StatsSchema";
 
-export function collectionBlacklistUser(): Collection<BlacklistUserSchema> {
-    return get().collection<BlacklistUserSchema>(DbCollection.BlacklistUser);
-}
+export const blacklist_user = new DatabaseCache<BlacklistUserSchema>(DbCollection.BlacklistUser, { indexName: "userId" });
 
-export function collectionCustomSample(): Collection<SoundboardCustomSampleSchema> {
-    return get().collection<SoundboardCustomSampleSchema>(DbCollection.CustomSample);
-}
+export const custom_sample = new DatabaseCache<SoundboardCustomSampleSchema>(DbCollection.CustomSample, { indexName: "id", maxSize: 1000 });
 
-export function collectionPredefinedSample(): Collection<SoundboardPredefinedSampleSchema> {
-    return get().collection<SoundboardPredefinedSampleSchema>(DbCollection.PredefinedSample);
-}
+export const standard_sample = new DatabaseCache<SoundboardStandardSampleSchema>(DbCollection.StandardSample, { indexName: "name" });
 
-export function collectionConfig(): Collection<ConfigSchema> {
-    return get().collection<ConfigSchema>(DbCollection.Config);
-}
+export const config = new DatabaseCache<ConfigSchema>(DbCollection.Config, { indexName: "guildId" });
 
-export function collectionStats(): Collection<StatsSchema> {
-    return get().collection<StatsSchema>(DbCollection.Stats);
-}
+export const stats = new DatabaseCache<StatsSchema>(DbCollection.Stats, { indexName: "_id", ttl: 1, maxSize: 1 }); // basically disabling cache

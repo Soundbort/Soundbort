@@ -4,7 +4,7 @@ import { createStringOption } from "../../modules/commands/options/createOption"
 import { EmbedType, isOwner, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
 import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
+import { StandardSample } from "../../core/soundboard/sample/StandardSample";
 
 const delete_extern_cmd = new Command({
     name: "extern",
@@ -46,12 +46,12 @@ const delete_standard_cmd = new Command({
             return replyEmbedEphemeral("You're not a bot developer, you can't remove standard samples.", EmbedType.Error);
         }
 
-        const sample = await PredefinedSample.findByName(name);
+        const sample = await StandardSample.findByName(name);
         if (!sample) {
             return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
         }
 
-        await PredefinedSample.remove(sample);
+        await StandardSample.remove(sample);
 
         return replyEmbed(`Removed ${sample.name} from standard soundboard!`, EmbedType.Success);
     },
