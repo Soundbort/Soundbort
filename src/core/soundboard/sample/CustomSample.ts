@@ -149,7 +149,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
 
-    static async count(): Promise<number> {
+    static count(): Promise<number> {
         return models.custom_sample.estimatedCount();
     }
 
