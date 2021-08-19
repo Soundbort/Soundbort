@@ -11,7 +11,7 @@ export default new Command({
         createStringOption("sample_id", "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.", true),
     ],
     async func(interaction) {
-        const id = interaction.options.getString("sample_id", true);
+        const id = interaction.options.getString("sample_id", true).trim();
 
         if (!isOwner(interaction.user.id)) {
             return replyEmbedEphemeral("You're not a bot developer, you can't add samples to standard soundboard.", EmbedType.Error);

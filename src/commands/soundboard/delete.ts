@@ -73,7 +73,7 @@ InteractionRegistry.addCommand(new TopCommand({
         ]),
     ],
     async func(interaction) {
-        const name = interaction.options.getString("sample", true);
+        const name = interaction.options.getString("sample", true).trim();
         const scope = interaction.options.getString("from", false) as ("user" | "server" | null) || "user";
 
         if (scope === "user") return await removeUser(interaction, name);

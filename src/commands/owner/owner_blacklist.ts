@@ -15,7 +15,7 @@ const blacklist_add_cmd = new Command({
             return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
         }
 
-        const userId = interaction.options.getString("user-id", true);
+        const userId = interaction.options.getString("user-id", true).trim();
 
         await collectionBlacklistUser().updateOne(
             { userId: userId },
@@ -38,7 +38,7 @@ const blacklist_remove_cmd = new Command({
             return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
         }
 
-        const userId = interaction.options.getString("user-id", true);
+        const userId = interaction.options.getString("user-id", true).trim();
 
         await collectionBlacklistUser().deleteOne(
             { userId: userId },

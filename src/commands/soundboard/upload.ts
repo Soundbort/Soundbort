@@ -15,7 +15,7 @@ InteractionRegistry.addCommand(new TopCommand({
         ]),
     ],
     async func(interaction) {
-        const name = interaction.options.getString("name", true);
+        const name = interaction.options.getString("name", true).trim();
         const scope = interaction.options.getString("to", false) as ("user" | "server" | null) || "user";
 
         await upload(interaction, name, scope);

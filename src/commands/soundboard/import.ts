@@ -69,7 +69,7 @@ InteractionRegistry.addCommand(new TopCommand({
         ]),
     ],
     async func(interaction) {
-        const id = interaction.options.getString("sample_id", true);
+        const id = interaction.options.getString("sample_id", true).trim();
         const scope = interaction.options.getString("to", false) as ("user" | "server" | null) || "user";
 
         const sample = await CustomSample.findById(id);

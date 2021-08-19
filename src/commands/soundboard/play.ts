@@ -80,7 +80,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
                 return replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error);
             }
 
-            const name = interaction.options.getString("sample", true);
+            const name = interaction.options.getString("sample", true).trim();
 
             let sample = await CustomSample.findByName(interaction.guildId, interaction.user.id, name) ||
                          await PredefinedSample.findByName(name);

@@ -18,7 +18,7 @@ const delete_extern_cmd = new Command({
             return replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error);
         }
 
-        const id = interaction.options.getString("id", true);
+        const id = interaction.options.getString("id", true).trim();
 
         const sample = await CustomSample.findById(id);
         if (!sample) {
@@ -38,7 +38,7 @@ const delete_standard_cmd = new Command({
         createStringOption("name", "Name of the standard sample to delete.", true),
     ],
     async func(interaction) {
-        const name = interaction.options.getString("name", true);
+        const name = interaction.options.getString("name", true).trim();
 
         const userId = interaction.user.id;
 
