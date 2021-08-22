@@ -1,12 +1,19 @@
-import DatabaseCache from "../DatabaseCache";
-import databaseProxy from "../databaseProxy";
-import { DbCollection } from "./collections";
+import DatabaseCache from "./DatabaseCache";
+import databaseProxy from "./databaseProxy";
 
 import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
 import { ConfigSchema } from "./schemas/ConfigSchema";
 import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
 import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema";
 import { StatsSchema } from "./schemas/StatsSchema";
+
+export enum DbCollection {
+    BlacklistUser = "blacklist_user",
+    CustomSample = "soundboard_custom_sample",
+    StandardSample = "soundboard_pre_sample",
+    Config = "guild_config",
+    Stats = "app_stats",
+}
 
 export const blacklist_user = new DatabaseCache<BlacklistUserSchema>(DbCollection.BlacklistUser, { indexName: "userId" });
 

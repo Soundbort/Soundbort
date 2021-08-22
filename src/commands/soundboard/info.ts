@@ -8,9 +8,9 @@ import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
 
 import SampleID from "../../core/soundboard/SampleID";
-import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import { StandardSample } from "../../core/soundboard/sample/StandardSample";
-import GuildConfigManager from "../../core/GuildConfigManager";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { StandardSample } from "../../core/soundboard/StandardSample";
+import GuildConfigManager from "../../core/managers/GuildConfigManager";
 
 async function findSampleByScope(
     guildId: Discord.Snowflake | null,

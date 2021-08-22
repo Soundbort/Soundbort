@@ -1,6 +1,6 @@
 import temp from "temp";
 import Discord from "discord.js";
-import database from "../modules/database";
+import * as database from "../modules/database";
 import Logger from "../log";
 
 temp.track();

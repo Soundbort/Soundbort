@@ -4,7 +4,7 @@ import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
 import { BOT_NAME } from "../config";
 import { EmbedType, replyEmbed } from "../util/util";
-import GuildConfigManager from "../core/GuildConfigManager";
+import GuildConfigManager from "../core/managers/GuildConfigManager";
 
 const set_admin_role_cmd = new Command({
     name: "set-admin-role",

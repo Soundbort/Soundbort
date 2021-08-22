@@ -2,8 +2,8 @@ import Discord from "discord.js";
 import { BUTTON_TYPES } from "../../../const";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../../util/util";
 import InteractionRegistry from "../../InteractionRegistry";
-import { CustomSample, AvailableCustomSamplesResponse } from "../sample/CustomSample";
-import { StandardSample } from "../sample/StandardSample";
+import { CustomSample, AvailableCustomSamplesResponse } from "../CustomSample";
+import { StandardSample } from "../StandardSample";
 
 interface AvailableSamplesResponse extends AvailableCustomSamplesResponse {
     standard: StandardSample[];

@@ -3,15 +3,15 @@ import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 import fs from "fs-extra";
 
-import Logger from "../../../log";
-import database from "../../../modules/database";
-import * as models from "../../../modules/database/models";
-import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../../modules/database/schemas/SoundboardCustomSampleSchema";
+import Logger from "../../log";
+import * as database from "../../modules/database";
+import * as models from "../../modules/database/models";
+import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema";
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
-import { createEmbed } from "../../../util/util";
+import { createEmbed } from "../../util/util";
 import moment from "moment";
-import InteractionRegistry from "../../InteractionRegistry";
-import { BUTTON_TYPES } from "../../../const";
+import InteractionRegistry from "../InteractionRegistry";
+import { BUTTON_TYPES } from "../../const";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 

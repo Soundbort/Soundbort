@@ -3,9 +3,9 @@ import path from "path";
 import * as Voice from "@discordjs/voice";
 import Discord from "discord.js";
 
-import { DATA_BASE } from "../../../config";
-import { SoundboardStandardSampleSchema } from "../../../modules/database/schemas/SoundboardStandardSampleSchema";
-import { EmbedType } from "../../../util/util";
+import { DATA_BASE } from "../../config";
+import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
+import { EmbedType } from "../../util/util";
 
 const BASE = path.join(DATA_BASE, "soundboard");
 fs.mkdirpSync(BASE);

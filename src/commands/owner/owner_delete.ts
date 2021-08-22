@@ -3,8 +3,8 @@ import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { EmbedType, isOwner, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
-import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import { StandardSample } from "../../core/soundboard/sample/StandardSample";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { StandardSample } from "../../core/soundboard/StandardSample";
 
 const delete_extern_cmd = new Command({
     name: "extern",

@@ -6,8 +6,8 @@ import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createEmbed, doNothing, EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
-import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import GuildConfigManager from "../../core/GuildConfigManager";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import GuildConfigManager from "../../core/managers/GuildConfigManager";
 import SampleID from "../../core/soundboard/SampleID";
 import { BUTTON_TYPES } from "../../const";
 

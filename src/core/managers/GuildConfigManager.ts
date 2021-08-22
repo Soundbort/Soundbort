@@ -1,7 +1,7 @@
 import Discord, { Awaited } from "discord.js";
-import { fetchMember, guessModRole } from "../util/util";
-import * as models from "../modules/database/models";
-import { ConfigSchema } from "../modules/database/schemas/ConfigSchema";
+import { fetchMember, guessModRole } from "../../util/util";
+import * as models from "../../modules/database/models";
+import { ConfigSchema } from "../../modules/database/schemas/ConfigSchema";
 
 type OnAdminRoleChangeFunc = (guildId: Discord.Snowflake, roleId: Discord.Snowflake) => Awaited<void>;
 

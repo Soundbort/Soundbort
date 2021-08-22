@@ -4,13 +4,13 @@ import * as Voice from "@discordjs/voice";
 import Discord from "discord.js";
 import moment from "moment";
 
-import InteractionRegistry from "../../InteractionRegistry";
-import { createEmbed } from "../../../util/util";
-import { BUTTON_TYPES } from "../../../const";
-import Logger from "../../../log";
-import database from "../../../modules/database";
-import * as models from "../../../modules/database/models";
-import { SoundboardStandardSampleSchema } from "../../../modules/database/schemas/SoundboardStandardSampleSchema";
+import InteractionRegistry from "../InteractionRegistry";
+import { createEmbed } from "../../util/util";
+import { BUTTON_TYPES } from "../../const";
+import Logger from "../../log";
+import * as database from "../../modules/database";
+import * as models from "../../modules/database/models";
+import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 
 const log = Logger.child({ label: "SampleManager => StandardSample" });

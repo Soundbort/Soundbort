@@ -11,10 +11,10 @@ import Logger from "../../../log";
 import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 
 import SampleID from "../SampleID";
-import { CustomSample } from "../sample/CustomSample";
-import { StandardSample } from "../sample/StandardSample";
+import { CustomSample } from "../CustomSample";
+import { StandardSample } from "../StandardSample";
 import { EmbedType, isOwner, logErr, replyEmbed } from "../../../util/util";
-import GuildConfigManager from "../../GuildConfigManager";
+import GuildConfigManager from "../../managers/GuildConfigManager";
 
 const ffprobe = promisify(_ffprobe) as (file: string) => Promise<FfprobeData>;
 

@@ -62,11 +62,3 @@ export function collection<T>(name: string): Collection<T> {
 export async function close(): Promise<void> {
     await client?.close();
 }
-
-export default {
-    connect,
-    onConnect,
-    get,
-    collection,
-    close,
-};

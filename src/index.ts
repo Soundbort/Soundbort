@@ -6,7 +6,7 @@ import Logger from "./log";
 import { DISCORD_TOKEN } from "./config";
 import { exit } from "./util/exit";
 import Core from "./core/Core";
-import database from "./modules/database/index";
+import * as database from "./modules/database/index";
 import { logErr } from "./util/util";
 
 const log = Logger.child({ label: "Index" });

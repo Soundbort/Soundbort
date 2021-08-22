@@ -1,7 +1,7 @@
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { EmbedType, isOwner, replyEmbedEphemeral } from "../../util/util";
-import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import { StandardSample } from "../../core/soundboard/sample/StandardSample";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { StandardSample } from "../../core/soundboard/StandardSample";
 import { Command } from "../../modules/commands/Command";
 
 export default new Command({

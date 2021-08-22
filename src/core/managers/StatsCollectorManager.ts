@@ -4,14 +4,14 @@ import { CronJob } from "cron";
 import http from "http";
 import os from "os";
 
-import database from "../modules/database";
-import { StatsSchema } from "../modules/database/schemas/StatsSchema";
-import Logger from "../log";
-import { CustomSample } from "./soundboard/sample/CustomSample";
-import * as models from "../modules/database/models";
-import { METRICS_PORT } from "../config";
-import { logErr } from "../util/util";
-import { lastItem } from "../util/array";
+import * as database from "../../modules/database";
+import { StatsSchema } from "../../modules/database/schemas/StatsSchema";
+import Logger from "../../log";
+import { CustomSample } from "../soundboard/CustomSample";
+import * as models from "../../modules/database/models";
+import { METRICS_PORT } from "../../config";
+import { logErr } from "../../util/util";
+import { lastItem } from "../../util/array";
 
 const log = Logger.child({ label: "Core => StatsCollectorManager" });
 
@@ -21,6 +21,7 @@ const server = http.createServer((req, res) => {
     res.writeHead(200);
     res.end("ok");
 });
+
 server.listen(METRICS_PORT);
 
 export class StatsCollectorManager extends EventEmitter {

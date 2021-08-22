@@ -2,16 +2,16 @@ import Discord from "discord.js";
 import path from "path";
 import topGGStatsPoster from "topgg-autoposter";
 
-import nanoTimer from "../modules/nanoTimer";
+import nanoTimer from "../util/timer";
 import Logger from "../log";
-import { StatsCollectorManager } from "./StatsCollectorManager";
+import { StatsCollectorManager } from "./managers/StatsCollectorManager";
 import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
 import InteractionRegistry from "./InteractionRegistry";
 import { TOP_GG_TOKEN } from "../config";
 import { EmbedType, guessModRole, logErr, replyEmbedEphemeral } from "../util/util";
 import AudioManager from "./audio/AudioManager";
-import GuildConfigManager from "./GuildConfigManager";
+import GuildConfigManager from "./managers/GuildConfigManager";
 import * as models from "../modules/database/models";
 import { BUTTON_TYPES } from "../const";
 
