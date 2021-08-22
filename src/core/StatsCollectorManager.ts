@@ -107,14 +107,14 @@ export class StatsCollectorManager extends EventEmitter {
 
         this.emit("collect", doc);
 
-        await models.stats.collection.insertOne(
+        await models.stats.insertOne(
             doc,
         );
     }
 
     public getStats(timespan: number | Date): Promise<StatsSchema[]> {
         const now = new Date();
-        return models.stats.collection
+        return models.stats
             .find({
                 _id: {
                     $lte: now,

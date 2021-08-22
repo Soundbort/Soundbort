@@ -1,4 +1,5 @@
 import DatabaseCache from "../DatabaseCache";
+import databaseProxy from "../databaseProxy";
 import { DbCollection } from "./collections";
 
 import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
@@ -15,4 +16,4 @@ export const standard_sample = new DatabaseCache<SoundboardStandardSampleSchema>
 
 export const config = new DatabaseCache<ConfigSchema>(DbCollection.Config, { indexName: "guildId" });
 
-export const stats = new DatabaseCache<StatsSchema>(DbCollection.Stats, { indexName: "_id", ttl: 1, maxSize: 1 }); // basically disabling cache
+export const stats = databaseProxy<StatsSchema>(DbCollection.Stats);
