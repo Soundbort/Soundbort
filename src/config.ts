@@ -41,7 +41,6 @@ const _ENV = (node_env: string | undefined): EnvironmentStages => {
     }
     throw new Error("NODE_ENV must be of \"development\", \"staging\" or \"production\"");
 };
-
 export const ENVIRONMENT = _ENV(process.env.NODE_ENV);
 
 export const TOP_GG_TOKEN = process.env.SOUNDBORT_TOP_GG_TOKEN;

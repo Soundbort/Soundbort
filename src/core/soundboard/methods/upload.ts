@@ -294,12 +294,3 @@ export async function upload(interaction: Discord.CommandInteraction, name: stri
         await temp.cleanup();
     }
 }
-
-export default {
-    MAX_SAMPLES,
-    MAX_LEN_NAME,
-    MAX_SIZE,
-    MAX_DURATION,
-    UploadErrors,
-    upload,
-};

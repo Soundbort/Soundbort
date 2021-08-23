@@ -10,6 +10,6 @@ export default new Command({
             return replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error);
         }
 
-        exit(interaction.client, 0);
+        exit(0);
     },
 });

@@ -3,6 +3,7 @@ import { Db, Collection, MongoClient } from "mongodb";
 
 import { BOT_NAME, DB_URI } from "../../config";
 import Logger from "../../log";
+import { onExit } from "../../util/exit";
 import { logErr } from "../../util/util";
 
 export type QueueFunction = () => Awaited<void>;
@@ -11,6 +12,16 @@ const log = Logger.child({ label: "database" });
 
 let client: MongoClient | undefined;
 let database: Db | undefined;
+
+export async function close(): Promise<void> {
+    await client?.close();
+}
+
+onExit(async () => {
+    log.debug("Closing MongoDb connection...");
+    await close();
+    log.debug("MongoDb connection closed.");
+});
 
 // Queue of Functions to call first when connected to DBMS
 const queue: QueueFunction[] = [];
@@ -57,8 +68,4 @@ export function get(): Db {
 
 export function collection<T>(name: string): Collection<T> {
     return get().collection<T>(name);
-}
-
-export async function close(): Promise<void> {
-    await client?.close();
 }
