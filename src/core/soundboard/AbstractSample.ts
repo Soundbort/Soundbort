@@ -3,11 +3,11 @@ import path from "path";
 import * as Voice from "@discordjs/voice";
 import Discord from "discord.js";
 
-import { DATA_BASE } from "../../config";
+import { DATA_BASE_PATH } from "../../config";
 import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
 import { EmbedType } from "../../util/util";
 
-const BASE = path.join(DATA_BASE, "soundboard");
+const BASE = path.join(DATA_BASE_PATH, "soundboard");
 fs.mkdirpSync(BASE);
 
 export interface ToEmbedOptions {

@@ -57,6 +57,6 @@ export const VERSION = package_file.version as string + (
 
 export const PROJECT_ROOT = path.resolve(__dirname, "..");
 
-export const DATA_BASE = path.resolve(PROJECT_ROOT, "data");
+export const DATA_BASE_PATH = path.resolve(PROJECT_ROOT, "data");
 
 export const METRICS_PORT = 6969;
