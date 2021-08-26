@@ -7,6 +7,7 @@ import { logErr } from "../util/util";
 import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config";
 
 import StatsCollectorManager from "./managers/StatsCollectorManager";
+import WebhookManager from "./managers/WebhookManager";
 import onInteractionCreate from "./events/onInteractionCreate";
 import onVoiceStateUpdate from "./events/onVoiceStateUpdate";
 
@@ -51,6 +52,7 @@ export default class Core {
         // ///////////////////
 
         StatsCollectorManager.listen();
+        if (TOP_GG_WEBHOOK_TOKEN) WebhookManager.listen();
 
         this.setStatus();
         this.client.on("shardReady", () => this.setStatus());

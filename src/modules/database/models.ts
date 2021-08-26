@@ -6,6 +6,7 @@ import { ConfigSchema } from "./schemas/ConfigSchema";
 import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
 import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema";
 import { StatsSchema } from "./schemas/StatsSchema";
+import { VotesSchema } from "./schemas/VotesSchema";
 
 export enum DbCollection {
     BlacklistUser = "blacklist_user",
@@ -13,6 +14,7 @@ export enum DbCollection {
     StandardSample = "soundboard_pre_sample",
     Config = "guild_config",
     Stats = "app_stats",
+    Votes = "bot_votes",
 }
 
 export const blacklist_user = new DatabaseCache<BlacklistUserSchema>(DbCollection.BlacklistUser, { indexName: "userId" });
@@ -24,3 +26,5 @@ export const standard_sample = new DatabaseCache<SoundboardStandardSampleSchema>
 export const config = new DatabaseCache<ConfigSchema>(DbCollection.Config, { indexName: "guildId" });
 
 export const stats = databaseProxy<StatsSchema>(DbCollection.Stats);
+
+export const votes = databaseProxy<VotesSchema>(DbCollection.Votes);
