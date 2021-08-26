@@ -20,9 +20,6 @@ const ffprobe = promisify(_ffprobe) as (file: string) => Promise<FfprobeData>;
 
 const log = Logger.child({ label: "Sample => Uploader" });
 
-// could be 25, but limit to 10 first, so that users can later vote to get more sample slots
-// export const MAX_SAMPLES = 25;
-export const MAX_SAMPLES = 10;
 export const MAX_LEN_NAME = 30;
 export const MAX_SIZE = 4;
 export const MAX_DURATION = 30 * 1_000;
@@ -32,7 +29,7 @@ export const UploadErrors = {
     NotInGuild: "You can't upload samples to a server when you're not calling this command from a server.",
     NotOwner: "Only bot developers can add standard samples.",
     NotModerator: "You can't upload a sample to this server, because you don't have the permissions.",
-    TooManySamples: `You can't add any more samples (max ${MAX_SAMPLES}). Try deleting some before you can add more.`,
+    TooManySamples: "You have filled all your sample slots ({MAX_SAMPLES}). Try deleting some or type `/vote` to get more slots before you can add more.",
     NoChannel: "Weirdly enough this channel was not cached.",
     FileMissing: "Upload an audio file first, then call this command.",
     UnsupportedType: "The file is not an audio file. Please upload an audio file and then call this command.",
@@ -101,18 +98,25 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         return await failed(UploadErrors.NotOwner);
     }
 
-    const guildId = interaction.guildId;
+    const guildId = interaction.guildId!;
 
     // is soundboard full?
-    let sample_count: number;
-    switch (scope) {
-        case "user": sample_count = await CustomSample.countUserSamples(userId); break;
-        case "server": sample_count = await CustomSample.countGuildSamples(guildId!); break;
-        case "standard": sample_count = await StandardSample.countSamples(); break;
-    }
+    if (scope === "standard") {
+        const sample_count = await StandardSample.countSamples();
+        if (sample_count >= StandardSample.MAX_SLOTS) {
+            return await failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", StandardSample.MAX_SLOTS.toLocaleString("en")));
+        }
+    } else {
+        let sample_count: number;
+        switch (scope) {
+            case "user": sample_count = await CustomSample.countUserSamples(userId); break;
+            case "server": sample_count = await CustomSample.countGuildSamples(guildId); break;
+        }
 
-    if (sample_count >= MAX_SAMPLES) {
-        return await failed(UploadErrors.TooManySamples);
+        const slot_count = await CustomSample.countSlots(scope === "user" ? userId : guildId);
+        if (sample_count >= slot_count) {
+            return await failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")));
+        }
     }
 
     // weird error. Probably caching with DM channels
@@ -168,7 +172,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     let name_exists = false;
     switch (scope) {
         case "user": name_exists = !!await CustomSample.findSampleUser(userId, name); break;
-        case "server": name_exists = !!await CustomSample.findSampleGuild(guildId!, name); break;
+        case "server": name_exists = !!await CustomSample.findSampleGuild(guildId, name); break;
         case "standard": name_exists = !!await StandardSample.findByName(name); break;
     }
     if (name_exists) {
@@ -264,9 +268,9 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
             id: new_id!,
             name: name,
             orig_filename: attachment.name || undefined,
-            creatorId: scope === "user" ? userId : guildId!,
+            creatorId: scope === "user" ? userId : guildId,
             userIds: scope === "user" ? [userId] : [],
-            guildIds: scope === "server" ? [guildId!] : [],
+            guildIds: scope === "server" ? [guildId] : [],
             plays: 0,
             created_at: new Date(),
             modified_at: new Date(),

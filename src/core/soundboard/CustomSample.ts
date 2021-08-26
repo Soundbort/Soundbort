@@ -2,30 +2,30 @@ import path from "path";
 import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 import fs from "fs-extra";
+import moment from "moment";
 
 import Logger from "../../log";
+import { BUTTON_TYPES } from "../../const";
+import { createEmbed, logErr } from "../../util/util";
+import { GenericListener, TypedEventEmitter } from "../../util/emitter";
+
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+
 import * as database from "../../modules/database";
 import * as models from "../../modules/database/models";
 import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema";
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
-import { createEmbed } from "../../util/util";
-import moment from "moment";
+import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema";
+import { VotesSchema } from "../../modules/database/schemas/VotesSchema";
+
 import InteractionRegistry from "../InteractionRegistry";
-import { BUTTON_TYPES } from "../../const";
+import WebhookManager from "../managers/WebhookManager";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 
 database.onConnect(async () => {
     await models.custom_sample.collection.createIndex({ id: 1 }, { unique: true });
+    await models.sample_slots.createIndex({ ownerId: 1 }, { unique: true });
 });
-
-export interface IdResolvable { id: Discord.Snowflake }
-
-export interface AvailableCustomSamplesResponse {
-    total: number;
-    user: CustomSample[];
-    guild: CustomSample[];
-}
 
 export class CustomSample extends AbstractSample implements SoundboardCustomSampleSchema {
     readonly importable = true;
@@ -295,6 +295,63 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         await fs.unlink(sample.file);
     }
 
+    // SLOTS
+
+    static MIN_SLOTS = 10;
+    static MAX_SLOTS = 25;
+
+    static emitter = new TypedEventEmitter<{
+        slotAdd: GenericListener<[slot: SingleSoundboardSlot, new: number, old: number]>
+    }>();
+
+    static async addSlot(vote: VotesSchema): Promise<boolean> {
+        const slotType = vote.query.guildId ? "server" : "user";
+        const ownerId = vote.query.guildId || vote.query.userId || vote.fromUserId;
+
+        const curr_slots = await this.countSlots(ownerId);
+        if (curr_slots >= this.MAX_SLOTS) {
+            return false;
+        }
+
+        // clamp to MAX_SLOTS
+        const votes = Math.min(this.MAX_SLOTS, curr_slots + vote.votes) - curr_slots;
+
+        const slot_received: SoundboardSlot = {
+            ts: vote.ts,
+            ref: vote.query.ref,
+            fromUserId: vote.fromUserId,
+            count: votes,
+        };
+
+        await models.sample_slots.updateOne(
+            { ownerId: ownerId },
+            { $push: { slots: slot_received }, $setOnInsert: { slotType } },
+            { upsert: true },
+        );
+
+        const single_slot: SingleSoundboardSlot = {
+            slotType,
+            ownerId,
+            ...slot_received,
+        };
+
+        log.debug(`Added ${slot_received.count} slots to ${slotType} ${ownerId} from ${vote.fromUserId}`);
+
+        this.emitter.emit("slotAdd", single_slot, curr_slots + votes, curr_slots);
+
+        return true;
+    }
+
+    static async countSlots(ownerId: string): Promise<number> {
+        const add_slots = await models.sample_slots
+            .aggregate()
+            .match({ ownerId })
+            .project<{ count: number }>({ count: { $sum: "$slots.count" }, _id: 0 })
+            .toArray();
+
+        return (add_slots[0]?.count ?? 0) + this.MIN_SLOTS;
+    }
+
     // UTILITY
 
     static async ensureDir(): Promise<void> {
@@ -305,3 +362,11 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return path.join(CustomSample.BASE, id + CustomSample.EXT);
     }
 }
+
+WebhookManager.on("vote", async vote => {
+    try {
+        await CustomSample.addSlot(vote);
+    } catch (error) {
+        log.error({ error: logErr(error) });
+    }
+});

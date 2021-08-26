@@ -157,4 +157,6 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
     }
 
     static BASE = path.join(AbstractSample.BASE, "standard");
+
+    static MAX_SLOTS = 25;
 }
