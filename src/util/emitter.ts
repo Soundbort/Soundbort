@@ -22,6 +22,6 @@ export class TypedEventEmitter<Events extends EventMap> {
         return this;
     }
     emit<K extends EventKey<Events>>(event: K, ...args: Parameters<Events[K]>): boolean {
-        return this._emitter.emit(event, args);
+        return this._emitter.emit(event, ...args);
     }
 }
