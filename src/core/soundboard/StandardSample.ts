@@ -95,13 +95,6 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
 
-    static async findByName(name: string): Promise<StandardSample | undefined> {
-        const doc = await models.standard_sample.findOne({ name });
-        if (!doc) return;
-
-        return new StandardSample(doc);
-    }
-
     static async countSamples(): Promise<number> {
         return await models.standard_sample.count({});
     }
@@ -116,6 +109,19 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         }
 
         return samples;
+    }
+
+    static async findByName(name: string): Promise<StandardSample | undefined> {
+        const doc = await models.standard_sample.findOne({ name });
+        if (!doc) return;
+
+        return new StandardSample(doc);
+    }
+
+    static async create(doc: SoundboardStandardSampleSchema): Promise<StandardSample> {
+        const new_doc = await models.standard_sample.insertOne(doc);
+
+        return new StandardSample(new_doc);
     }
 
     static async import(sample: AbstractSample): Promise<StandardSample> {
@@ -135,16 +141,12 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         return new_sample;
     }
 
-    static async create(doc: SoundboardStandardSampleSchema): Promise<StandardSample> {
-        const new_doc = await models.standard_sample.insertOne(doc);
-
-        return new StandardSample(new_doc);
-    }
-
     static async remove(sample: StandardSample): Promise<void> {
         await models.standard_sample.deleteOne({ name: sample.name });
         await fs.unlink(sample.file);
     }
+
+    // UTILITY
 
     static async ensureDir(): Promise<void> {
         await fs.ensureDir(StandardSample.BASE, 0o0777);

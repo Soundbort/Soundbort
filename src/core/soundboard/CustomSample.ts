@@ -153,6 +153,19 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return models.custom_sample.estimatedCount();
     }
 
+    static async countUserSamples(userId: Discord.Snowflake): Promise<number> {
+        return await models.custom_sample.count({
+            userIds: userId,
+        });
+    }
+    static async countGuildSamples(guildId: Discord.Snowflake): Promise<number> {
+        return await models.custom_sample.count({
+            guildIds: guildId,
+        });
+    }
+
+    // FIND SAMPLES
+
     static async findById(id: string): Promise<CustomSample | undefined> {
         const doc = await models.custom_sample.findOne({ id });
         if (!doc) return;
@@ -209,17 +222,6 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return new CustomSample(doc);
     }
 
-    static async countUserSamples(userId: Discord.Snowflake): Promise<number> {
-        return await models.custom_sample.count({
-            userIds: userId,
-        });
-    }
-    static async countGuildSamples(guildId: Discord.Snowflake): Promise<number> {
-        return await models.custom_sample.count({
-            guildIds: guildId,
-        });
-    }
-
     static async getUserSamples(userId: Discord.Snowflake): Promise<CustomSample[]> {
         const docs = await models.custom_sample.findMany(
             { userIds: userId },
@@ -248,6 +250,8 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return samples;
     }
 
+    // CREATE / ADD SAMPLES
+
     static async create(doc: SoundboardCustomSampleSchema): Promise<CustomSample> {
         const new_sample = await models.custom_sample.insertOne(doc);
 
@@ -266,6 +270,8 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         if (new_sample) return new CustomSample(new_sample);
     }
+
+    // REMOVE SAMPLE
 
     /**
      * Deletes a custom sample from a soundboard
@@ -288,6 +294,8 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         await models.custom_sample.deleteOne({ id: sample.id });
         await fs.unlink(sample.file);
     }
+
+    // UTILITY
 
     static async ensureDir(): Promise<void> {
         await fs.ensureDir(AbstractSample.BASE, 0o0777);
