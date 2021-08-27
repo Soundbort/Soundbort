@@ -3,6 +3,7 @@ import databaseProxy from "./databaseProxy";
 
 import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
 import { ConfigSchema } from "./schemas/ConfigSchema";
+import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema";
 import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
 import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema";
 import { SoundboardSlotSchema } from "./schemas/SoundboardSlotsSchema";
@@ -17,6 +18,7 @@ export enum DbCollection {
     Config = "guild_config",
     Stats = "app_stats",
     Votes = "bot_votes",
+    InteractionReplies = "interaction_replies",
 }
 
 export const blacklist_user = new DatabaseCache<BlacklistUserSchema>(DbCollection.BlacklistUser, { indexName: "userId" });
@@ -32,3 +34,5 @@ export const config = new DatabaseCache<ConfigSchema>(DbCollection.Config, { ind
 export const stats = databaseProxy<StatsSchema>(DbCollection.Stats);
 
 export const votes = databaseProxy<VotesSchema>(DbCollection.Votes);
+
+export const interaction_replies = new DatabaseCache<InteractionRepliesSchema>(DbCollection.InteractionReplies, { indexName: "interactionId" });
