@@ -29,9 +29,6 @@ const rotate_file_opts = {
 };
 
 const Logger = winston.createLogger({
-    level: ENVIRONMENT === EnvironmentStages.PROD
-        ? "warn"
-        : "debug",
     levels,
     format: winston.format.combine(
         winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
@@ -40,6 +37,9 @@ const Logger = winston.createLogger({
     ),
     transports: [
         new winston.transports.Console({
+            level: ENVIRONMENT === EnvironmentStages.PROD
+                ? "warn"
+                : "debug",
             format: winston.format.combine(
                 winston.format.colorize({ all: true }),
                 winston.format.printf(info => {
@@ -60,6 +60,7 @@ const Logger = winston.createLogger({
         new winston.transports.DailyRotateFile({
             ...rotate_file_opts,
             filename: `${LOGS_DIR}%DATE%-bot-combined.log`,
+            level: "debug",
         }),
     ],
 });
