@@ -19,6 +19,10 @@ if (TOP_GG_WEBHOOK_TOKEN) {
     InteractionRegistry.addCommand(new TopCommand({
         name: "vote",
         description: "Upvote Soundbort on top.gg to get more sample slots for your or someone else's soundboard.",
+        target: {
+            global: true,
+            guildHidden: false,
+        },
         async func(interaction) {
             const interactionId = interaction.id;
             const client = interaction.client as Discord.Client<true>;
