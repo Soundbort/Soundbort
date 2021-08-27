@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.4.0](https://github.com/LonelessCodes/SoundBort/compare/v0.3.0...v0.4.0) (2021-08-27)
+
+
+### Features
+
+* improved caching of samples, guild configs and blacklisted users ([341be4b](https://github.com/LonelessCodes/SoundBort/commit/341be4b89cf1334e6f360e8d178e36cab5eb0e17)), closes [#5](https://github.com/LonelessCodes/SoundBort/issues/5)
+* **metrics command:** add option to specify time window ([e9b9442](https://github.com/LonelessCodes/SoundBort/commit/e9b9442f789dea2a08456b769bcb150e783b3d47))
+* Upvote the bot to get more sample slots. /vote command ([af71a31](https://github.com/LonelessCodes/SoundBort/commit/af71a31ac6001fb867a5580128c91d8d6d6a79de)), closes [#6](https://github.com/LonelessCodes/SoundBort/issues/6)
+
+
+### Bug Fixes
+
+* differenciate between custom and standard sample buttons in statistics ([0d4eeae](https://github.com/LonelessCodes/SoundBort/commit/0d4eeaec9af2ff373a764271d78c8d30b5700152))
+* revert emergency fix from 'stable' 7dd4bdf1d34c9b62bcab770aad928d6370eca035 ([ec222db](https://github.com/LonelessCodes/SoundBort/commit/ec222dbc1ab84e3866841465836d9d4c14b69b22))
+* trim inputs from string options. ([9f366ec](https://github.com/LonelessCodes/SoundBort/commit/9f366ec616f7700a03c3d8afa1d94698e42cbd70))
+
+
+### Changes
+
+* add another time window to TimeWindowTable ([05f06e7](https://github.com/LonelessCodes/SoundBort/commit/05f06e76101c8a48cdd7c19bff39ecea156e59c1))
+* make /metrics command global ([69cf26a](https://github.com/LonelessCodes/SoundBort/commit/69cf26abe2320cb620d3bbb4dc93ce636246b4f8))
+* make /vote command global ([ee51d70](https://github.com/LonelessCodes/SoundBort/commit/ee51d7046623b75d5cd2f1873e00db5bfa03b335))
+* move worker-portal.js to be more universal ([db30c96](https://github.com/LonelessCodes/SoundBort/commit/db30c9660810e18c8565c79b8b862bb6daad8f49))
+
 ## [0.3.0](https://github.com/LonelessCodes/SoundBort/compare/v0.2.1...v0.3.0) (2021-08-16)
 
 
