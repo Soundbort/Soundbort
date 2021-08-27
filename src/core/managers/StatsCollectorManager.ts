@@ -3,15 +3,17 @@ import { EventEmitter } from "events";
 import { CronJob } from "cron";
 import http from "http";
 import os from "os";
+import { promisify } from "util";
 
-import database from "../modules/database";
-import { StatsSchema } from "../modules/database/schemas/StatsSchema";
-import Logger from "../log";
-import { CustomSample } from "./soundboard/sample/CustomSample";
-import { collectionStats } from "../modules/database/models";
-import { METRICS_PORT } from "../config";
-import { logErr } from "../util/util";
-import { lastItem } from "../util/array";
+import * as database from "../../modules/database";
+import { StatsSchema } from "../../modules/database/schemas/StatsSchema";
+import Logger from "../../log";
+import { CustomSample } from "../soundboard/CustomSample";
+import * as models from "../../modules/database/models";
+import { METRICS_PORT } from "../../config";
+import { logErr } from "../../util/util";
+import { lastItem } from "../../util/array";
+import { onExit } from "../../util/exit";
 
 const log = Logger.child({ label: "Core => StatsCollectorManager" });
 
@@ -21,9 +23,13 @@ const server = http.createServer((req, res) => {
     res.writeHead(200);
     res.end("ok");
 });
-server.listen(METRICS_PORT);
 
-export class StatsCollectorManager extends EventEmitter {
+onExit(async () => {
+    log.debug("Closing health monitor server...");
+    await promisify(server.close)();
+});
+
+export default class StatsCollectorManager extends EventEmitter {
     private job = new CronJob({
         cronTime: "0 */10 * * * *",
         onTick: () => this.collect().catch(error => log.error({ error: logErr(error) })),
@@ -42,6 +48,12 @@ export class StatsCollectorManager extends EventEmitter {
 
         database.onConnect(() => this.job.start());
     }
+
+    public static listen(): void {
+        server.listen(METRICS_PORT);
+    }
+
+    // /////////////////
 
     public incPlayedSamples(inc: number = 1): void {
         this.played_samples += inc;
@@ -107,14 +119,14 @@ export class StatsCollectorManager extends EventEmitter {
 
         this.emit("collect", doc);
 
-        await collectionStats().insertOne(
+        await models.stats.insertOne(
             doc,
         );
     }
 
     public getStats(timespan: number | Date): Promise<StatsSchema[]> {
         const now = new Date();
-        return collectionStats()
+        return models.stats
             .find({
                 _id: {
                     $lte: now,

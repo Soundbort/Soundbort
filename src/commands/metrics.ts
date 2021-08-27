@@ -9,24 +9,54 @@ import { BOT_NAME, VERSION } from "../config";
 import { TopCommand } from "../modules/commands/TopCommand";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../util/util";
 import { CmdInstallerArgs } from "../util/types";
+import { createStringOption } from "../modules/commands/options/createOption";
+import { createChoice } from "../modules/commands/options/createChoice";
 import type { ChartOptionsData } from "../modules/charts/line";
 import charts from "../modules/charts";
 import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../const";
+
+enum TimeWindowChoices {
+    Day = "24 hours",
+    ThreeDay = "3 days",
+    Week = "week",
+    Month = "4 weeks",
+}
 
 export function install({ stats_collector }: CmdInstallerArgs): void {
     InteractionRegistry.addCommand(new TopCommand({
         name: "metrics",
         description: "Display bot metrics and health statistics for anyone interested.",
+        options: [
+            createStringOption("time_window", "The time window that's analyzed.", false, [
+                createChoice("Last 24 hours", TimeWindowChoices.Day),
+                createChoice("Last 3 days", TimeWindowChoices.ThreeDay),
+                createChoice("Last week", TimeWindowChoices.Week),
+                createChoice("Last 4 weeks", TimeWindowChoices.Month),
+            ]),
+        ],
+        target: {
+            global: true,
+            guildHidden: false,
+        },
         async func(interaction) {
             await interaction.deferReply();
 
             const embeds: Discord.MessageEmbed[] = [];
             const files: Discord.MessageAttachment[] = [];
 
-            const stats = await stats_collector.getStats(24 * 60 * 60 * 1000);
+            const time_window_name = interaction.options.getString("time_window", false) as (TimeWindowChoices | null) || TimeWindowChoices.Day;
+
+            let time_window: number;
+            switch (time_window_name) {
+                case TimeWindowChoices.Day: time_window = 24 * 60 * 60 * 1000; break;
+                case TimeWindowChoices.ThreeDay: time_window = 3 * 24 * 60 * 60 * 1000; break;
+                case TimeWindowChoices.Week: time_window = 7 * 24 * 60 * 60 * 1000; break;
+                case TimeWindowChoices.Month: time_window = 4 * 7 * 24 * 60 * 60 * 1000; break;
+            }
+            const stats = await stats_collector.getStats(time_window);
 
             if (stats.length === 0) {
-                return await interaction.reply(replyEmbedEphemeral("The bot hasn't collected any statistics in the last 24 hours.", EmbedType.Warning));
+                return replyEmbedEphemeral(`The bot hasn't collected any statistics in the last ${time_window_name}.`, EmbedType.Warning);
             }
 
             const aggregation = stats_collector.aggregateStatsArray(stats);
@@ -121,7 +151,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
             embeds.push(createEmbed(undefined, EmbedType.Warning)
                 .setTitle("Connected Voice Channels")
                 .addField("Active", aggregation.voice_connections.toLocaleString("en"), true)
-                .addField("Top 24h", top_voice_connections.toLocaleString("en"), true)
+                .addField(`Top ${time_window_name}`, top_voice_connections.toLocaleString("en"), true)
                 .setImage("attachment://voice_connections.png"));
 
             // INTERACTIONS
@@ -164,7 +194,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
                 .join("\n");
 
             embeds.push(createEmbed(undefined, EmbedType.Error)
-                .setTitle("Interactions in the last 24 hours")
+                .setTitle(`Interactions in the last ${time_window_name}`)
                 .setImage("attachment://samples_played.png")
                 .addField("Commands used", commands_used || "none", true)
                 .addField("Buttons used", buttons_used || "none", true)
@@ -193,7 +223,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
             embeds.push(createEmbed(undefined, EmbedType.Success)
                 .setTitle("Ping")
                 .addField("Last ping", interaction.client.ws.ping.toLocaleString("en") + " ms", true)
-                .addField("Average ping 24h", Math.round(aggregation.ping).toLocaleString("en") + " ms", true)
+                .addField(`Average ping last ${time_window_name}`, Math.round(aggregation.ping).toLocaleString("en") + " ms", true)
                 .setImage("attachment://ping.png"));
 
             return { embeds, files };

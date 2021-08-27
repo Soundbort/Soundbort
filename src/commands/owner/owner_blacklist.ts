@@ -1,7 +1,7 @@
 import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
-import { collectionBlacklistUser } from "../../modules/database/models";
+import * as models from "../../modules/database/models";
 import { EmbedType, isOwner, replyEmbedEphemeral } from "../../util/util";
 
 const blacklist_add_cmd = new Command({
@@ -12,18 +12,18 @@ const blacklist_add_cmd = new Command({
     ],
     async func(interaction) {
         if (!isOwner(interaction.user.id)) {
-            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error));
+            return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
         }
 
-        const userId = interaction.options.getString("user-id", true);
+        const userId = interaction.options.getString("user-id", true).trim();
 
-        await collectionBlacklistUser().updateOne(
+        await models.blacklist_user.updateOne(
             { userId: userId },
             { $set: { userId: userId } },
             { upsert: true },
         );
 
-        await interaction.reply(replyEmbedEphemeral("Blacklisted user.", EmbedType.Success));
+        return replyEmbedEphemeral("Blacklisted user.", EmbedType.Success);
     },
 });
 
@@ -35,16 +35,16 @@ const blacklist_remove_cmd = new Command({
     ],
     async func(interaction) {
         if (!isOwner(interaction.user.id)) {
-            return await interaction.reply(replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error));
+            return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
         }
 
-        const userId = interaction.options.getString("user-id", true);
+        const userId = interaction.options.getString("user-id", true).trim();
 
-        await collectionBlacklistUser().deleteOne(
+        await models.blacklist_user.deleteOne(
             { userId: userId },
         );
 
-        await interaction.reply(replyEmbedEphemeral("Removed user from blacklist.", EmbedType.Success));
+        return replyEmbedEphemeral("Removed user from blacklist.", EmbedType.Success);
     },
 });
 

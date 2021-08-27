@@ -2,34 +2,30 @@ import path from "path";
 import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 import fs from "fs-extra";
-
-import Logger from "../../../log";
-import { collectionCustomSample } from "../../../modules/database/models";
-import database from "../../../modules/database";
-import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../../modules/database/schemas/SoundboardCustomSampleSchema";
-import Cache from "../../../modules/Cache";
-import { findAndRemove } from "../../../util/array";
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
-import { createEmbed } from "../../../util/util";
 import moment from "moment";
-import InteractionRegistry from "../../InteractionRegistry";
-import { BUTTON_TYPES } from "../../../const";
+
+import Logger from "../../log";
+import { BUTTON_TYPES } from "../../const";
+import { createEmbed, logErr } from "../../util/util";
+import { GenericListener, TypedEventEmitter } from "../../util/emitter";
+
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+
+import * as database from "../../modules/database";
+import * as models from "../../modules/database/models";
+import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema";
+import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema";
+import { VotesSchema } from "../../modules/database/schemas/VotesSchema";
+
+import InteractionRegistry from "../InteractionRegistry";
+import WebhookManager from "../managers/WebhookManager";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 
-const cache = new Cache<string, CustomSample>({ maxSize: 1000 });
-
 database.onConnect(async () => {
-    await collectionCustomSample().createIndex({ id: 1 }, { unique: true });
+    await models.custom_sample.collection.createIndex({ id: 1 }, { unique: true });
+    await models.sample_slots.createIndex({ ownerId: 1 }, { unique: true });
 });
-
-export interface IdResolvable { id: Discord.Snowflake }
-
-export interface AvailableCustomSamplesResponse {
-    total: number;
-    user: CustomSample[];
-    guild: CustomSample[];
-}
 
 export class CustomSample extends AbstractSample implements SoundboardCustomSampleSchema {
     readonly importable = true;
@@ -62,7 +58,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         const now = new Date();
 
-        await collectionCustomSample().updateOne(
+        await models.custom_sample.updateOne(
             { id: this.id },
             { $inc: { plays: 1 }, $set: { last_played_at: now } },
         );
@@ -153,46 +149,43 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
 
-    static async count(): Promise<number> {
-        return collectionCustomSample().estimatedDocumentCount();
+    static count(): Promise<number> {
+        return models.custom_sample.estimatedCount();
     }
 
-    static async findById(id: string): Promise<CustomSample | undefined> {
-        if (cache.has(id)) return cache.get(id);
+    static async countUserSamples(userId: Discord.Snowflake): Promise<number> {
+        return await models.custom_sample.count({
+            userIds: userId,
+        });
+    }
+    static async countGuildSamples(guildId: Discord.Snowflake): Promise<number> {
+        return await models.custom_sample.count({
+            guildIds: guildId,
+        });
+    }
 
-        const doc = await collectionCustomSample().findOne({ id });
+    // FIND SAMPLES
+
+    static async findById(id: string): Promise<CustomSample | undefined> {
+        const doc = await models.custom_sample.findOne({ id });
         if (!doc) return;
 
-        const sample = new CustomSample(doc);
-        cache.set(sample.id, sample);
-
-        return sample;
+        return new CustomSample(doc);
     }
 
     static async findByNameNoOrder(guildId: Discord.Snowflake | null, userId: Discord.Snowflake, name: string): Promise<CustomSample | undefined> {
         if (!guildId) return await CustomSample.findSampleUser(userId, name);
 
-        const cached = cache.find(item => {
-            return (item.userIds.includes(userId) || item.guildIds.includes(guildId)) &&
-                   item.name === name;
+        const doc = await models.custom_sample.findOne({
+            $or: [
+                { userIds: userId },
+                { guildIds: guildId },
+            ],
+            name: name,
         });
-        if (cached) return cached;
-
-        const doc = await collectionCustomSample().findOne(
-            {
-                $or: [
-                    { userIds: userId },
-                    { guildIds: guildId },
-                ],
-                name: name,
-            },
-        );
         if (!doc) return;
 
-        const sample = new CustomSample(doc);
-        cache.set(sample.id, sample);
-
-        return sample;
+        return new CustomSample(doc);
     }
 
     /**
@@ -210,142 +203,75 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     }
 
     static async findSampleUser(userId: Discord.Snowflake, name: string): Promise<CustomSample | undefined> {
-        const cached = cache.find(item => {
-            return item.userIds.includes(userId) &&
-                   item.name === name;
-        });
-        if (cached) return cached;
-
-        const doc = await collectionCustomSample().findOne({
+        const doc = await models.custom_sample.findOne({
             userIds: userId,
             name: name,
         });
         if (!doc) return;
 
-        const sample = new CustomSample(doc);
-        cache.set(sample.id, sample);
-
-        return sample;
+        return new CustomSample(doc);
     }
 
     static async findSampleGuild(guildId: Discord.Snowflake, name: string): Promise<CustomSample | undefined> {
-        const cached = cache.find(item => {
-            return item.guildIds.includes(guildId) &&
-                   item.name === name;
-        });
-        if (cached) return cached;
-
-        const doc = await collectionCustomSample().findOne({
+        const doc = await models.custom_sample.findOne({
             guildIds: guildId,
             name: name,
         });
         if (!doc) return;
 
-        const sample = new CustomSample(doc);
-        cache.set(sample.id, sample);
-
-        return sample;
-    }
-
-    static async countUserSamples(userId: Discord.Snowflake): Promise<number> {
-        return await collectionCustomSample().countDocuments({
-            userIds: userId,
-        });
-    }
-    static async countGuildSamples(guildId: Discord.Snowflake): Promise<number> {
-        return await collectionCustomSample().countDocuments({
-            guildIds: guildId,
-        });
+        return new CustomSample(doc);
     }
 
     static async getUserSamples(userId: Discord.Snowflake): Promise<CustomSample[]> {
-        const docs = await collectionCustomSample()
-            .find({ userIds: userId })
-            .toArray();
+        const docs = await models.custom_sample.findMany(
+            { userIds: userId },
+        );
 
         const samples: CustomSample[] = [];
 
         for (const doc of docs) {
-            const sample = new CustomSample(doc);
-
-            if (sample.isInUsers(userId)) {
-                samples.push(sample);
-            }
-
-            cache.set(sample.id, sample);
+            samples.push(new CustomSample(doc));
         }
 
         return samples;
     }
 
     static async getGuildSamples(guildId: Discord.Snowflake): Promise<CustomSample[]> {
-        const docs = await collectionCustomSample()
-            .find({ guildIds: guildId })
-            .toArray();
+        const docs = await models.custom_sample.findMany(
+            { guildIds: guildId },
+        );
 
         const samples: CustomSample[] = [];
 
         for (const doc of docs) {
-            const sample = new CustomSample(doc);
-
-            if (sample.isInGuilds(guildId)) {
-                samples.push(sample);
-            }
-
-            cache.set(sample.id, sample);
+            samples.push(new CustomSample(doc));
         }
 
         return samples;
     }
 
+    // CREATE / ADD SAMPLES
+
     static async create(doc: SoundboardCustomSampleSchema): Promise<CustomSample> {
-        await collectionCustomSample().insertOne(doc);
+        const new_sample = await models.custom_sample.insertOne(doc);
 
-        const sample = new CustomSample(doc);
-        cache.set(sample.id, sample);
-
-        return sample;
-    }
-
-    /**
-     * Transfer a custom sample to another user or another guild
-     */
-    static async transfer(user_guild_to: Discord.User | Discord.Guild, sample: CustomSample): Promise<CustomSample | undefined> {
-        const result = await collectionCustomSample().findOneAndUpdate(
-            { id: sample.id },
-            {
-                $set: { creatorId: user_guild_to.id },
-                $addToSet: user_guild_to instanceof Discord.User
-                    ? { userIds: user_guild_to.id }
-                    : { guildIds: user_guild_to.id },
-            },
-            { returnDocument: "after" },
-        );
-
-        if (result.value) {
-            const sample = new CustomSample(result.value);
-            cache.set(sample.id, sample);
-            return sample;
-        }
+        return new CustomSample(new_sample);
     }
 
     static async import(user_guild_to: Discord.User | Discord.Guild, sample: CustomSample): Promise<CustomSample | undefined> {
-        const result = await collectionCustomSample().findOneAndUpdate(
+        const new_sample = await models.custom_sample.updateOne(
             { id: sample.id },
             {
                 $addToSet: user_guild_to instanceof Discord.User
                     ? { userIds: user_guild_to.id }
                     : { guildIds: user_guild_to.id },
             },
-            { returnDocument: "after" },
         );
 
-        if (result.value) {
-            const sample = new CustomSample(result.value);
-            cache.set(sample.id, sample);
-            return sample;
-        }
+        if (new_sample) return new CustomSample(new_sample);
     }
+
+    // REMOVE SAMPLE
 
     /**
      * Deletes a custom sample from a soundboard
@@ -354,15 +280,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         if (sample.creatorId === user_guild_id) {
             await this.removeCompletely(sample);
         } else {
-            const cached = cache.get(sample.id);
-            if (cached) {
-                // can savely remove the id from both owners and guilds, because ids are unique
-                findAndRemove(cached.userIds, user_guild_id);
-                findAndRemove(cached.guildIds, user_guild_id);
-            }
-
-            // can savely remove the id from both owners and guilds, because ids are unique
-            await collectionCustomSample().updateOne(
+            await models.custom_sample.updateOne(
                 { id: sample.id },
                 { $pull: { userIds: user_guild_id, guildIds: user_guild_id } },
             );
@@ -373,16 +291,82 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
      * Deletes a custom sample from cache, database and file system
      */
     static async removeCompletely(sample: CustomSample): Promise<void> {
-        cache.delete(sample.id);
-        await collectionCustomSample().deleteOne({ id: sample.id });
+        await models.custom_sample.deleteOne({ id: sample.id });
         await fs.unlink(sample.file);
     }
+
+    // SLOTS
+
+    static MIN_SLOTS = 10;
+    static MAX_SLOTS = 25;
+
+    static emitter = new TypedEventEmitter<{
+        slotAdd: GenericListener<[slot: SingleSoundboardSlot, new: number, old: number]>
+    }>();
+
+    static async addSlot(vote: VotesSchema): Promise<boolean> {
+        const slotType = vote.query.guildId ? "server" : "user";
+        const ownerId = vote.query.guildId || vote.query.userId || vote.fromUserId;
+
+        const curr_slots = await this.countSlots(ownerId);
+        if (curr_slots >= this.MAX_SLOTS) {
+            return false;
+        }
+
+        // clamp to MAX_SLOTS
+        const votes = Math.min(this.MAX_SLOTS, curr_slots + vote.votes) - curr_slots;
+
+        const slot_received: SoundboardSlot = {
+            ts: vote.ts,
+            ref: vote.query.ref,
+            fromUserId: vote.fromUserId,
+            count: votes,
+        };
+
+        await models.sample_slots.updateOne(
+            { ownerId: ownerId },
+            { $push: { slots: slot_received }, $setOnInsert: { slotType } },
+            { upsert: true },
+        );
+
+        const single_slot: SingleSoundboardSlot = {
+            slotType,
+            ownerId,
+            ...slot_received,
+        };
+
+        log.debug(`Added ${slot_received.count} slots to ${slotType} ${ownerId} from ${vote.fromUserId}`);
+
+        this.emitter.emit("slotAdd", single_slot, curr_slots + votes, curr_slots);
+
+        return true;
+    }
+
+    static async countSlots(ownerId: string): Promise<number> {
+        const add_slots = await models.sample_slots
+            .aggregate()
+            .match({ ownerId })
+            .project<{ count: number }>({ count: { $sum: "$slots.count" }, _id: 0 })
+            .toArray();
+
+        return (add_slots[0]?.count ?? 0) + this.MIN_SLOTS;
+    }
+
+    // UTILITY
 
     static async ensureDir(): Promise<void> {
         await fs.ensureDir(AbstractSample.BASE, 0o0777);
     }
 
     static generateFilePath(id: string): string {
-        return path.join(CustomSample.BASE, id + ".ogg");
+        return path.join(CustomSample.BASE, id + CustomSample.EXT);
     }
 }
+
+WebhookManager.on("vote", async vote => {
+    try {
+        await CustomSample.addSlot(vote);
+    } catch (error) {
+        log.error({ error: logErr(error) });
+    }
+});

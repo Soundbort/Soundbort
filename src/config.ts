@@ -41,10 +41,11 @@ const _ENV = (node_env: string | undefined): EnvironmentStages => {
     }
     throw new Error("NODE_ENV must be of \"development\", \"staging\" or \"production\"");
 };
-
 export const ENVIRONMENT = _ENV(process.env.NODE_ENV);
 
 export const TOP_GG_TOKEN = process.env.SOUNDBORT_TOP_GG_TOKEN;
+
+export const TOP_GG_WEBHOOK_TOKEN = process.env.SOUNDBORT_TOP_GG_WEBHOOK_TOKEN;
 
 // ////////////// INFO //////////////
 
@@ -58,6 +59,7 @@ export const VERSION = package_file.version as string + (
 
 export const PROJECT_ROOT = path.resolve(__dirname, "..");
 
-export const DATA_BASE = path.resolve(PROJECT_ROOT, "data");
+export const DATA_BASE_PATH = path.resolve(PROJECT_ROOT, "data");
 
 export const METRICS_PORT = 6969;
+export const WEBHOOK_PORT = 8080;

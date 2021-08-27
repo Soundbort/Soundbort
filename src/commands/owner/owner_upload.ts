@@ -14,7 +14,7 @@ export default new CommandGroup({
                 createStringOption("name", "Name for the sample", true),
             ],
             async func(interaction) {
-                const name = interaction.options.getString("name", true);
+                const name = interaction.options.getString("name", true).trim();
 
                 await upload(interaction, name, "standard");
             },

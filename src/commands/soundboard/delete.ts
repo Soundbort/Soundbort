@@ -6,8 +6,8 @@ import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createEmbed, doNothing, EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 
-import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import GuildConfigManager from "../../core/GuildConfigManager";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import GuildConfigManager from "../../core/managers/GuildConfigManager";
 import SampleID from "../../core/soundboard/SampleID";
 import { BUTTON_TYPES } from "../../const";
 
@@ -16,11 +16,11 @@ async function removeServer(interaction: Discord.CommandInteraction, name: strin
     const guildId = interaction.guildId;
 
     if (!guildId || !interaction.guild) {
-        return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
+        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
     }
 
     if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
-        return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
+        return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
     }
 
     let sample = await CustomSample.findSampleGuild(guildId, name);
@@ -33,12 +33,12 @@ async function removeServer(interaction: Discord.CommandInteraction, name: strin
     }
 
     if (!sample) {
-        return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
+        return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
     }
 
     await CustomSample.remove(guildId, sample);
 
-    return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success));
+    return replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success);
 }
 
 async function removeUser(interaction: Discord.CommandInteraction, name: string) {
@@ -54,12 +54,12 @@ async function removeUser(interaction: Discord.CommandInteraction, name: string)
     }
 
     if (!sample) {
-        return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
+        return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
     }
 
     await CustomSample.remove(userId, sample);
 
-    return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
+    return replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success);
 }
 
 InteractionRegistry.addCommand(new TopCommand({
@@ -73,11 +73,11 @@ InteractionRegistry.addCommand(new TopCommand({
         ]),
     ],
     async func(interaction) {
-        const name = interaction.options.getString("sample", true);
+        const name = interaction.options.getString("sample", true).trim();
         const scope = interaction.options.getString("from", false) as ("user" | "server" | null) || "user";
 
-        if (scope === "user") await removeUser(interaction, name);
-        else await removeServer(interaction, name);
+        if (scope === "user") return await removeUser(interaction, name);
+        return await removeServer(interaction, name);
     },
 }));
 
@@ -97,7 +97,7 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction
     const hasInGuild = interaction.guild && await GuildConfigManager.isModerator(interaction.guild, userId) && sample.isInGuilds(guildId);
 
     if (!hasInUser && !hasInGuild) {
-        return await interaction.reply(replyEmbedEphemeral("You can't delete this sample from your personal or this server's soundboard.", EmbedType.Info));
+        return replyEmbedEphemeral("You can't delete this sample from your personal or this server's soundboard.", EmbedType.Info);
     }
 
     const buttons = [];
@@ -167,12 +167,12 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_USER }, async (interactio
 
     const userId = interaction.user.id;
     if (!sample.isInUsers(userId)) {
-        return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your user soundboard.", EmbedType.Info));
+        return replyEmbedEphemeral("You don't have this sample in your user soundboard.", EmbedType.Info);
     }
 
     await CustomSample.remove(userId, sample);
 
-    return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success));
+    return replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success);
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_SERVER }, async (interaction, decoded) => {
@@ -184,23 +184,23 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_SERVER }, async (interact
     const guildId = interaction.guildId;
 
     if (!interaction.guild) {
-        return await interaction.reply(replyEmbedEphemeral("You're not in a server.", EmbedType.Error));
+        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
     }
 
     if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
-        return await interaction.reply(replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error));
+        return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
     }
 
     const sample = await CustomSample.findById(id);
     if (!sample) return;
 
     if (!sample.isInGuilds(guildId)) {
-        return await interaction.reply(replyEmbedEphemeral("You don't have this sample in your server soundboard.", EmbedType.Info));
+        return replyEmbedEphemeral("You don't have this sample in your server soundboard.", EmbedType.Info);
     }
 
     await CustomSample.remove(guildId, sample);
 
-    return await interaction.reply(replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success));
+    return replyEmbed(`Removed ${sample.name} (${sample.id}) from server soundboard!`, EmbedType.Success);
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ABORT }, async (interaction, decoded) => {
@@ -208,8 +208,8 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ABORT }, async (interacti
 
     const sample = await CustomSample.findById(id);
     if (!sample) {
-        return await interaction.reply(replyEmbed("Aborted deletion of sample.", EmbedType.Info));
+        return replyEmbed("Aborted deletion of sample.", EmbedType.Info);
     }
 
-    return await interaction.reply(replyEmbed(`Aborted deletion of sample \`${sample.name}\`.`, EmbedType.Info));
+    return replyEmbed(`Aborted deletion of sample \`${sample.name}\`.`, EmbedType.Info);
 });

@@ -8,16 +8,16 @@ import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/util";
 InteractionRegistry.addCommand(new TopCommand({
     name: "stop",
     description: "Stops all currently playing audio.",
-    async func(interaction: Discord.CommandInteraction) {
+    func(interaction: Discord.CommandInteraction) {
         if (!interaction.inGuild() || !interaction.guild) {
-            return await interaction.reply(replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error));
+            return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);
         }
 
         const subscription = AudioManager.get(interaction.guildId);
-        if (!subscription) return await interaction.reply(replyEmbedEphemeral("I am not in a voice channel.", EmbedType.Info));
+        if (!subscription) return replyEmbedEphemeral("I am not in a voice channel.", EmbedType.Info);
 
         subscription.stop();
 
-        await interaction.reply(replyEmbed("👍 Done did"));
+        return replyEmbed("👍 Done did");
     },
 }));

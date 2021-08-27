@@ -6,7 +6,7 @@ export interface KeyValue<V> {
 
 export interface CmdInstallerArgs {
     client: Discord.Client<true>;
-    stats_collector: import("../core/StatsCollectorManager").StatsCollectorManager;
+    stats_collector: import("../core/managers/StatsCollectorManager").default;
 }
 
 export type CmdInstallerFileFunc = (opts: CmdInstallerArgs) => (Promise<void> | void);

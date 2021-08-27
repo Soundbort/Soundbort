@@ -8,20 +8,20 @@ import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
 
 import SampleID from "../../core/soundboard/SampleID";
-import { CustomSample } from "../../core/soundboard/sample/CustomSample";
-import { PredefinedSample } from "../../core/soundboard/sample/PredefinedSample";
-import GuildConfigManager from "../../core/GuildConfigManager";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { StandardSample } from "../../core/soundboard/StandardSample";
+import GuildConfigManager from "../../core/managers/GuildConfigManager";
 
 async function findSampleByScope(
     guildId: Discord.Snowflake | null,
     userId: Discord.Snowflake,
     name: string,
     scope: "user" | "server" | null,
-): Promise<CustomSample | PredefinedSample | undefined> {
-    let sample: CustomSample | PredefinedSample | undefined;
+): Promise<CustomSample | StandardSample | undefined> {
+    let sample: CustomSample | StandardSample | undefined;
     if (!scope) {
         sample = await CustomSample.findByName(guildId, userId, name) ||
-                 await PredefinedSample.findByName(name);
+                 await StandardSample.findByName(name);
     } else if (scope === "user") {
         sample = await CustomSample.findSampleUser(userId, name);
     } else if (guildId) {
@@ -46,12 +46,12 @@ InteractionRegistry.addCommand(new TopCommand({
         ]),
     ],
     async func(interaction) {
-        const name = interaction.options.getString("sample", true);
+        const name = interaction.options.getString("sample", true).trim();
         const scope = interaction.options.getString("from", false) as ("user" | "server" | null);
 
         const sample = await findSampleByScope(interaction.guildId, interaction.user.id, name, scope);
         if (!sample) {
-            return await interaction.reply(replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error));
+            return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
         }
 
         const show_delete = sample instanceof CustomSample &&
@@ -65,6 +65,6 @@ InteractionRegistry.addCommand(new TopCommand({
                 await GuildConfigManager.isModerator(interaction.guild, interaction.user.id))
             ));
 
-        await interaction.reply(sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete }));
+        return sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
     },
 }));

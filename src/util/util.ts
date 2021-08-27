@@ -70,7 +70,9 @@ export async function fetchMember(
     }
 }
 
-export function logErr(error: Error): Error {
+type _any = any;
+
+export function logErr(error: _any): Error {
     const err = {
         ...error,
         message: error.message,
