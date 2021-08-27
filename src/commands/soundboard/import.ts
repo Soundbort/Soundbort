@@ -8,7 +8,7 @@ import { EmbedType, replyEmbedEphemeral } from "../../util/util";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import GuildConfigManager from "../../core/managers/GuildConfigManager";
 import { BUTTON_TYPES } from "../../const";
-import { MAX_SAMPLES, UploadErrors } from "../../core/soundboard/methods/upload";
+import { UploadErrors } from "../../core/soundboard/methods/upload";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
     const user = interaction.user;
@@ -16,8 +16,9 @@ async function importUser(interaction: Discord.ButtonInteraction | Discord.Comma
     // is soundboard full?
     const sample_count = await CustomSample.countUserSamples(user.id);
 
-    if (sample_count >= MAX_SAMPLES) {
-        return replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error);
+    const slot_count = await CustomSample.countSlots(user.id);
+    if (sample_count >= slot_count) {
+        return replyEmbedEphemeral(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")), EmbedType.Error);
     }
 
     if (await CustomSample.findSampleUser(user.id, sample.name)) {
@@ -45,8 +46,9 @@ async function importServer(interaction: Discord.ButtonInteraction | Discord.Com
     // is soundboard full?
     const sample_count = await CustomSample.countGuildSamples(guildId);
 
-    if (sample_count >= MAX_SAMPLES) {
-        return replyEmbedEphemeral(UploadErrors.TooManySamples, EmbedType.Error);
+    const slot_count = await CustomSample.countSlots(guild.id);
+    if (sample_count >= slot_count) {
+        return replyEmbedEphemeral(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")), EmbedType.Error);
     }
 
     if (await CustomSample.findSampleGuild(guildId, sample.name)) {

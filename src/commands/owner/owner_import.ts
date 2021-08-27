@@ -3,6 +3,7 @@ import { EmbedType, isOwner, replyEmbedEphemeral } from "../../util/util";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import { Command } from "../../modules/commands/Command";
+import { UploadErrors } from "../../core/soundboard/methods/upload";
 
 export default new Command({
     name: "import",
@@ -15,6 +16,11 @@ export default new Command({
 
         if (!isOwner(interaction.user.id)) {
             return replyEmbedEphemeral("You're not a bot developer, you can't add samples to standard soundboard.", EmbedType.Error);
+        }
+
+        const sample_count = await StandardSample.countSamples();
+        if (sample_count >= StandardSample.MAX_SLOTS) {
+            return replyEmbedEphemeral(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", StandardSample.MAX_SLOTS.toLocaleString("en")), EmbedType.Error);
         }
 
         const sample = await CustomSample.findById(id);

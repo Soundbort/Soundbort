@@ -13,13 +13,9 @@ const log = Logger.child({ label: "database" });
 let client: MongoClient | undefined;
 let database: Db | undefined;
 
-export async function close(): Promise<void> {
-    await client?.close();
-}
-
 onExit(async () => {
     log.debug("Closing MongoDb connection...");
-    await close();
+    await client?.close();
     log.debug("MongoDb connection closed.");
 });
 
