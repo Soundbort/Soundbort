@@ -20,7 +20,6 @@
         <img src="https://img.shields.io/github/issues/LonelessCodes/Soundbort" alt="GitHub issues">
     </a>
   </p>
-  <br />
 </div>
 
 ## Using the Official Soundbort
