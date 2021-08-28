@@ -1,17 +1,33 @@
-# Soundbort
-
-![Soundbort Banner](assets/readme_banner.jpg)
-
-<div>
-
-<img src="https://top.gg/api/widget/868296331234521099.svg" alt="Bot stats from top.gg" width="250" style="float:right; margin-left: .5rem" />
+<div align="center">
+  <br />
+  <p>
+    <a href="https://soundbort.loneless.art"><img src="assets/readme_banner.jpg" alt="Soundbort banner" width="800" /></a>
+  </p>
+  <p>
+    <a href="https://discord.gg/94MaVKtTPq">
+        <img src="https://img.shields.io/discord/875115596038176830?color=5865F2&logo=discord&logoColor=white" alt="Discord support server" />
+    </a>
+    <a href="https://top.gg/bot/868296331234521099">
+        <img src="https://top.gg/api/widget/status/868296331234521099.svg" alt="Soundbort status" />
+    </a>
+    <a href="https://top.gg/bot/868296331234521099">
+        <img src="https://top.gg/api/widget/servers/868296331234521099.svg" alt="Soundbort servers" />
+    </a>
+    <a href="https://top.gg/bot/868296331234521099/vote">
+        <img src="https://top.gg/api/widget/upvotes/868296331234521099.svg" alt="Soundbort upvotes" />
+    </a>
+    <a href="https://github.com/LonelessCodes/Soundbort/issues">
+        <img src="https://img.shields.io/github/issues/LonelessCodes/Soundbort" alt="GitHub issues">
+    </a>
+  </p>
+  <br />
+</div>
 
 ## Using the Official Soundbort
 
 ***[Add Soundbort to your server now](https://discord.com/api/oauth2/authorize?client_id=868296331234521099&permissions=2150943808&scope=applications.commands%20bot) and enjoy it's full set of features with low latency.***
 
 ##### *[Add Soundbort Staging to your server](https://discord.com/api/oauth2/authorize?client_id=869715767497740378&permissions=2150943808&scope=applications.commands%20bot) if you want the newest of (potentially unstable) features and help out with development.*
-</div>
 
 ---
 
