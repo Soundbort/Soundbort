@@ -1,0 +1,3 @@
+[submodule "assets/locales"]
+	path = assets/locales
+	url = https://github.com/Soundbort/Translations.git
