@@ -6,6 +6,8 @@ LABEL maintainer="Christian Schäfer <lonelessart@gmail.com> (@lonelesscodes)"
 RUN apt update \
     && apt install -y \
         build-essential \
+        # Needed to build sodium
+        libtool \
         # Install node-canvas dependencies, to build on unsupported system
         libcairo2-dev \
         libpango1.0-dev \
