@@ -10,8 +10,7 @@ RUN apt update \
         libpango1.0-dev \
         libjpeg-dev \
         libgif-dev \
-        librsvg2-dev \
-        ffmpeg
+        librsvg2-dev
 
 RUN mkdir -p /app
 WORKDIR /app
