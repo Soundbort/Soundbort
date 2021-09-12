@@ -6,6 +6,8 @@ import { logErr } from "../../util/util";
 
 const log = Logger.child({ label: "Audio" });
 
+log.debug(Voice.generateDependencyReport());
+
 export enum JoinFailureTypes {
     FailedNotInVoiceChannel,
     FailedTryAgain,
