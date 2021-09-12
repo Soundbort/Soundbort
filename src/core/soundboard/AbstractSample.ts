@@ -5,7 +5,7 @@ import Discord from "discord.js";
 
 import { DATA_BASE_PATH } from "../../config";
 import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
-import { EmbedType } from "../../util/util";
+import { EmbedType } from "../../util/builders/embed";
 
 const BASE = path.join(DATA_BASE_PATH, "soundboard");
 fs.mkdirpSync(BASE);

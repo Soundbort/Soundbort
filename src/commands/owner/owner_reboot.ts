@@ -1,6 +1,7 @@
 import { Command } from "../../modules/commands/Command";
 import { exit } from "../../util/exit";
-import { EmbedType, isOwner, replyEmbedEphemeral } from "../../util/util";
+import { isOwner } from "../../util/util";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 export default new Command({
     name: "reboot",

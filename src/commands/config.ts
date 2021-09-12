@@ -3,7 +3,7 @@ import { createRoleOption } from "../modules/commands/options/createOption";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
 import { BOT_NAME } from "../config";
-import { EmbedType, replyEmbed } from "../util/util";
+import { EmbedType, replyEmbed } from "../util/builders/embed";
 import GuildConfigManager from "../core/managers/GuildConfigManager";
 
 const set_admin_role_cmd = new Command({

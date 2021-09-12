@@ -2,7 +2,8 @@ import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import * as models from "../../modules/database/models";
-import { EmbedType, isOwner, replyEmbedEphemeral } from "../../util/util";
+import { isOwner } from "../../util/util";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 const blacklist_add_cmd = new Command({
     name: "add",

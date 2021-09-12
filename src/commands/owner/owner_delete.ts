@@ -1,7 +1,8 @@
 import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
-import { EmbedType, isOwner, replyEmbed, replyEmbedEphemeral } from "../../util/util";
+import { isOwner } from "../../util/util";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";

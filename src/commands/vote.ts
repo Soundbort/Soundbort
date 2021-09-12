@@ -7,7 +7,7 @@ import { CustomSample } from "../core/soundboard/CustomSample";
 import { TopCommand } from "../modules/commands/TopCommand";
 import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema";
 import { CmdInstallerArgs } from "../util/types";
-import { createEmbed, replyEmbed } from "../util/util";
+import { createEmbed, replyEmbed } from "../util/builders/embed";
 import * as models from "../modules/database/models";
 import * as database from "../modules/database";
 

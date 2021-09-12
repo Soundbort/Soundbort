@@ -5,7 +5,8 @@ import Discord from "discord.js";
 import moment from "moment";
 
 import InteractionRegistry from "../InteractionRegistry";
-import { createEmbed } from "../../util/util";
+import { createEmbed } from "../../util/builders/embed";
+
 import { BUTTON_TYPES } from "../../const";
 import Logger from "../../log";
 import * as database from "../../modules/database";

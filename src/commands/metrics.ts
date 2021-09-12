@@ -7,7 +7,7 @@ import { time } from "@discordjs/builders";
 import InteractionRegistry from "../core/InteractionRegistry";
 import { BOT_NAME, VERSION } from "../config";
 import { TopCommand } from "../modules/commands/TopCommand";
-import { createEmbed, EmbedType, replyEmbedEphemeral } from "../util/util";
+import { createEmbed, EmbedType, replyEmbedEphemeral } from "../util/builders/embed";
 import { CmdInstallerArgs } from "../util/types";
 import { createStringOption } from "../modules/commands/options/createOption";
 import { createChoice } from "../modules/commands/options/createChoice";

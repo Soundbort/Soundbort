@@ -13,7 +13,8 @@ import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 import SampleID from "../SampleID";
 import { CustomSample } from "../CustomSample";
 import { StandardSample } from "../StandardSample";
-import { EmbedType, isOwner, logErr, replyEmbed } from "../../../util/util";
+import { isOwner, logErr } from "../../../util/util";
+import { EmbedType, replyEmbed } from "../../../util/builders/embed";
 import GuildConfigManager from "../../managers/GuildConfigManager";
 
 const ffprobe = promisify(_ffprobe) as (file: string) => Promise<FfprobeData>;

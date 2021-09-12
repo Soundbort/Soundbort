@@ -6,7 +6,8 @@ import moment from "moment";
 
 import Logger from "../../log";
 import { BUTTON_TYPES } from "../../const";
-import { createEmbed, logErr } from "../../util/util";
+import { logErr } from "../../util/util";
+import { createEmbed } from "../../util/builders/embed";
 import { GenericListener, TypedEventEmitter } from "../../util/emitter";
 
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";

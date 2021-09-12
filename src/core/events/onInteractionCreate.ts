@@ -2,11 +2,12 @@ import Discord from "discord.js";
 
 import Logger from "../../log";
 import { BUTTON_TYPES } from "../../const";
-import { EmbedType, logErr, replyEmbedEphemeral } from "../../util/util";
+import { logErr } from "../../util/util";
 import * as models from "../../modules/database/models";
 
 import InteractionRegistry from "../InteractionRegistry";
 import StatsCollectorManager from "../managers/StatsCollectorManager";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 const log = Logger.child({ label: "Core => onInteractionCreate" });
 

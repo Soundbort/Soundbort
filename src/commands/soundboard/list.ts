@@ -4,9 +4,9 @@ import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
+import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { BUTTON_TYPES } from "../../const";
-import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../util/util";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import { SimpleFuncReturn } from "../../modules/commands/types";

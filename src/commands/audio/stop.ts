@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import AudioManager from "../../core/audio/AudioManager";
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/util";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "stop",

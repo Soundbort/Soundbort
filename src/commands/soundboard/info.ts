@@ -1,11 +1,10 @@
 import Discord from "discord.js";
 
-import { EmbedType, replyEmbedEphemeral } from "../../util/util";
-
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import SampleID from "../../core/soundboard/SampleID";
 import { CustomSample } from "../../core/soundboard/CustomSample";
