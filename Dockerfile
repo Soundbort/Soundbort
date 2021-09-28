@@ -1,5 +1,5 @@
 # Build stage
-FROM node:16.6.2 as builder
+FROM node:16.6.2-slim
 
 LABEL maintainer="Christian Schäfer <lonelessart@gmail.com> (@lonelesscodes)"
 
@@ -24,14 +24,8 @@ COPY . .
 RUN npm run build
 
 # remove build dependencies
-RUN npm install --production
-
-# Runtime stage
-FROM node:16.6.2-slim
-
-WORKDIR /app
-
-COPY --from=builder /app/ /app/
+RUN npm install --production \
+ && npm cache clean --force
 
 EXPOSE 8080
 
