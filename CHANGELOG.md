@@ -1,5 +1,26 @@
 # Changelog
 
+### [0.4.1](https://github.com/LonelessCodes/SoundBort/compare/v0.4.0...v0.4.1) (2021-09-28)
+
+
+### Bug Fixes
+
+* emergency fixed failing to log in when one server doesn't have app.commands permissions ([7dd4bdf](https://github.com/LonelessCodes/SoundBort/commit/7dd4bdf1d34c9b62bcab770aad928d6370eca035))
+* fixed logging levels ([6312ce7](https://github.com/LonelessCodes/SoundBort/commit/6312ce7854eb8591efe1c2df9f11fa7df0acd4e0))
+
+
+### Changes
+
+* build sodium instead of using libsodium-wrappers ([9a86f08](https://github.com/LonelessCodes/SoundBort/commit/9a86f08eaef3957016c877a6a833962483fcb395))
+* use ffmpeg-static package instead of host system installation to address [#1](https://github.com/LonelessCodes/SoundBort/issues/1) ([986f9b5](https://github.com/LonelessCodes/SoundBort/commit/986f9b5fcc2679f8888386e93a5f553eed0e981b))
+
+
+### Improvements
+
+* add graceful reboots/shutdowns ([1adcf93](https://github.com/LonelessCodes/SoundBort/commit/1adcf93cca866602a2574d512890efe40d144932))
+* disable caching for unused stuff ([afe150a](https://github.com/LonelessCodes/SoundBort/commit/afe150af407c9eb584b112ec8f8405e4cd7679f6))
+* produce smaller docker container ([dfdd530](https://github.com/LonelessCodes/SoundBort/commit/dfdd5307b759a33827a86b1396b58149a43dbda2))
+
 ## [0.4.0](https://github.com/LonelessCodes/SoundBort/compare/v0.3.0...v0.4.0) (2021-08-27)
 
 
