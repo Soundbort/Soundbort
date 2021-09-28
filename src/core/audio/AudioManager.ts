@@ -1,8 +1,10 @@
 import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
-import { AudioSubscription } from "./AudioSubscription";
+
 import Logger from "../../log";
 import { logErr } from "../../util/util";
+import { GenericListener, TypedEventEmitter } from "../../util/emitter";
+import { AudioSubscription } from "./AudioSubscription";
 
 const log = Logger.child({ label: "Audio" });
 
@@ -13,9 +15,23 @@ export enum JoinFailureTypes {
     FailedTryAgain,
 }
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+type EventMap = {
+    destroy: GenericListener<[guildId: Discord.Snowflake]>;
+    destroyAll: GenericListener<[]>;
+};
+
 // https://github.com/discordjs/voice/blob/main/examples/music-bot/src/bot.ts
-class AudioManager {
+class AudioManager extends TypedEventEmitter<EventMap> {
     private subscriptions = new Map<Discord.Snowflake, AudioSubscription>();
+
+    public awaitDestroyable(): Promise<void> {
+        if (this.subscriptions.size === 0) return Promise.resolve();
+
+        return new Promise(resolve => {
+            this.once("destroyAll", resolve);
+        });
+    }
 
     public async join(member: Discord.GuildMember): Promise<AudioSubscription | JoinFailureTypes> {
         let subscription = this.subscriptions.get(member.guild.id);
@@ -34,7 +50,13 @@ class AudioManager {
             guildId: channel.guild.id,
             adapterCreator: channel.guild.voiceAdapterCreator as Voice.DiscordGatewayAdapterCreator,
         });
-        subscription = new AudioSubscription(voice_connection, () => this.subscriptions.delete(member.guild.id));
+        subscription = new AudioSubscription(voice_connection, () => {
+            this.subscriptions.delete(member.guild.id);
+            this.emit("destroy", member.guild.id);
+
+            if (this.subscriptions.size > 0) return;
+            this.emit("destroyAll");
+        });
         this.subscriptions.set(channel.guild.id, subscription);
 
         /*
