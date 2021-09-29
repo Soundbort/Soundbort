@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.4.2](https://github.com/LonelessCodes/SoundBort/compare/v0.4.1...v0.4.2) (2021-09-29)
+
+
+### Bug Fixes
+
+* fixed missing libpixman in Docker image ([48d1079](https://github.com/LonelessCodes/SoundBort/commit/48d107926ed53250a5f98f71abe42c4855a3e334))
+* uploading fixed by reverting earlier commit ([0db8f65](https://github.com/LonelessCodes/SoundBort/commit/0db8f650300a41331e892faaa3bb7b6fb695840f))
+
 ### [0.4.1](https://github.com/LonelessCodes/SoundBort/compare/v0.4.0...v0.4.1) (2021-09-28)
 
 
