@@ -13,7 +13,8 @@ RUN apt update \
         libpango1.0-dev \
         libjpeg-dev \
         libgif-dev \
-        librsvg2-dev
+        librsvg2-dev \
+        ffmpeg
 
 WORKDIR /app
 

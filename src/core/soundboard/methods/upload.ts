@@ -5,11 +5,7 @@ import path from "path";
 import temp from "temp";
 import fs from "fs-extra";
 import Discord from "discord.js";
-import ffmpeg from "fluent-ffmpeg";
-import { path as _path_to_ffprobe } from "ffprobe-static";
-import { default as _path_to_ffmpeg} from "ffmpeg-static";
-ffmpeg.setFfprobePath(_path_to_ffprobe);
-ffmpeg.setFfmpegPath(_path_to_ffmpeg);
+import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
 import Logger from "../../../log";
 import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
@@ -21,7 +17,7 @@ import { isOwner, logErr } from "../../../util/util";
 import { EmbedType, replyEmbed } from "../../../util/builders/embed";
 import GuildConfigManager from "../../managers/GuildConfigManager";
 
-const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<ffmpeg.FfprobeData>;
+const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<FfprobeData>;
 
 const log = Logger.child({ label: "Sample => Uploader" });
 

@@ -54,6 +54,7 @@ You need the following prerequisites for testing Soundbort:
 
 * Node.js 16.6.2 (using a version management tool like [nvm](https://github.com/nvm-sh/nvm) is recommended)
 * build-essentials (apt install build-essential. For dev on Windows use WSL 2 or inform yourself about Node.js package build requirements)
+* ffmpeg (apt install ffmpeg)
 * A MongoDb instance. Either local, or on [cloud.mongodb.com](https://cloud.mongodb.com), which I recommend, because it's easy to setup, doesn't require you to install anything and it has a free plan.
 
 For testing Soundbort you need a Discord API Token and bot user account from [here](https://discord.com/developers/applications).
