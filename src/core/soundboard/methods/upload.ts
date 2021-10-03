@@ -57,6 +57,8 @@ function convertAudio(input: string, output: string): Promise<void> {
             .audioBitrate("96k")
             .audioFrequency(48000)
             .audioChannels(2)
+            .addOutputOption("-map 0:a:0") // only first input audio stream
+            .addOutputOption("-map_metadata -1") // strip all metadata from input
             .output(output)
             .once("end", res)
             .once("error", rej)
