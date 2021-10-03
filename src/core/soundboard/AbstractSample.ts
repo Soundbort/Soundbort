@@ -24,7 +24,6 @@ export abstract class AbstractSample implements SoundboardStandardSampleSchema {
 
     name: string;
     plays: number;
-    orig_filename: string | undefined;
     created_at: Date;
     modified_at: Date;
     last_played_at: Date | undefined;
@@ -32,7 +31,6 @@ export abstract class AbstractSample implements SoundboardStandardSampleSchema {
     constructor(doc: SoundboardStandardSampleSchema) {
         this.name = doc.name;
         this.plays = doc.plays;
-        this.orig_filename = doc.orig_filename || undefined;
         this.created_at = doc.created_at;
         this.modified_at = doc.modified_at;
         this.last_played_at = doc.last_played_at;

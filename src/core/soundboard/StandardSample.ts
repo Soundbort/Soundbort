@@ -26,7 +26,6 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
     name: string;
     plays: number;
-    orig_filename: string | undefined;
     created_at: Date;
     modified_at: Date;
     last_played_at: Date | undefined;
@@ -36,7 +35,6 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
         this.name = doc.name;
         this.plays = doc.plays;
-        this.orig_filename = doc.orig_filename || undefined;
         this.created_at = doc.created_at;
         this.modified_at = doc.modified_at;
         this.last_played_at = doc.last_played_at;
@@ -134,7 +132,6 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         const new_sample = await StandardSample.create({
             name: sample.name,
             plays: 0,
-            orig_filename: sample.orig_filename,
             created_at: new Date(),
             modified_at: new Date(),
         });

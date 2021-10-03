@@ -270,7 +270,6 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
             scope: scope,
             id: new_id!,
             name: name,
-            orig_filename: attachment.name || undefined,
             creatorId: scope === "user" ? userId : guildId,
             userIds: scope === "user" ? [userId] : [],
             guildIds: scope === "server" ? [guildId] : [],
@@ -281,7 +280,6 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     } else {
         sample = await StandardSample.create({
             name: name,
-            orig_filename: attachment.name || undefined,
             plays: 0,
             created_at: new Date(),
             modified_at: new Date(),
