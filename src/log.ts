@@ -22,10 +22,10 @@ winston.addColors({
 
 const LOGS_DIR = "logs/";
 const rotate_file_opts = {
-    datePattern: "YYYY-MM-DD-HH",
+    datePattern: "YYYY-MM-DD",
     zippedArchive: true,
     maxSize: "20m",
-    maxFiles: "31d",
+    maxFiles: "30d",
 };
 
 const Logger = winston.createLogger({
