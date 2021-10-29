@@ -1,4 +1,4 @@
-import { Awaited } from "discord.js";
+import { Awaitable } from "discord.js";
 import { Db, Collection, MongoClient } from "mongodb";
 
 import { BOT_NAME, DB_URI } from "../../config";
@@ -6,7 +6,7 @@ import Logger from "../../log";
 import { onExit } from "../../util/exit";
 import { logErr } from "../../util/util";
 
-export type QueueFunction = () => Awaited<void>;
+export type QueueFunction = () => Awaitable<void>;
 
 const log = Logger.child({ label: "database" });
 

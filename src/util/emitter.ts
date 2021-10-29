@@ -1,7 +1,7 @@
-import { Awaited } from "discord.js";
+import { Awaitable } from "discord.js";
 import EventEmitter from "events";
 
-export type GenericListener<T extends any[]> = (...args: T) => Awaited<void>;
+export type GenericListener<T extends any[]> = (...args: T) => Awaitable<void>;
 type EventMap = Record<string, GenericListener<any[]>>;
 
 type EventKey<T extends EventMap> = string & keyof T;

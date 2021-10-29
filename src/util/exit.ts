@@ -1,12 +1,12 @@
 import temp from "temp";
-import { Awaited } from "discord.js";
+import { Awaitable } from "discord.js";
 import Logger from "../log";
 
 temp.track();
 
 const log = Logger.child({ label: "Util => Exit" });
 
-type ExitHandler = () => Awaited<void>;
+type ExitHandler = () => Awaitable<void>;
 
 const handlers: ExitHandler[] = [];
 

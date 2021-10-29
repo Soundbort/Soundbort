@@ -4,7 +4,7 @@ export type SimpleFuncReturn = string | Discord.MessagePayload | Discord.Interac
 
 export type SimpleFunc = (interaction: Discord.CommandInteraction) => (Promise<SimpleFuncReturn> | SimpleFuncReturn);
 
-export type GuildCreateEventHandler = (app_command: Discord.ApplicationCommand, guild: Discord.Guild) => Discord.Awaited<void>;
+export type GuildCreateEventHandler = (app_command: Discord.ApplicationCommand, guild: Discord.Guild) => Discord.Awaitable<void>;
 
 export interface CommandTarget {
     global: boolean;
