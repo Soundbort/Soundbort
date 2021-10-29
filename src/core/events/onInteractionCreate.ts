@@ -24,7 +24,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
                 const command = InteractionRegistry.commands.get(interaction.commandName);
                 if (!command) return await interaction.reply(replyEmbedEphemeral("This command doesn't exist anymore or some other thing screwed up.", EmbedType.Error));
 
-                log.debug("Command '%s' by '%s' (%s) in %s (%s)", command.name, interaction.user.tag, interaction.user.id, interaction.channelId, interaction.channel?.type);
+                log.debug("Command '%s' by %s in %s (%s)", command.name, interaction.user.id, interaction.channelId, interaction.channel?.type);
 
                 await command.run(interaction);
 
@@ -62,7 +62,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
                 try {
                     if (!InteractionRegistry.checkButtonFilter(decoded, button_handler.filter)) continue;
 
-                    log.debug("Button '%i' by '%s' (%s) in %s (%s)", decoded.t, interaction.user.tag, interaction.user.id, interaction.channelId, interaction.channel?.type);
+                    log.debug("Button '%i' by %s in %s (%s)", decoded.t, interaction.user.id, interaction.channelId, interaction.channel?.type);
 
                     const result = await button_handler.func(interaction, decoded);
 
