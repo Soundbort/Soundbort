@@ -1,7 +1,9 @@
 import fetch from "node-fetch";
 import fs from "fs";
+import { pipeline } from "stream/promises";
 import path from "path";
 import disk from "diskusage";
+
 import Logger from "../log";
 
 const log = Logger.child({ label: "util => files" });
@@ -48,11 +50,8 @@ export async function downloadFile(url: string, out_file: string): Promise<void>
     const res = await fetch(url);
     if (!res.ok) throw new Error("Resource not accessible");
 
-    const out_stream = fs.createWriteStream(out_file);
-
-    await new Promise<void>((resolve, reject) => {
-        res.body.pipe(out_stream);
-        res.body.once("error", reject);
-        out_stream.once("finish", resolve);
-    });
+    await pipeline(
+        res.body,
+        fs.createWriteStream(out_file),
+    );
 }
