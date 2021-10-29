@@ -21,6 +21,34 @@ type EventMap = {
     destroyAll: GenericListener<[]>;
 };
 
+// //#region Voice
+
+// /**
+//  * @internal Use `DiscordGatewayAdapterLibraryMethods` from `@discordjs/voice` instead.
+//  */
+// export interface InternalDiscordGatewayAdapterLibraryMethods {
+//     onVoiceServerUpdate(data: GatewayVoiceServerUpdateDispatchData): void;
+//     onVoiceStateUpdate(data: GatewayVoiceStateUpdateDispatchData): void;
+//     destroy(): void;
+// }
+
+// /**
+//  * @internal Use `DiscordGatewayAdapterImplementerMethods` from `@discordjs/voice` instead.
+//  */
+// export interface InternalDiscordGatewayAdapterImplementerMethods {
+//     sendPayload(payload: unknown): boolean;
+//     destroy(): void;
+// }
+
+// /**
+//  * @internal Use `DiscordGatewayAdapterCreator` from `@discordjs/voice` instead.
+//  */
+// export type InternalDiscordGatewayAdapterCreator = (
+//     methods: InternalDiscordGatewayAdapterLibraryMethods,
+// ) => InternalDiscordGatewayAdapterImplementerMethods;
+
+// //#endregion
+
 // https://github.com/discordjs/voice/blob/main/examples/music-bot/src/bot.ts
 class AudioManager extends TypedEventEmitter<EventMap> {
     private subscriptions = new Map<Discord.Snowflake, AudioSubscription>();
