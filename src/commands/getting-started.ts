@@ -29,7 +29,9 @@ export function install({ client }: CmdInstallerArgs): void {
                     "\n" +
                     `:inbox_tray: Invite: [invite link](${invite_link})\n` +
                     ":money_with_wings: Donate: [ko-fi.com/loneless](https://ko-fi.com/loneless)\n" +
-                    ":woman_technologist: Contributing: [github.com/LonelessCodes/Soundbort](https://github.com/LonelessCodes/Soundbort)",
+                    ":woman_technologist: Contributing: [github.com/LonelessCodes/Soundbort](https://github.com/LonelessCodes/Soundbort)\n" +
+                    "\n" +
+                    "🔒 Privacy notice and data deletion: [soundbort-guide.loneless.art/privacy](https://soundbort-guide.loneless.art/privacy)",
                 )
                 .setImage("https://raw.githubusercontent.com/LonelessCodes/Soundbort/main/assets/readme_banner.jpg")
                 .setFooter(`${BOT_NAME} v${VERSION}`)
