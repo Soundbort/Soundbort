@@ -1,5 +1,20 @@
 # Changelog
 
+### [0.4.3](https://github.com/LonelessCodes/SoundBort/compare/v0.4.2...v0.4.3) (2021-10-29)
+
+
+### Bug Fixes
+
+* privacy improvements during upload ([b7c8b94](https://github.com/LonelessCodes/SoundBort/commit/b7c8b944353cbbb55a4027076b2516573d4c889f))
+
+
+### Changes
+
+* add link to privacy page in /getting-started ([afbcb7d](https://github.com/LonelessCodes/SoundBort/commit/afbcb7d02ebfc3e76631f9f7cef6c63bbaedfdd0))
+* logging ([d7c887e](https://github.com/LonelessCodes/SoundBort/commit/d7c887e2676ccc7e100e60c5319bcf12a79168e2))
+* stop logging user tags ([0a26100](https://github.com/LonelessCodes/SoundBort/commit/0a26100805653d7c3c7c843e0226fe01f7cd53e9))
+* stop storing file names of attachments ([7b8bee5](https://github.com/LonelessCodes/SoundBort/commit/7b8bee5541f55f7065cb8f92b1d0724a341bfc0a))
+
 ### [0.4.2](https://github.com/LonelessCodes/SoundBort/compare/v0.4.1...v0.4.2) (2021-09-29)
 
 
