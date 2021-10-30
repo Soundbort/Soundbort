@@ -1,5 +1,5 @@
+import path from "node:path";
 import dotenv from "dotenv";
-import path from "path";
 import fs from "fs-extra";
 import { PackageJson } from "type-fest";
 

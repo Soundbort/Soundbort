@@ -1,5 +1,5 @@
 import fs from "fs-extra";
-import path from "path";
+import path from "node:path";
 import * as Voice from "@discordjs/voice";
 import Discord from "discord.js";
 

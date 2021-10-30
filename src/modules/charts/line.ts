@@ -1,5 +1,5 @@
 import { createCanvas, CanvasRenderingContext2D, registerFont } from "canvas";
-import path from "path";
+import path from "node:path";
 import color from "color";
 import moment from "moment";
 

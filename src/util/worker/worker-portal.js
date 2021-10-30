@@ -3,7 +3,7 @@
  * Node.js only supports .js, .mjs, .cjs file extentions on Worker classes
  */
 
-const { workerData } = require("worker_threads");
+const { workerData } = require("node:worker_threads");
 
 require("ts-node").register();
 // resolve to source dir

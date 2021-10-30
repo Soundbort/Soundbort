@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import path from "path";
+import path from "node:path";
 import topGGStatsPoster from "topgg-autoposter";
 
 import Logger from "../log";

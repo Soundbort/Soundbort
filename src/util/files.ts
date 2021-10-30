@@ -1,7 +1,7 @@
+import fs from "node:fs";
+import path from "node:path";
+import { pipeline } from "node:stream/promises";
 import fetch from "node-fetch";
-import fs from "fs";
-import { pipeline } from "stream/promises";
-import path from "path";
 import disk from "diskusage";
 
 import Logger from "../log";

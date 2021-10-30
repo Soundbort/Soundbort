@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import { createWorker } from "../../util/worker";
 import * as Comlink from "comlink";
 import nodeEndpoint from "comlink/dist/umd/node-adapter";

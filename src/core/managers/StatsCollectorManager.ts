@@ -1,9 +1,9 @@
 import Discord from "discord.js";
-import { EventEmitter } from "events";
+import { EventEmitter } from "node:events";
 import { CronJob } from "cron";
-import http from "http";
-import os from "os";
-import { promisify } from "util";
+import http from "node:http";
+import os from "node:os";
+import { promisify } from "node:util";
 
 import * as database from "../../modules/database";
 import { StatsSchema } from "../../modules/database/schemas/StatsSchema";

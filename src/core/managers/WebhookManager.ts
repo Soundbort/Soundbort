@@ -1,7 +1,7 @@
 import { Webhook } from "@top-gg/sdk";
 import express from "express";
-import http from "http";
-import { promisify } from "util";
+import http from "node:http";
+import { promisify } from "node:util";
 
 import { TOP_GG_WEBHOOK_TOKEN, WEBHOOK_PORT } from "../../config";
 import Logger from "../../log";

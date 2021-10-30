@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { parentPort } from "worker_threads";
+import { parentPort } from "node:worker_threads";
 import * as Comlink from "comlink";
 import nodeEndpoint from "comlink/dist/umd/node-adapter";
 import Logger from "../../log";
