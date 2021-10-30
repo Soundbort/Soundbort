@@ -8,6 +8,15 @@
     "type": "git",
     "url": "git+https://github.com/LonelessCodes/Soundbort.git"
   },
+  "bugs": {
+    "url": "https://github.com/LonelessCodes/Soundbort/issues"
+  },
+  "license": "GPL-3.0",
+  "keywords": [
+    "discord",
+    "bot",
+    "soundboard"
+  ],
   "dependencies": {
     "@discordjs/builders": "^0.8.1",
     "@discordjs/collection": "^0.3.1",
@@ -78,14 +87,6 @@
     "release:patch": "standard-version --release-as patch",
     "health": "curl -f http://localhost:6969/ || exit 1"
   },
-  "license": "GPL-3.0",
-  "keywords": [
-    "discord",
-    "bot",
-    "soundboard"
-  ],
-  "main": "dist/index.js",
-  "bugs": {
-    "url": "https://github.com/LonelessCodes/Soundbort/issues"
-  }
+  "type": "module",
+  "main": "dist/index.js"
 }

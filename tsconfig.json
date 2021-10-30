@@ -7,8 +7,14 @@
         "outDir": "./dist" /* Redirect output structure to the directory. */,
         "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
 
-        "resolveJsonModule": true
+        // "allowSyntheticDefaultImports": true,
+        // "isolatedModules": true,
+        "strict": true,
+        "module": "esnext",
+        // "lib": ["ES2019"],
+        "moduleResolution": "node",
+        // "skipLibCheck": true
     },
     "include": ["./src/**/*"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", "dist"]
 }
