@@ -13,7 +13,6 @@ import reboot_cmd from "./owner_reboot";
 import blacklist_cmd from "./owner_blacklist";
 import upload_standard_cmd from "./owner_upload";
 import delete_cmd from "./owner_delete";
-import backup_cmd from "./owner_backup";
 import import_cmd from "./owner_import";
 
 InteractionRegistry.addCommand(new TopCommandGroup({
@@ -24,7 +23,6 @@ InteractionRegistry.addCommand(new TopCommandGroup({
         upload_standard_cmd,
         delete_cmd,
         import_cmd,
-        backup_cmd,
         reboot_cmd,
     ],
     target: {
