@@ -9,16 +9,11 @@ import { createEmbed } from "../../util/builders/embed";
 
 import { BUTTON_TYPES } from "../../const";
 import Logger from "../../log";
-import * as database from "../../modules/database";
 import * as models from "../../modules/database/models";
 import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 
 const log = Logger.child({ label: "SampleManager => StandardSample" });
-
-database.onConnect(async () => {
-    await models.standard_sample.collection.createIndex({ name: 1 }, { unique: true });
-});
 
 export class StandardSample extends AbstractSample implements SoundboardStandardSampleSchema {
     readonly importable: boolean = false;

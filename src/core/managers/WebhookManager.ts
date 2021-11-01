@@ -16,10 +16,6 @@ const log = Logger.child({ label: "Core => WebhookManager" });
 
 let server: http.Server | undefined;
 
-database.onConnect(async () => {
-    await models.votes.createIndex({ ts: 1, userId: 1 }, { unique: true });
-});
-
 onExit(async () => {
     if (!server) return;
 

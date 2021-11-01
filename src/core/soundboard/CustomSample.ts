@@ -12,7 +12,6 @@ import { GenericListener, TypedEventEmitter } from "../../util/emitter";
 
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 
-import * as database from "../../modules/database";
 import * as models from "../../modules/database/models";
 import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema";
 import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema";
@@ -22,11 +21,6 @@ import InteractionRegistry from "../InteractionRegistry";
 import WebhookManager from "../managers/WebhookManager";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
-
-database.onConnect(async () => {
-    await models.custom_sample.collection.createIndex({ id: 1 }, { unique: true });
-    await models.sample_slots.createIndex({ ownerId: 1 }, { unique: true });
-});
 
 export class CustomSample extends AbstractSample implements SoundboardCustomSampleSchema {
     readonly importable = true;

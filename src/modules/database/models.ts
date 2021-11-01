@@ -1,3 +1,5 @@
+import * as database from "./index";
+
 import DatabaseCache from "./DatabaseCache";
 import databaseProxy from "./databaseProxy";
 
@@ -36,3 +38,21 @@ export const stats = databaseProxy<StatsSchema>(DbCollection.Stats);
 export const votes = databaseProxy<VotesSchema>(DbCollection.Votes);
 
 export const interaction_replies = new DatabaseCache<InteractionRepliesSchema>(DbCollection.InteractionReplies, { indexName: "interactionId" });
+
+// Indexes
+
+database.onConnect(async () => {
+    await blacklist_user.collection.createIndex({ userId: 1 }, { unique: true });
+
+    await custom_sample.collection.createIndex({ id: 1 }, { unique: true });
+
+    await standard_sample.collection.createIndex({ name: 1 }, { unique: true });
+
+    await sample_slots.createIndex({ ownerId: 1 }, { unique: true });
+
+    await config.collection.createIndex({ guildId: 1 }, { unique: true });
+
+    await votes.createIndex({ ts: 1, userId: 1 }, { unique: true });
+
+    await interaction_replies.collection.createIndex({ interactionId: 1 }, { unique: true });
+});
