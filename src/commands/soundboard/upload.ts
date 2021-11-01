@@ -1,3 +1,4 @@
+import { SAMPLE_TYPES } from "../../const";
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { createStringOption } from "../../modules/commands/options/createOption";
@@ -16,7 +17,6 @@ InteractionRegistry.addCommand(new TopCommand({
     ],
     async func(interaction) {
         const name = interaction.options.getString("name", true).trim();
-        const scope = interaction.options.getString("to", false) as ("user" | "server" | null) || "user";
 
         await upload(interaction, name, scope);
     },

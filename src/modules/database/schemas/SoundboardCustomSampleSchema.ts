@@ -1,6 +1,7 @@
+import { SAMPLE_TYPES } from "../../../const";
 import { SoundboardStandardSampleSchema } from "./SoundboardStandardSampleSchema";
 
-export type SoundboardCustomSampleScope = "user" | "server";
+export type SoundboardCustomSampleScope = SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER;
 
 export interface SoundboardCustomSampleSchema extends SoundboardStandardSampleSchema {
     id: string;

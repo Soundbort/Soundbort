@@ -5,7 +5,7 @@ import fs from "fs-extra";
 import moment from "moment";
 
 import Logger from "../../log";
-import { BUTTON_TYPES } from "../../const";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 import { logErr } from "../../util/util";
 import { createEmbed } from "../../util/builders/embed";
 import { GenericListener, TypedEventEmitter } from "../../util/emitter";
@@ -300,7 +300,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     }>();
 
     static async addSlot(vote: VotesSchema): Promise<boolean> {
-        const slotType = vote.query.guildId ? "server" : "user";
+        const slotType = vote.query.guildId ? SAMPLE_TYPES.SERVER : SAMPLE_TYPES.USER;
         const ownerId = vote.query.guildId || vote.query.userId || vote.fromUserId;
 
         const curr_slots = await this.countSlots(ownerId);

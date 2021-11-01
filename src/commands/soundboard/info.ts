@@ -1,4 +1,5 @@
 import Discord from "discord.js";
+import { SAMPLE_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
@@ -46,7 +47,7 @@ InteractionRegistry.addCommand(new TopCommand({
     ],
     async func(interaction) {
         const name = interaction.options.getString("sample", true).trim();
-        const scope = interaction.options.getString("from", false) as ("user" | "server" | null);
+        const scope = interaction.options.getString("from", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null);
 
         const sample = await findSampleByScope(interaction.guildId, interaction.user.id, name, scope);
         if (!sample) {

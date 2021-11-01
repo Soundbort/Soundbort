@@ -1,5 +1,7 @@
 import Discord from "discord.js";
 
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
+
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
@@ -10,7 +12,6 @@ import { createEmbed, EmbedType, replyEmbed, replyEmbedEphemeral } from "../../u
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import GuildConfigManager from "../../core/managers/GuildConfigManager";
 import SampleID from "../../core/soundboard/SampleID";
-import { BUTTON_TYPES } from "../../const";
 
 async function removeServer(interaction: Discord.CommandInteraction, name: string) {
     const userId = interaction.user.id;
@@ -75,9 +76,9 @@ InteractionRegistry.addCommand(new TopCommand({
     ],
     async func(interaction) {
         const name = interaction.options.getString("sample", true).trim();
-        const scope = interaction.options.getString("from", false) as ("user" | "server" | null) || "user";
+        const scope = interaction.options.getString("from", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
 
-        if (scope === "user") return await removeUser(interaction, name);
+        if (scope === SAMPLE_TYPES.USER) return await removeUser(interaction, name);
         return await removeServer(interaction, name);
     },
 }));

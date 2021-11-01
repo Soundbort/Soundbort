@@ -1,3 +1,5 @@
+import { SAMPLE_TYPES } from "../../../const";
+
 export interface SoundboardSlot {
     ts: Date;
     fromUserId: string;
@@ -6,12 +8,12 @@ export interface SoundboardSlot {
 }
 
 export interface SoundboardSlotSchema {
-    slotType: "user" | "server";
+    slotType: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER;
     ownerId: string;
     slots: SoundboardSlot[];
 }
 
 export interface SingleSoundboardSlot extends SoundboardSlot {
-    slotType: "user" | "server";
+    slotType: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER;
     ownerId: string;
 }

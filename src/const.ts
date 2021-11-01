@@ -1,22 +1,28 @@
-export const COLOR = {
+export enum COLOR {
     // TEXT: 0x2f3136,
     // WHITE: 0xffffff,
-    CHART_FG: 0xffffff,
-    CHART_BG: 0x2f3136,
+    CHART_FG = 0xffffff,
+    CHART_BG = 0x2f3136,
 
-    PRIMARY: 0x6378CA,
-    INFO: 0xADBCE6,
-    SUCCESS: 0x62D945,
-    WARNING: 0xe6a23c,
-    ERROR: 0xd8315b,
-};
+    PRIMARY = 0x6378CA,
+    INFO = 0xADBCE6,
+    SUCCESS = 0x62D945,
+    WARNING = 0xe6a23c,
+    ERROR = 0xd8315b,
+}
 
-export const EMOJI = {
-    SUCCESS: "✅",
-    ERROR: "❌",
-    WARNING: "⚠️",
-    INFO: "❕",
-};
+export enum EMOJI {
+    SUCCESS = "✅",
+    ERROR = "❌",
+    WARNING = "⚠️",
+    INFO = "❕",
+}
+
+export enum SAMPLE_TYPES {
+    USER = "user",
+    SERVER = "server",
+    STANDARD = "standard",
+}
 
 // Important: Don't change these enum values! They are important
 //            to keep old buttons working and not doing the completely

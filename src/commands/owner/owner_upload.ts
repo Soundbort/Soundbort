@@ -1,3 +1,5 @@
+import { SAMPLE_TYPES } from "../../const";
+
 import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
@@ -16,7 +18,7 @@ export default new CommandGroup({
             async func(interaction) {
                 const name = interaction.options.getString("name", true).trim();
 
-                await upload(interaction, name, "standard");
+                await upload(interaction, name, SAMPLE_TYPES.STANDARD);
             },
         }),
     ],

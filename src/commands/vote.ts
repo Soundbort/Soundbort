@@ -1,6 +1,7 @@
 import { userMention } from "@discordjs/builders";
 import Discord from "discord.js";
 
+import { SAMPLE_TYPES } from "../const";
 import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";
 import InteractionRegistry from "../core/InteractionRegistry";
 import { CustomSample } from "../core/soundboard/CustomSample";
@@ -86,14 +87,14 @@ async function sendMessageReply(client: Discord.Client<true>, slot: SingleSoundb
     const doc = await models.interaction_replies.findOne({ interactionId: refId });
     if (!doc) return;
 
-    if (slot.slotType === "server" && (!doc.guildId || slot.ownerId !== doc.guildId)) return;
+    if (slot.slotType === SAMPLE_TYPES.SERVER && (!doc.guildId || slot.ownerId !== doc.guildId)) return;
 
     // get channel
     let channel: Discord.Channel | null | undefined;
     if (doc.guildId) {
         const guild = await client.guilds.fetch(doc.guildId);
         channel = await guild.channels.fetch(doc.channelId);
-    } else if (slot.slotType === "user") {
+    } else if (slot.slotType === SAMPLE_TYPES.USER) {
         channel = await client.channels.fetch(doc.channelId, { allowUnknownGuild: true });
     }
 
@@ -103,7 +104,7 @@ async function sendMessageReply(client: Discord.Client<true>, slot: SingleSoundb
     const slot_text = slot.count === 1 ? "one soundboard slot" : "two soundboard slots";
 
     let text: string;
-    if (slot.slotType === "server") {
+    if (slot.slotType === SAMPLE_TYPES.SERVER) {
         text = `${userMention(slot.fromUserId)} gave this server ${slot_text}.`;
     } else {
         text = `${userMention(slot.fromUserId)} gave ${userMention(slot.ownerId)} ${slot_text}.`;
@@ -142,7 +143,7 @@ export function install({ client }: CmdInstallerArgs): void {
             } catch (_) { _; }
         }
 
-        if (slot.slotType === "user") {
+        if (slot.slotType === SAMPLE_TYPES.USER) {
             try {
                 await sendDM(client, slot, new_slots);
             } catch (_) { _; }

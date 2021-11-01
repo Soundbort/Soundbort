@@ -1,5 +1,7 @@
 import Discord from "discord.js";
 
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
+
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
@@ -8,7 +10,6 @@ import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import GuildConfigManager from "../../core/managers/GuildConfigManager";
-import { BUTTON_TYPES } from "../../const";
 import { UploadErrors } from "../../core/soundboard/methods/upload";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
@@ -73,7 +74,7 @@ InteractionRegistry.addCommand(new TopCommand({
     ],
     async func(interaction) {
         const id = interaction.options.getString("sample_id", true).trim();
-        const scope = interaction.options.getString("to", false) as ("user" | "server" | null) || "user";
+        const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
 
         const sample = await CustomSample.findById(id);
         if (!sample) {
@@ -84,7 +85,7 @@ InteractionRegistry.addCommand(new TopCommand({
             return replyEmbedEphemeral("This sample is marked as not importable.", EmbedType.Error);
         }
 
-        if (scope === "user") return await importUser(interaction, sample);
+        if (scope === SAMPLE_TYPES.USER) return await importUser(interaction, sample);
         return await importServer(interaction, sample);
     },
 }));

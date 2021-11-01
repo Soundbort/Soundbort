@@ -6,7 +6,7 @@ import { createStringOption } from "../../modules/commands/options/createOption"
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
-import { BUTTON_TYPES } from "../../const";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import { SimpleFuncReturn } from "../../modules/commands/types";
@@ -148,11 +148,11 @@ InteractionRegistry.addCommand(new TopCommand({
         ]),
     ],
     func(interaction) {
-        const scope = interaction.options.getString("from") as ("all" | "standard" | "server" | "user" | null) || "all";
+        const scope = interaction.options.getString("from") as ("all" | SAMPLE_TYPES.STANDARD | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.USER | null) || "all";
 
-        if (scope === "standard") return scopeStandard(interaction);
-        if (scope === "server") return scopeServer(interaction);
-        if (scope === "user") return scopeUser(interaction);
+        if (scope === SAMPLE_TYPES.STANDARD) return scopeStandard(interaction);
+        if (scope === SAMPLE_TYPES.SERVER) return scopeServer(interaction);
+        if (scope === SAMPLE_TYPES.USER) return scopeUser(interaction);
         return scopeAll(interaction);
     },
 }));

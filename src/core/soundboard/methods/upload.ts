@@ -7,6 +7,7 @@ import fs from "fs-extra";
 import Discord from "discord.js";
 import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
+import { SAMPLE_TYPES } from "../../../const";
 import Logger from "../../../log";
 import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 
@@ -75,7 +76,7 @@ async function generateId() {
     }
 }
 
-async function _upload(interaction: Discord.CommandInteraction, name: string, scope: "user" | "server" | "standard"): Promise<any> {
+async function _upload(interaction: Discord.CommandInteraction, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     await interaction.deferReply();
 
     const failed = (desc: string) => interaction.editReply(replyEmbed(desc, EmbedType.Error));
@@ -87,7 +88,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
     const userId = interaction.user.id;
 
-    if (scope === "server") {
+    if (scope === SAMPLE_TYPES.SERVER) {
         if (!interaction.inGuild()) {
             return await failed(UploadErrors.NotInGuild);
         }
@@ -97,14 +98,14 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         }
     }
 
-    if (scope === "standard" && !isOwner(userId)) {
+    if (scope === SAMPLE_TYPES.STANDARD && !isOwner(userId)) {
         return await failed(UploadErrors.NotOwner);
     }
 
     const guildId = interaction.guildId!;
 
     // is soundboard full?
-    if (scope === "standard") {
+    if (scope === SAMPLE_TYPES.STANDARD) {
         const sample_count = await StandardSample.countSamples();
         if (sample_count >= StandardSample.MAX_SLOTS) {
             return await failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", StandardSample.MAX_SLOTS.toLocaleString("en")));
@@ -112,11 +113,11 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     } else {
         let sample_count: number;
         switch (scope) {
-            case "user": sample_count = await CustomSample.countUserSamples(userId); break;
-            case "server": sample_count = await CustomSample.countGuildSamples(guildId); break;
+            case SAMPLE_TYPES.USER: sample_count = await CustomSample.countUserSamples(userId); break;
+            case SAMPLE_TYPES.SERVER: sample_count = await CustomSample.countGuildSamples(guildId); break;
         }
 
-        const slot_count = await CustomSample.countSlots(scope === "user" ? userId : guildId);
+        const slot_count = await CustomSample.countSlots(scope === SAMPLE_TYPES.USER ? userId : guildId);
         if (sample_count >= slot_count) {
             return await failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")));
         }
@@ -174,9 +175,9 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
     let name_exists = false;
     switch (scope) {
-        case "user": name_exists = !!await CustomSample.findSampleUser(userId, name); break;
-        case "server": name_exists = !!await CustomSample.findSampleGuild(guildId, name); break;
-        case "standard": name_exists = !!await StandardSample.findByName(name); break;
+        case SAMPLE_TYPES.USER: name_exists = !!await CustomSample.findSampleUser(userId, name); break;
+        case SAMPLE_TYPES.SERVER: name_exists = !!await CustomSample.findSampleGuild(guildId, name); break;
+        case SAMPLE_TYPES.STANDARD: name_exists = !!await StandardSample.findByName(name); break;
     }
     if (name_exists) {
         return await failed(UploadErrors.NameExists);
@@ -241,7 +242,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     let sample_file: string;
     let new_id: string | undefined;
 
-    if (scope !== "standard") {
+    if (scope !== SAMPLE_TYPES.STANDARD) {
         new_id = await generateId();
 
         if (!new_id) {
@@ -265,14 +266,14 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
 
     let sample: CustomSample | StandardSample;
 
-    if (scope !== "standard") {
+    if (scope !== SAMPLE_TYPES.STANDARD) {
         sample = await CustomSample.create({
             scope: scope,
             id: new_id!,
             name: name,
-            creatorId: scope === "user" ? userId : guildId,
-            userIds: scope === "user" ? [userId] : [],
-            guildIds: scope === "server" ? [guildId] : [],
+            creatorId: scope === SAMPLE_TYPES.USER ? userId : guildId,
+            userIds: scope === SAMPLE_TYPES.USER ? [userId] : [],
+            guildIds: scope === SAMPLE_TYPES.SERVER ? [guildId] : [],
             plays: 0,
             created_at: new Date(),
             modified_at: new Date(),
@@ -289,7 +290,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     await interaction.editReply(sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
 }
 
-export async function upload(interaction: Discord.CommandInteraction, name: string, scope: "user" | "server" | "standard"): Promise<any> {
+export async function upload(interaction: Discord.CommandInteraction, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     try {
         await _upload(interaction, name, scope);
     } catch (error) {
