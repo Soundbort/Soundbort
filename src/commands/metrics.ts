@@ -9,7 +9,7 @@ import { BOT_NAME, VERSION } from "../config";
 import { TopCommand } from "../modules/commands/TopCommand";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../util/builders/embed";
 import { CmdInstallerArgs } from "../util/types";
-import { createStringOption } from "../modules/commands/options/createOption";
+import { CommandStringOption } from "../modules/commands/CommandOption";
 import { createChoice } from "../modules/commands/options/createChoice";
 import type { ChartOptionsData } from "../modules/charts/line";
 import charts from "../modules/charts";
@@ -27,12 +27,16 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
         name: "metrics",
         description: "Display bot metrics and health statistics for anyone interested.",
         options: [
-            createStringOption("time_window", "The time window that's analyzed.", false, [
-                createChoice("Last 24 hours", TimeWindowChoices.Day),
-                createChoice("Last 3 days", TimeWindowChoices.ThreeDay),
-                createChoice("Last week", TimeWindowChoices.Week),
-                createChoice("Last 4 weeks", TimeWindowChoices.Month),
-            ]),
+            new CommandStringOption({
+                name: "time_window",
+                description: "The time window that's analyzed.",
+                choices: [
+                    createChoice("Last 24 hours", TimeWindowChoices.Day),
+                    createChoice("Last 3 days", TimeWindowChoices.ThreeDay),
+                    createChoice("Last week", TimeWindowChoices.Week),
+                    createChoice("Last 4 weeks", TimeWindowChoices.Month),
+                ],
+            }),
         ],
         target: {
             global: true,

@@ -1,5 +1,5 @@
-import { createStringOption } from "../../modules/commands/options/createOption";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import { Command } from "../../modules/commands/Command";
@@ -9,7 +9,11 @@ export default new Command({
     name: "import",
     description: "Import a sample from another user or server to your or your server's soundboard.",
     options: [
-        createStringOption("sample_id", "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.", true),
+        new CommandStringOption({
+            name: "sample_id",
+            description: "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.",
+            required: true,
+        }),
     ],
     async func(interaction) {
         const id = interaction.options.getString("sample_id", true).trim();

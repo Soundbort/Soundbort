@@ -1,6 +1,6 @@
 import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
-import { createStringOption } from "../../modules/commands/options/createOption";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
 import * as models from "../../modules/database/models";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
@@ -8,7 +8,11 @@ const blacklist_add_cmd = new Command({
     name: "add",
     description: "Blacklist a user from using this bot.",
     options: [
-        createStringOption("user-id", "User id to blacklist", true),
+        new CommandStringOption({
+            name: "user-id",
+            description: "User id to blacklist",
+            required: true,
+        }),
     ],
     async func(interaction) {
         const userId = interaction.options.getString("user-id", true).trim();
@@ -27,7 +31,11 @@ const blacklist_remove_cmd = new Command({
     name: "remove",
     description: "Remove blacklisting of user.",
     options: [
-        createStringOption("user-id", "User id to remove from blacklist", true),
+        new CommandStringOption({
+            name: "user-id",
+            description: "User id to remove from blacklist",
+            required: true,
+        }),
     ],
     async func(interaction) {
         const userId = interaction.options.getString("user-id", true).trim();

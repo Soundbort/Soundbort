@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { createStringOption } from "../../modules/commands/options/createOption";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { doNothing } from "../../util/util";
@@ -68,11 +68,19 @@ InteractionRegistry.addCommand(new TopCommand({
     name: "delete",
     description: "Remove a sample from one of your soundboards.",
     options: [
-        createStringOption("sample", "A sample name or sample identifier (sXXXXXX)", true),
-        createStringOption("from", "In case user or server samples have the same name.", false, [
-            createChoice("Only search server samples.", "server"),
-            createChoice("Only search your user samples.", "user"),
-        ]),
+        new CommandStringOption({
+            name: "sample",
+            description: "A sample name or sample identifier (sXXXXXX)",
+            required: true,
+        }),
+        new CommandStringOption({
+            name: "from",
+            description: "In case user or server samples have the same name.",
+            choices: [
+                createChoice("Only search server samples.", SAMPLE_TYPES.SERVER),
+                createChoice("Only search your user samples.", SAMPLE_TYPES.USER),
+            ],
+        }),
     ],
     async func(interaction) {
         const name = interaction.options.getString("sample", true).trim();

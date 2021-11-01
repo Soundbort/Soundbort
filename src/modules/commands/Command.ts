@@ -1,18 +1,18 @@
 import Discord from "discord.js";
+import { BaseCommandOption } from "./CommandOption";
 import { SimpleFunc } from "./types";
 
 export interface CommandOptions {
     name: string,
     description: string,
-    options?: Discord.ApplicationCommandOptionData[],
+    options?: BaseCommandOption[],
     func?: SimpleFunc,
 }
 
 export class Command {
-    type: Discord.ApplicationCommandOptionType = "SUB_COMMAND";
     name: string;
     description: string;
-    options: Map<string, Discord.ApplicationCommandOptionData> = new Map();
+    options: Map<string, BaseCommandOption> = new Map();
 
     func: SimpleFunc | undefined;
 
@@ -22,9 +22,9 @@ export class Command {
         this.func = func;
 
         for (const option of options) {
-            if (this.options.has(option.name)) throw new Error("Option name already exists");
+            if (this.options.has(option.data.name)) throw new Error("Option name already exists");
 
-            this.options.set(option.name, option);
+            this.options.set(option.data.name, option);
         }
     }
 
@@ -40,10 +40,10 @@ export class Command {
 
     toJSON(): any { // need return type any for TopCommand to work
         return {
-            type: this.type,
+            type: "SUB_COMMAND",
             name: this.name,
             description: this.description,
-            options: [...this.options.values()],
+            options: [...this.options.values()].map(o => o.data),
         };
     }
 }

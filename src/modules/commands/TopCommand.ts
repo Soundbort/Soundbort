@@ -27,9 +27,10 @@ export class TopCommand extends Command {
         if (this._json) return this._json;
 
         return this._json = {
+            type: "CHAT_INPUT",
             name: this.name,
             description: this.description,
-            options: [...this.options.values()],
+            options: [...this.options.values()].map(o => o.data),
             defaultPermission: !this.target.guildHidden,
         };
     }

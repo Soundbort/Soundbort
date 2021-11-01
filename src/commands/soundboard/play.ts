@@ -4,12 +4,12 @@ import Logger from "../../log";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import { createStringOption } from "../../modules/commands/options/createOption";
 import { CmdInstallerArgs } from "../../util/types";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { BUTTON_TYPES } from "../../const";
 import { logErr } from "../../util/util";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import SampleID from "../../core/soundboard/SampleID";
@@ -76,7 +76,11 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
         name: "play",
         description: "Joins the voice channel if needed and plays the sound sample.",
         options: [
-            createStringOption("sample", "A sample name or sample identifier (sXXXXXX)", true),
+            new CommandStringOption({
+                name: "sample",
+                description: "A sample name or sample identifier (sXXXXXX)",
+                required: true,
+            }),
         ],
         async func(interaction) {
             if (!interaction.inGuild()) {

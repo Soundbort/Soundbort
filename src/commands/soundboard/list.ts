@@ -2,7 +2,7 @@ import Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import { createStringOption } from "../../modules/commands/options/createOption";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
@@ -140,12 +140,16 @@ InteractionRegistry.addCommand(new TopCommand({
     name: "list",
     description: "Generate a list of all accessable samples with clickable buttons to trigger them.",
     options: [
-        createStringOption("from", "What soundboards to output.", false, [
-            createChoice("Output all soundboards (standard, server and user soundboards).", "all"),
-            createChoice("Output standard soundboard only.", "standard"),
-            createChoice("Output this server's soundboard only.", "server"),
-            createChoice("Output your own soundboard only.", "user"),
-        ]),
+        new CommandStringOption({
+            name: "from",
+            description: "What soundboards to output.",
+            choices: [
+                createChoice("Output all soundboards (standard, server and user soundboards).", "all"),
+                createChoice("Output standard soundboard only.", SAMPLE_TYPES.STANDARD),
+                createChoice("Output this server's soundboard only.", SAMPLE_TYPES.SERVER),
+                createChoice("Output your own soundboard only.", SAMPLE_TYPES.USER),
+            ],
+        }),
     ],
     func(interaction) {
         const scope = interaction.options.getString("from") as ("all" | SAMPLE_TYPES.STANDARD | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.USER | null) || "all";

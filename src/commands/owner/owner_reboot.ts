@@ -3,7 +3,7 @@ import { exit } from "../../util/exit";
 import { logErr } from "../../util/util";
 import { replyEmbed } from "../../util/builders/embed";
 import { Command } from "../../modules/commands/Command";
-import { createBooleanOption } from "../../modules/commands/options/createOption";
+import { CommandBooleanOption } from "../../modules/commands/CommandOption";
 import AudioManager from "../../core/audio/AudioManager";
 
 const log = Logger.child({ label: "Reboot" });
@@ -37,7 +37,10 @@ export default new Command({
     name: "reboot",
     description: "Reboot the bot",
     options: [
-        createBooleanOption("force", "Disconnect everything and restart immediately. If false, wait for all voice connections to end.", false),
+        new CommandBooleanOption({
+            name: "force",
+            description: "Disconnect everything and restart immediately. If false, wait for all voice connections to end.",
+        }),
     ],
     func(interaction) {
         const force = interaction.options.getBoolean("force") ?? false;

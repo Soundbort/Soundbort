@@ -46,6 +46,7 @@ export class TopCommandGroup extends CommandGroup {
         if (this._json) return this._json;
 
         return this._json = {
+            type: "CHAT_INPUT",
             name: this.name,
             description: this.description,
             options: [...this.commands.values()].map(subcommand => subcommand.toJSON()),

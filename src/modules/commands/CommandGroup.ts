@@ -10,7 +10,6 @@ export interface CommandGroupOptions {
 }
 
 export class CommandGroup extends Command {
-    type: Discord.ApplicationCommandOptionType = "SUB_COMMAND_GROUP";
     commands: Map<string, Command> = new Map();
 
     middleware?: MiddlewareFunc;
@@ -43,7 +42,7 @@ export class CommandGroup extends Command {
 
     toJSON(): any { // need return type any for TopCommandGroup to work
         return {
-            type: this.type,
+            type: "SUB_COMMAND_GROUP",
             name: this.name,
             description: this.description,
             options: [...this.commands.values()].map(subcommand => subcommand.toJSON()),

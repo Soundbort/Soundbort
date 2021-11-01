@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { createStringOption } from "../../modules/commands/options/createOption";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
@@ -66,11 +66,19 @@ InteractionRegistry.addCommand(new TopCommand({
     name: "import",
     description: "Import a sample from another user or server to your or your server's soundboard.",
     options: [
-        createStringOption("sample_id", "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.", true),
-        createStringOption("to", "Choose the soundboard to import the sound to. Defaults to your personal soundboard.", false, [
-            createChoice("Import into your personal soundboard.", "user"),
-            createChoice("Import into server soundboard for every member to use.", "server"),
-        ]),
+        new CommandStringOption({
+            name: "sample_id",
+            description: "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.",
+            required: true,
+        }),
+        new CommandStringOption({
+            name: "to",
+            description: "Choose the soundboard to import the sound to. Defaults to your personal soundboard.",
+            choices: [
+                createChoice("Import into your personal soundboard.", SAMPLE_TYPES.USER),
+                createChoice("Import into server soundboard for every member to use.", SAMPLE_TYPES.SERVER),
+            ],
+        }),
     ],
     async func(interaction) {
         const id = interaction.options.getString("sample_id", true).trim();

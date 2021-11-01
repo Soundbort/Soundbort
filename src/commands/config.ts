@@ -1,5 +1,5 @@
 import InteractionRegistry from "../core/InteractionRegistry";
-import { createRoleOption } from "../modules/commands/options/createOption";
+import { CommandRoleOption } from "../modules/commands/CommandOption";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
 import { Command } from "../modules/commands/Command";
 import { BOT_NAME } from "../config";
@@ -10,7 +10,11 @@ const set_admin_role_cmd = new Command({
     name: "set-admin-role",
     description: `Set the (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
     options: [
-        createRoleOption("role", `The (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`, true),
+        new CommandRoleOption({
+            name: "role",
+            description: `The (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
+            required: true,
+        }),
     ],
     async func(interaction) {
         if (!interaction.inGuild()) {
