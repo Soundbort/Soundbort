@@ -2,7 +2,6 @@ import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
 import * as models from "../../modules/database/models";
-import { isOwner } from "../../util/util";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 const blacklist_add_cmd = new Command({
@@ -12,10 +11,6 @@ const blacklist_add_cmd = new Command({
         createStringOption("user-id", "User id to blacklist", true),
     ],
     async func(interaction) {
-        if (!isOwner(interaction.user.id)) {
-            return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
-        }
-
         const userId = interaction.options.getString("user-id", true).trim();
 
         await models.blacklist_user.updateOne(
@@ -35,10 +30,6 @@ const blacklist_remove_cmd = new Command({
         createStringOption("user-id", "User id to remove from blacklist", true),
     ],
     async func(interaction) {
-        if (!isOwner(interaction.user.id)) {
-            return replyEmbedEphemeral("You're not a bot developer.", EmbedType.Error);
-        }
-
         const userId = interaction.options.getString("user-id", true).trim();
 
         await models.blacklist_user.deleteOne(

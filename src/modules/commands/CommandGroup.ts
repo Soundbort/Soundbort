@@ -1,17 +1,21 @@
 import Discord from "discord.js";
 import { Command } from "./Command";
+import { MiddlewareFunc } from "./types";
 
 export interface CommandGroupOptions {
     name: string;
     description: string;
     commands: Command[];
+    middleware?: MiddlewareFunc;
 }
 
 export class CommandGroup extends Command {
     type: Discord.ApplicationCommandOptionType = "SUB_COMMAND_GROUP";
     commands: Map<string, Command> = new Map();
 
-    constructor({ name, description, commands }: CommandGroupOptions) {
+    middleware?: MiddlewareFunc;
+
+    constructor({ name, description, commands, middleware }: CommandGroupOptions) {
         super({ name, description });
 
         for (const command of commands) {
@@ -19,14 +23,22 @@ export class CommandGroup extends Command {
 
             this.commands.set(command.name, command);
         }
+
+        this.middleware = middleware;
+    }
+
+    protected _getSubcommand(interaction: Discord.CommandInteraction | Discord.AutocompleteInteraction): Command | undefined {
+        const command_name = interaction.options.getSubcommand(true);
+        return this.commands.get(command_name);
     }
 
     async run(interaction: Discord.CommandInteraction): Promise<void> {
-        const command_name = interaction.options.getSubcommand(true);
-        const command = this.commands.get(command_name);
+        if (this.middleware && !await this.middleware(interaction)) return;
+
+        const command = this._getSubcommand(interaction);
         if (!command) return;
 
-        return await command.run(interaction);
+        await command.run(interaction);
     }
 
     toJSON(): any { // need return type any for TopCommandGroup to work

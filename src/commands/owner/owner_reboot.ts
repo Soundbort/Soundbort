@@ -1,7 +1,7 @@
 import Logger from "../../log";
 import { exit } from "../../util/exit";
-import { isOwner, logErr } from "../../util/util";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
+import { logErr } from "../../util/util";
+import { replyEmbed } from "../../util/builders/embed";
 import { Command } from "../../modules/commands/Command";
 import { createBooleanOption } from "../../modules/commands/options/createOption";
 import AudioManager from "../../core/audio/AudioManager";
@@ -40,10 +40,6 @@ export default new Command({
         createBooleanOption("force", "Disconnect everything and restart immediately. If false, wait for all voice connections to end.", false),
     ],
     func(interaction) {
-        if (!isOwner(interaction.user.id)) {
-            return replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error);
-        }
-
         const force = interaction.options.getBoolean("force") ?? false;
 
         return shutdown(force);

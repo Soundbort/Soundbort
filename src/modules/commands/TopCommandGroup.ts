@@ -1,13 +1,14 @@
 import Discord from "discord.js";
 import { Command } from "./Command";
 import { CommandGroup } from "./CommandGroup";
-import { CommandTarget, GuildCreateEventHandler } from "./types";
+import { CommandTarget, GuildCreateEventHandler, MiddlewareFunc } from "./types";
 
 export interface TopCommandGroupOptions {
     name: string;
     description: string;
     commands: (Command | CommandGroup)[];
     target?: CommandTarget;
+    middleware?: MiddlewareFunc;
     onGuildCreate?: GuildCreateEventHandler;
 }
 
@@ -19,19 +20,25 @@ export class TopCommandGroup extends CommandGroup {
 
     private _json?: Discord.ApplicationCommandData;
 
-    constructor({ name, description, commands, target = { global: false, guildHidden: false }, onGuildCreate }: TopCommandGroupOptions) {
-        super({ name, description, commands });
+    constructor({ name, description, commands, target = { global: false, guildHidden: false }, middleware, onGuildCreate }: TopCommandGroupOptions) {
+        super({ name, description, commands, middleware });
 
         this.target = target;
         this.onGuildCreate = onGuildCreate;
     }
 
-    async run(interaction: Discord.CommandInteraction): Promise<void> {
+    protected _getSubcommand(interaction: Discord.CommandInteraction | Discord.AutocompleteInteraction): Command | undefined {
         const command_name = interaction.options.getSubcommandGroup(false) || interaction.options.getSubcommand(true);
-        const command = this.commands.get(command_name);
+        return this.commands.get(command_name);
+    }
+
+    async run(interaction: Discord.CommandInteraction): Promise<void> {
+        if (this.middleware && !await this.middleware(interaction)) return;
+
+        const command = this._getSubcommand(interaction);
         if (!command) return;
 
-        return await command.run(interaction);
+        await command.run(interaction);
     }
 
     toJSON(): Discord.ApplicationCommandData {

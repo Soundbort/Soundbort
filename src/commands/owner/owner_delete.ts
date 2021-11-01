@@ -1,7 +1,6 @@
 import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { createStringOption } from "../../modules/commands/options/createOption";
-import { isOwner } from "../../util/util";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
@@ -14,11 +13,6 @@ const delete_extern_cmd = new Command({
         createStringOption("id", "Id of the custom sample to delete.", true),
     ],
     async func(interaction) {
-        const userId = interaction.user.id;
-        if (!isOwner(userId)) {
-            return replyEmbedEphemeral("You're not a bot developer, you can't just remove any sample.", EmbedType.Error);
-        }
-
         const id = interaction.options.getString("id", true).trim();
 
         const sample = await CustomSample.findById(id);
@@ -40,12 +34,6 @@ const delete_standard_cmd = new Command({
     ],
     async func(interaction) {
         const name = interaction.options.getString("name", true).trim();
-
-        const userId = interaction.user.id;
-
-        if (!isOwner(userId)) {
-            return replyEmbedEphemeral("You're not a bot developer, you can't remove standard samples.", EmbedType.Error);
-        }
 
         const sample = await StandardSample.findByName(name);
         if (!sample) {

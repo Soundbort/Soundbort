@@ -1,5 +1,4 @@
 import { createStringOption } from "../../modules/commands/options/createOption";
-import { isOwner } from "../../util/util";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
@@ -14,10 +13,6 @@ export default new Command({
     ],
     async func(interaction) {
         const id = interaction.options.getString("sample_id", true).trim();
-
-        if (!isOwner(interaction.user.id)) {
-            return replyEmbedEphemeral("You're not a bot developer, you can't add samples to standard soundboard.", EmbedType.Error);
-        }
 
         const sample_count = await StandardSample.countSamples();
         if (sample_count >= StandardSample.MAX_SLOTS) {
