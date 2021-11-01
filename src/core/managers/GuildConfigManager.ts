@@ -14,6 +14,18 @@ class GuildConfigManager extends TypedEventEmitter<EventMap> {
         await models.config.replaceOne({ guildId }, config, { upsert: true });
     }
 
+    public async regenConfig(guild: Discord.Guild): Promise<void> {
+        const guessed_role = guessModRole(guild);
+
+        const config = await this.findOrGenConfig(guild);
+        if (config && config.adminRoleId === guessed_role.id) return;
+
+        // reset admin role to the highest role when rejoining
+        // default to the highest role or a role that says "mod", "moderator"
+        // or "admin" in the server (server with no roles this will be @everyone)
+        await this.setAdminRole(guild.id, guessed_role.id);
+    }
+
     /**
      * Get an existing config from the database, check it's values and repair it, or create a new config if it doesn't exist
      */

@@ -5,7 +5,7 @@ import nanoTimer from "../util/timer";
 import Logger from "../log";
 import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
-import { guessModRole, logErr } from "../util/util";
+import { logErr } from "../util/util";
 
 import InteractionRegistry from "./InteractionRegistry";
 import GuildConfigManager from "./managers/GuildConfigManager";
@@ -89,15 +89,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
         try {
             await deployToGuild(guild);
 
-            const guessed_role = guessModRole(guild);
-
-            const config = await GuildConfigManager.findOrGenConfig(guild);
-            if (config && config.adminRoleId === guessed_role.id) return;
-
-            // reset admin role to the highest role when rejoining
-            // default to the highest role or a role that says "mod", "moderator"
-            // or "admin" in the server (server with no roles this will be @everyone)
-            await GuildConfigManager.setAdminRole(guild.id, guessed_role.id);
+            await GuildConfigManager.regenConfig(guild);
         } catch (error) {
             log.error({ error: logErr(error) });
         }
