@@ -14,6 +14,7 @@ RUN apt update \
         libjpeg-dev \
         libgif-dev \
         librsvg2-dev \
+        curl \
         ffmpeg
 
 WORKDIR /app
