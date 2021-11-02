@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.0](https://github.com/LonelessCodes/SoundBort/compare/v0.4.3...v0.5.0) (2021-11-02)
+
+
+### Features
+
+* add autocomplete (woooo! yeah!) ([65acda8](https://github.com/LonelessCodes/SoundBort/commit/65acda8bc692702a5413cdde81a02413e60e8a2e))
+
+
+### Bug Fixes
+
+* **dialog:** don't freak out over expected "time" error from awaitMessageComponent() ([cbe0a5c](https://github.com/LonelessCodes/SoundBort/commit/cbe0a5c475ab1b9aed0676072e747df718a734cf))
+* fixed docker healthcheck ([ca8c3d3](https://github.com/LonelessCodes/SoundBort/commit/ca8c3d3817a4576b52f218b8b3e80994ffaa2598))
+
+
+### Changes
+
+* change /delete behaviour (preparation for autocomplete) ([e3a4f0f](https://github.com/LonelessCodes/SoundBort/commit/e3a4f0fc73d4c358012d3966279b28151ef08563))
+* remove "from" option from /info command ([36cb95c](https://github.com/LonelessCodes/SoundBort/commit/36cb95c5b5a781b83e11ab82c9d4db9f9152de11))
+
 ### [0.4.3](https://github.com/LonelessCodes/SoundBort/compare/v0.4.2...v0.4.3) (2021-10-29)
 
 
