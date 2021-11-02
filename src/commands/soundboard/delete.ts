@@ -6,8 +6,7 @@ import InteractionRegistry from "../../core/InteractionRegistry";
 import { CommandStringOption } from "../../modules/commands/CommandOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import { doNothing } from "../../util/util";
-import { createEmbed, EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import GuildConfigManager from "../../core/managers/GuildConfigManager";
@@ -63,6 +62,7 @@ async function removeUser(interaction: Discord.CommandInteraction, name: string)
 
     return replyEmbed(`Removed ${sample.name} (${sample.id}) from user soundboard!`, EmbedType.Success);
 }
+import { createDialog, DialogOptionsButton } from "../../util/builders/dialog";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "delete",
@@ -94,11 +94,12 @@ InteractionRegistry.addCommand(new TopCommand({
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction, decoded) => {
     if (!interaction.inGuild()) return;
 
-    const deletionId = interaction.id;
     const id = decoded.id as string;
 
     const sample = await CustomSample.findById(id);
-    if (!sample) return;
+    if (!sample) {
+        return replyEmbedEphemeral("This sample doesn't exist anymore", EmbedType.Info);
+    }
 
     const userId = interaction.user.id;
     const guildId = interaction.guildId;
@@ -110,63 +111,28 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction
         return replyEmbedEphemeral("You can't delete this sample from your personal or this server's soundboard.", EmbedType.Info);
     }
 
-    const buttons = [];
-
-    if (hasInUser) {
-        buttons.push(
-            new Discord.MessageButton()
-                .setCustomId(InteractionRegistry.encodeButtonId({ ...decoded, t: BUTTON_TYPES.DELETE_USER, did: deletionId }))
-                .setLabel("Delete From User Board")
-                .setEmoji("🗑️")
-                .setStyle("DANGER"),
-        );
-    }
-    if (hasInGuild) {
-        buttons.push(
-            new Discord.MessageButton()
-                .setCustomId(InteractionRegistry.encodeButtonId({ ...decoded, t: BUTTON_TYPES.DELETE_SERVER, did: deletionId }))
-                .setLabel("Delete From Server Board")
-                .setEmoji("🗑️")
-                .setStyle("DANGER"),
-        );
-    }
-    buttons.push(
-        new Discord.MessageButton()
-            .setCustomId(InteractionRegistry.encodeButtonId({ ...decoded, t: BUTTON_TYPES.DELETE_ABORT, did: deletionId }))
-            .setLabel("Abort")
-            .setEmoji("⚪")
-            .setStyle("SECONDARY"),
-    );
-
-    const embed = createEmbed(
-        "Are you sure you want to delete this sample from your user or server soundboard? " +
-        "If you're the creator of this sample, it will be removed from every soundboard it was imported into.",
-        EmbedType.Warning,
-    );
-
-    const replied_msg = await interaction.reply({ embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)], fetchReply: true });
-
-    // as a lil UX sugar, delete dialog once one of the buttons was clicked
-
-    if (!interaction.channel) return;
-    await interaction.channel.awaitMessageComponent({
-        filter: new_inter => {
-            const decoded = InteractionRegistry.decodeButtonId(new_inter.customId);
-
-            return new_inter.user.id === interaction.user.id &&
-                   decoded.did === deletionId;
-        },
-        componentType: "BUTTON",
-        time: 5 * 60 * 1000,
+    await createDialog({
+        interaction,
+        dialog_text:
+            "Are you sure you want to delete this sample from your user or server soundboard? " +
+            "If you're the creator of this sample, it will be removed from every soundboard it was imported into.",
+        dialog_type: EmbedType.Warning,
+        abort_type: BUTTON_TYPES.DELETE_ABORT,
+        buttons: [
+            hasInUser && {
+                id: { ...decoded, t: BUTTON_TYPES.DELETE_USER },
+                label: "Delete From User Board",
+                emoji: "🗑️",
+                style: "DANGER",
+            },
+            hasInGuild && {
+                id: { ...decoded, t: BUTTON_TYPES.DELETE_SERVER },
+                label: "Delete From Server Board",
+                emoji: "🗑️",
+                style: "DANGER",
+            },
+        ].filter(Boolean) as DialogOptionsButton[],
     });
-
-    for (const button of buttons) {
-        button.disabled = true;
-        button.style = "SECONDARY";
-    }
-
-    // await interaction.editReply({ embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)] });
-    await interaction.channel.messages.delete(replied_msg.id).catch(doNothing);
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_USER }, async (interaction, decoded) => {
@@ -214,9 +180,9 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_SERVER }, async (interact
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ABORT }, async (interaction, decoded) => {
-    const id = decoded.id as string;
+    const id = decoded.id as (string | null);
 
-    const sample = await CustomSample.findById(id);
+    const sample = id && await CustomSample.findById(id);
     if (!sample) {
         return replyEmbed("Aborted deletion of sample.", EmbedType.Info);
     }
