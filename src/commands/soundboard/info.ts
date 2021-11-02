@@ -1,3 +1,5 @@
+import Discord from "discord.js";
+
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
@@ -8,6 +10,22 @@ import { CustomSample } from "../../core/soundboard/CustomSample";
 import GuildConfigManager from "../../core/managers/GuildConfigManager";
 import { search } from "../../core/soundboard/methods/searchMany";
 import { findOne } from "../../core/soundboard/methods/findOne";
+import { StandardSample } from "../../core/soundboard/StandardSample";
+
+async function canShowDelete(sample: CustomSample | StandardSample, userId: string, guild: Discord.Guild | null) {
+    if (sample instanceof CustomSample) {
+        // has sample in user soundboard?
+        if (sample.isInUsers(userId)) return true;
+        // ok then not, but has sample in server soundboard?
+        else if (
+            guild &&
+            sample.isInGuilds(guild.id) &&
+            // is a moderator? can remove sample?
+            await GuildConfigManager.isModerator(guild, userId)
+        ) return true;
+    }
+    return false;
+}
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "info",
@@ -30,16 +48,7 @@ InteractionRegistry.addCommand(new TopCommand({
             return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
         }
 
-        const show_delete = sample instanceof CustomSample &&
-            // has sample in user soundboard?
-            (sample.isInUsers(interaction.user.id) ||
-            (!interaction.guildId || (
-                // has sample in server soundboard?
-                sample.isInGuilds(interaction.guildId) &&
-                interaction.guild &&
-                // is a moderator? can remove sample?
-                await GuildConfigManager.isModerator(interaction.guild, interaction.user.id))
-            ));
+        const show_delete = await canShowDelete(sample, interaction.user.id, interaction.guild);
 
         return sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
     },
