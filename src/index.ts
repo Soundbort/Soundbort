@@ -76,7 +76,10 @@ process.on("unhandledRejection", (reason, promise) => {
     exit(1);
 });
 
-client.on("debug", message => { djs_log.debug(message); });
+client.on("debug", message => {
+    if (/heartbeat/ig.test(message)) return;
+    djs_log.debug(message);
+});
 
 client.on("warn", warn => { djs_log.warn(warn); });
 
