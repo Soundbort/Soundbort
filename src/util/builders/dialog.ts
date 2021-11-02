@@ -35,7 +35,7 @@ export async function createDialog({ interaction, dialog_text, dialog_type = Emb
         message_buttons.push(message_button);
     }
 
-    if (abort_type) {
+    if (typeof abort_type !== "undefined") {
         message_buttons.push(
             new Discord.MessageButton()
                 .setCustomId(InteractionRegistry.encodeButtonId({ t: abort_type, did: dialogId }))
@@ -56,16 +56,26 @@ export async function createDialog({ interaction, dialog_text, dialog_type = Emb
     // as a lil UX sugar, delete dialog once one of the buttons was clicked
 
     if (!interaction.channel) return;
-    await interaction.channel.awaitMessageComponent({
-        filter: new_inter => {
-            const decoded = InteractionRegistry.decodeButtonId(new_inter.customId);
 
-            return new_inter.user.id === interaction.user.id &&
-                decoded.did === dialogId;
-        },
-        componentType: "BUTTON",
-        time: 5 * 60 * 1000,
-    });
+    try {
+        await interaction.channel.awaitMessageComponent({
+            filter: new_inter => {
+                const decoded = InteractionRegistry.decodeButtonId(new_inter.customId);
 
-    await interaction.channel.messages.delete(replied_msg.id).catch(doNothing);
+                return new_inter.user.id === interaction.user.id &&
+                    decoded.did === dialogId;
+            },
+            componentType: "BUTTON",
+            time: 5 * 60 * 1000,
+        });
+
+        await interaction.channel.messages.delete(replied_msg.id).catch(doNothing);
+    } catch (error: any) {
+        // "time" is an expected error. Only bubble up when error reason is not "time"
+        if (error.code === "INTERACTION_COLLECTOR_ERROR" &&
+            typeof error.message === "string" &&
+            error.message.endsWith("time")) return;
+
+        throw error;
+    }
 }
