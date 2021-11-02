@@ -3,6 +3,7 @@ import path from "node:path";
 import * as Voice from "@discordjs/voice";
 import Discord from "discord.js";
 import moment from "moment";
+import escapeStringRegexp from "escape-string-regexp";
 
 import InteractionRegistry from "../InteractionRegistry";
 import { createEmbed } from "../../util/builders/embed";
@@ -95,6 +96,27 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
     static async getSamples(): Promise<StandardSample[]> {
         const docs = await models.standard_sample.findMany({});
+
+        const samples: StandardSample[] = [];
+
+        for (const doc of docs) {
+            samples.push(new StandardSample(doc));
+        }
+
+        return samples;
+    }
+
+    static async fuzzySearch(name: string): Promise<StandardSample[]> {
+        if (name === "") {
+            return await this.getSamples();
+        }
+
+        const docs = await models.standard_sample.findMany({
+            name: {
+                $regex: escapeStringRegexp(name),
+                $options: "i",
+            },
+        });
 
         const samples: StandardSample[] = [];
 

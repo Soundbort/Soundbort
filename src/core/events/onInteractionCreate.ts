@@ -44,6 +44,18 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
             return;
         }
 
+        if (interaction.isAutocomplete()) {
+            try {
+                const command = InteractionRegistry.commands.get(interaction.commandName);
+                if (!command) return;
+
+                await command.autocomplete(interaction);
+            } catch (error) {
+                log.error({ error: logErr(error) });
+            }
+            return;
+        }
+
         if (interaction.isButton()) {
             const customId = interaction.customId;
             const decoded = InteractionRegistry.decodeButtonId(customId);

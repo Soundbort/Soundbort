@@ -3,6 +3,8 @@ import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 import fs from "fs-extra";
 import moment from "moment";
+import { Filter } from "mongodb";
+import escapeStringRegexp from "escape-string-regexp";
 
 import Logger from "../../log";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
@@ -160,6 +162,53 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     }
 
     // FIND SAMPLES
+
+    static async fuzzySearch(name: string, { userId, guildId }: { userId: string, guildId?: string }): Promise<CustomSample[]> {
+        let query: Filter<SoundboardCustomSampleSchema>;
+
+        if (name === "") {
+            if (!guildId) {
+                return await CustomSample.getUserSamples(userId);
+            }
+
+            query = {
+                $or: [
+                    { userIds: userId },
+                    { guildIds: guildId },
+                ],
+            };
+        } else {
+            const name_query = {
+                $regex: escapeStringRegexp(name),
+                $options: "i",
+            };
+
+            if (guildId) {
+                query = {
+                    $or: [
+                        { userIds: userId },
+                        { guildIds: guildId },
+                    ],
+                    name: name_query,
+                };
+            } else {
+                query = {
+                    userId,
+                    name: name_query,
+                };
+            }
+        }
+
+        const docs = await models.custom_sample.findMany(query);
+
+        const samples: CustomSample[] = [];
+
+        for (const doc of docs) {
+            samples.push(new CustomSample(doc));
+        }
+
+        return samples;
+    }
 
     static async findById(id: string): Promise<CustomSample | undefined> {
         const doc = await models.custom_sample.findOne({ id });

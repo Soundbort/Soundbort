@@ -10,6 +10,7 @@ import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import GuildConfigManager from "../../core/managers/GuildConfigManager";
 import SampleID from "../../core/soundboard/SampleID";
+import { search } from "../../core/soundboard/methods/searchMany";
 import { createDialog, DialogOptionsButton } from "../../util/builders/dialog";
 
 async function dialogSameId(interaction: Discord.CommandInteraction, sampleId: string) {
@@ -62,6 +63,9 @@ InteractionRegistry.addCommand(new TopCommand({
             name: "sample",
             description: "A sample name or sample identifier (sXXXXXX)",
             required: true,
+            async autocomplete(value, interaction) {
+                return await search(value, interaction.user.id, interaction.guild, true);
+            },
         }),
     ],
     async func(interaction) {

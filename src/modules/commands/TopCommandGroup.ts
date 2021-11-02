@@ -32,6 +32,13 @@ export class TopCommandGroup extends CommandGroup {
         return this.commands.get(command_name);
     }
 
+    async autocomplete(interaction: Discord.AutocompleteInteraction): Promise<void> {
+        const command = this._getSubcommand(interaction);
+        if (!command) return;
+
+        await command.autocomplete(interaction);
+    }
+
     async run(interaction: Discord.CommandInteraction): Promise<void> {
         if (this.middleware && !await this.middleware(interaction)) return;
 

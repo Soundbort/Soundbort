@@ -1,39 +1,16 @@
-import Discord from "discord.js";
 import { SAMPLE_TYPES } from "../../const";
+
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { CommandStringOption } from "../../modules/commands/CommandOption";
 import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
-import SampleID from "../../core/soundboard/SampleID";
 import { CustomSample } from "../../core/soundboard/CustomSample";
-import { StandardSample } from "../../core/soundboard/StandardSample";
 import GuildConfigManager from "../../core/managers/GuildConfigManager";
-
-async function findSampleByScope(
-    guildId: Discord.Snowflake | null,
-    userId: Discord.Snowflake,
-    name: string,
-    scope: "user" | "server" | null,
-): Promise<CustomSample | StandardSample | undefined> {
-    let sample: CustomSample | StandardSample | undefined;
-    if (!scope) {
-        sample = await CustomSample.findByName(guildId, userId, name) ||
-                 await StandardSample.findByName(name);
-    } else if (scope === "user") {
-        sample = await CustomSample.findSampleUser(userId, name);
-    } else if (guildId) {
-        sample = await CustomSample.findSampleGuild(guildId, name);
-    }
-
-    if (!sample && SampleID.isId(name)) {
-        sample = await CustomSample.findById(name);
-    }
-
-    return sample;
-}
+import { search } from "../../core/soundboard/methods/searchMany";
+import { findOne } from "../../core/soundboard/methods/findOne";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "info",
@@ -43,6 +20,9 @@ InteractionRegistry.addCommand(new TopCommand({
             name: "sample",
             description: "A sample name or sample identifier (sXXXXXX)",
             required: true,
+            async autocomplete(value, interaction) {
+                return await search(value, interaction.user.id, interaction.guild);
+            },
         }),
         new CommandStringOption({
             name: "from",
@@ -57,7 +37,7 @@ InteractionRegistry.addCommand(new TopCommand({
         const name = interaction.options.getString("sample", true).trim();
         const scope = interaction.options.getString("from", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null);
 
-        const sample = await findSampleByScope(interaction.guildId, interaction.user.id, name, scope);
+        const sample = await findOne(name, interaction.user.id, interaction.guildId, scope);
         if (!sample) {
             return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
         }

@@ -33,6 +33,7 @@ const client = new Discord.Client({
         BaseGuildEmojiManager: 0,
         GuildBanManager: 0,
         GuildInviteManager: 0,
+        // keep default, because of autocomplete checks for isModerator => lot of calls in short time, therefore enable cache
         // GuildMemberManager: 0,
         GuildStickerManager: 0,
         MessageManager: 0,
@@ -42,6 +43,7 @@ const client = new Discord.Client({
         StageInstanceManager: 0,
         ThreadManager: 0,
         ThreadMemberManager: 0,
+        // keep user cache default, because guild member cache depends on it
         // UserManager: 0,
         VoiceStateManager: Infinity,
     }),

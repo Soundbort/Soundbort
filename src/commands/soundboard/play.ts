@@ -1,19 +1,21 @@
 import Discord from "discord.js";
 
+import { BUTTON_TYPES } from "../../const";
 import Logger from "../../log";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
-import { TopCommand } from "../../modules/commands/TopCommand";
+import { logErr } from "../../util/util";
 import { CmdInstallerArgs } from "../../util/types";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
-import { BUTTON_TYPES } from "../../const";
-import { logErr } from "../../util/util";
+import { TopCommand } from "../../modules/commands/TopCommand";
 import { CommandStringOption } from "../../modules/commands/CommandOption";
+
+import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
+import InteractionRegistry from "../../core/InteractionRegistry";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
-import SampleID from "../../core/soundboard/SampleID";
-import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
+import { search } from "../../core/soundboard/methods/searchMany";
+import { findOne } from "../../core/soundboard/methods/findOne";
 
 const log = Logger.child({ label: "Command => play" });
 
@@ -80,6 +82,9 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
                 name: "sample",
                 description: "A sample name or sample identifier (sXXXXXX)",
                 required: true,
+                autocomplete(value, interaction) {
+                    return search(value, interaction.user.id, interaction.guild);
+                },
             }),
         ],
         async func(interaction) {
@@ -89,13 +94,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
             const name = interaction.options.getString("sample", true).trim();
 
-            let sample = await CustomSample.findByName(interaction.guildId, interaction.user.id, name) ||
-                         await StandardSample.findByName(name);
-
-            if (!sample && SampleID.isId(name)) {
-                sample = await CustomSample.findById(name);
-            }
-
+            const sample = await findOne(name, interaction.user.id, interaction.guildId);
             if (!sample) {
                 return replyEmbedEphemeral(`Couldn't find sample with name or id '${name}'`, EmbedType.Error);
             }

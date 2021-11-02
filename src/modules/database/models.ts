@@ -45,6 +45,7 @@ database.onConnect(async () => {
     await blacklist_user.collection.createIndex({ userId: 1 }, { unique: true });
 
     await custom_sample.collection.createIndex({ id: 1 }, { unique: true });
+    await custom_sample.collection.createIndex({ name: 1 });
 
     await standard_sample.collection.createIndex({ name: 1 }, { unique: true });
 

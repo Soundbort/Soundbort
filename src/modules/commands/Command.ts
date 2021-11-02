@@ -1,6 +1,10 @@
 import Discord from "discord.js";
+import Logger from "../../log";
+import nanoTimer from "../../util/timer";
 import { BaseCommandOption } from "./CommandOption";
 import { SimpleFunc } from "./types";
+
+const log = Logger.child({ label: "Command => autocomplete" });
 
 export interface CommandOptions {
     name: string,
@@ -26,6 +30,29 @@ export class Command {
 
             this.options.set(option.data.name, option);
         }
+    }
+
+    async autocomplete(interaction: Discord.AutocompleteInteraction): Promise<void> {
+        const timer = nanoTimer();
+
+        const focused = interaction.options.getFocused(true);
+        const option = this.options.get(focused.name);
+        if (!option || !option.autocomplete) return;
+
+        let choices: Discord.ApplicationCommandOptionChoice[];
+        try {
+            choices = await option.autocomplete(focused.value, interaction);
+        } catch (error) {
+            const exec_time = nanoTimer.diff(timer) / nanoTimer.NS_PER_MS;
+            log.debug("%s='%s' for '%s' by %s in %s (%s) finished in %sms", focused.name, focused.value, this.name, interaction.user.id, interaction.channelId, interaction.channel?.type, exec_time.toFixed(3));
+
+            throw error;
+        }
+
+        const exec_time = nanoTimer.diff(timer) / nanoTimer.NS_PER_MS;
+        log.debug("%s='%s' for '%s' by %s in %s (%s) finished in %sms", focused.name, focused.value, this.name, interaction.user.id, interaction.channelId, interaction.channel?.type, exec_time.toFixed(3));
+
+        await interaction.respond(choices);
     }
 
     async run(interaction: Discord.CommandInteraction): Promise<void> {

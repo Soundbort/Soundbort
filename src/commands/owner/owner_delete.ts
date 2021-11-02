@@ -5,6 +5,7 @@ import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
+import { searchStandard } from "../../core/soundboard/methods/searchMany";
 
 const delete_extern_cmd = new Command({
     name: "extern",
@@ -38,6 +39,9 @@ const delete_standard_cmd = new Command({
             name: "name",
             description: "Name of the standard sample to delete.",
             required: true,
+            async autocomplete(value) {
+                return await searchStandard(value);
+            },
         }),
     ],
     async func(interaction) {
