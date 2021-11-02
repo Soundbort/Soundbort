@@ -76,6 +76,7 @@
     "release:major": "standard-version --release-as major",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
+    "release:push": "git push --follow-tags origin main && git checkout stable && git merge main && git push --follow-tags origin stable && git checkout main",
     "health": "curl -f http://localhost:6969/ || exit 1"
   },
   "license": "GPL-3.0",
