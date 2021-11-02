@@ -1,10 +1,7 @@
-import { SAMPLE_TYPES } from "../../const";
-
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { createChoice } from "../../modules/commands/options/createChoice";
 import { TopCommand } from "../../modules/commands/TopCommand";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
@@ -24,20 +21,11 @@ InteractionRegistry.addCommand(new TopCommand({
                 return await search(value, interaction.user.id, interaction.guild);
             },
         }),
-        new CommandStringOption({
-            name: "from",
-            description: "In case user, server or standard samples have the same name.",
-            choices: [
-                createChoice("Only search server samples.", SAMPLE_TYPES.SERVER),
-                createChoice("Only search your user samples.", SAMPLE_TYPES.USER),
-            ],
-        }),
     ],
     async func(interaction) {
         const name = interaction.options.getString("sample", true).trim();
-        const scope = interaction.options.getString("from", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null);
 
-        const sample = await findOne(name, interaction.user.id, interaction.guildId, scope);
+        const sample = await findOne(name, interaction.user.id, interaction.guildId);
         if (!sample) {
             return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
         }
