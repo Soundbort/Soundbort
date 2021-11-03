@@ -1,9 +1,11 @@
 import Logger from "../../log.js";
 import { exit } from "../../util/exit.js";
 import { logErr } from "../../util/util.js";
+
 import { replyEmbed } from "../../util/builders/embed.js";
 import { Command } from "../../modules/commands/Command.js";
 import { CommandBooleanOption } from "../../modules/commands/CommandOption.js";
+
 import AudioManager from "../../core/audio/AudioManager.js";
 
 const log = Logger.child({ label: "Reboot" });

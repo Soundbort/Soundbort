@@ -7,7 +7,7 @@ import { TOP_GG_WEBHOOK_TOKEN, WEBHOOK_PORT } from "../../config.js";
 import Logger from "../../log.js";
 import { logErr } from "../../util/util.js";
 import * as models from "../../modules/database/models.js";
-import { TypedEventEmitter, GenericListener } from "../../util/emitter.js";
+import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
 import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
 import { onExit } from "../../util/exit.js";
 

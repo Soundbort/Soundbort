@@ -1,8 +1,6 @@
 import * as database from "./index.js";
-
 import DatabaseCache from "./DatabaseCache.js";
 import databaseProxy from "./databaseProxy.js";
-
 import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema.js";
 import { ConfigSchema } from "./schemas/ConfigSchema.js";
 import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema.js";

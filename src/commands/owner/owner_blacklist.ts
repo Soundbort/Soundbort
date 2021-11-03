@@ -1,8 +1,9 @@
 import { Command } from "../../modules/commands/Command.js";
 import { CommandGroup } from "../../modules/commands/CommandGroup.js";
 import { CommandStringOption } from "../../modules/commands/CommandOption.js";
-import * as models from "../../modules/database/models.js";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
+
+import * as models from "../../modules/database/models.js";
 
 const blacklist_add_cmd = new Command({
     name: "add",

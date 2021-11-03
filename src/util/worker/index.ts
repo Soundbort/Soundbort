@@ -1,5 +1,6 @@
 import path from "node:path";
 import { Worker } from "node:worker_threads";
+
 import { getDirname } from "../esm.js";
 
 export function createWorker(worker_path: string): Worker {

@@ -6,12 +6,12 @@ import InteractionRegistry from "../../core/InteractionRegistry.js";
 import { CommandStringOption } from "../../modules/commands/CommandOption.js";
 import { TopCommand } from "../../modules/commands/TopCommand.js";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { DialogOptionsButton, createDialog } from "../../util/builders/dialog.js";
 
 import { CustomSample } from "../../core/soundboard/CustomSample.js";
 import GuildConfigManager from "../../core/managers/GuildConfigManager.js";
 import SampleID from "../../core/soundboard/SampleID.js";
 import { search } from "../../core/soundboard/methods/searchMany.js";
-import { createDialog, DialogOptionsButton } from "../../util/builders/dialog.js";
 
 async function dialogSameId(interaction: Discord.CommandInteraction, sampleId: string) {
     await createDialog({

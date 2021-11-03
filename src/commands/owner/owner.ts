@@ -1,9 +1,10 @@
 import Discord from "discord.js";
 
-import { OWNER_IDS, OWNER_GUILD_IDS } from "../../config.js";
+import { OWNER_GUILD_IDS, OWNER_IDS } from "../../config.js";
 import { isOwner } from "../../util/util.js";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
+
 import InteractionRegistry from "../../core/InteractionRegistry.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 import { TopCommandGroup } from "../../modules/commands/TopCommandGroup.js";
 import { createUserPermission } from "../../modules/commands/options/createPermission.js";
 

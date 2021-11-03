@@ -1,4 +1,5 @@
 import { Collection, Document } from "mongodb";
+
 import * as database from "./index.js";
 
 // A lot of typescript cheating to make this proxy wrap

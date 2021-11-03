@@ -5,9 +5,9 @@ import Discord from "discord.js";
 import Logger from "./log.js";
 import { DISCORD_TOKEN } from "./config.js";
 import { exit, onExit } from "./util/exit.js";
+import { logErr } from "./util/util.js";
 import Core from "./core/Core.js";
 import * as database from "./modules/database/index.js";
-import { logErr } from "./util/util.js";
 
 const log = Logger.child({ label: "Index" });
 const djs_log = Logger.child({ label: "discord.js" });

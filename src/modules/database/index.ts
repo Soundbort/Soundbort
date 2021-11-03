@@ -1,5 +1,5 @@
 import { Awaitable } from "discord.js";
-import { Db, Collection, MongoClient } from "mongodb";
+import { Collection, Db, MongoClient } from "mongodb";
 
 import { BOT_NAME, DB_URI } from "../../config.js";
 import Logger from "../../log.js";

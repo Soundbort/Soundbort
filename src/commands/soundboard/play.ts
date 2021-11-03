@@ -2,16 +2,15 @@ import Discord from "discord.js";
 
 import { BUTTON_TYPES } from "../../const.js";
 import Logger from "../../log.js";
-
 import { logErr } from "../../util/util.js";
+
+import InteractionRegistry from "../../core/InteractionRegistry.js";
 import { CmdInstallerArgs } from "../../util/types.js";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
-
 import { TopCommand } from "../../modules/commands/TopCommand.js";
 import { CommandStringOption } from "../../modules/commands/CommandOption.js";
 
 import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager.js";
-import InteractionRegistry from "../../core/InteractionRegistry.js";
 import { CustomSample } from "../../core/soundboard/CustomSample.js";
 import { StandardSample } from "../../core/soundboard/StandardSample.js";
 import { search } from "../../core/soundboard/methods/searchMany.js";

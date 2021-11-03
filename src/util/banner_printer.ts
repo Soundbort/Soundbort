@@ -1,5 +1,4 @@
 import Discord from "discord.js";
-
 import fs from "fs-extra";
 import path from "node:path";
 import { PackageJson } from "type-fest";

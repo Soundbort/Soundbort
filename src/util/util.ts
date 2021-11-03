@@ -1,5 +1,6 @@
-import { OWNER_IDS } from "../config.js";
 import Discord from "discord.js";
+
+import { OWNER_IDS } from "../config.js";
 
 export function isOwner(userId: Discord.Snowflake): boolean {
     return OWNER_IDS.includes(userId);

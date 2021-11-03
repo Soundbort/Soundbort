@@ -3,12 +3,14 @@ import Discord from "discord.js";
 
 import { SAMPLE_TYPES } from "../const.js";
 import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
+
 import InteractionRegistry from "../core/InteractionRegistry.js";
 import { CustomSample } from "../core/soundboard/CustomSample.js";
 import { TopCommand } from "../modules/commands/TopCommand.js";
-import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema.js";
 import { CmdInstallerArgs } from "../util/types.js";
 import { createEmbed, replyEmbed } from "../util/builders/embed.js";
+
+import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema.js";
 import * as models from "../modules/database/models.js";
 
 if (TOP_GG_WEBHOOK_TOKEN) {

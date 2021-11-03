@@ -1,9 +1,10 @@
 import { randomUUID } from "node:crypto";
 import Discord from "discord.js";
+
 import { BUTTON_TYPES } from "../../const.js";
 import InteractionRegistry, { ButtonParsed } from "../../core/InteractionRegistry.js";
 import { doNothing } from "../util.js";
-import { createEmbed, EmbedType } from "./embed.js";
+import { EmbedType, createEmbed } from "./embed.js";
 
 export interface DialogOptionsButton {
     id: ButtonParsed;

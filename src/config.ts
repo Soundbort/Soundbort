@@ -2,6 +2,7 @@ import path from "node:path";
 import dotenv from "dotenv";
 import fs from "fs-extra";
 import { PackageJson } from "type-fest";
+
 import { getDirname } from "./util/esm.js";
 
 dotenv.config();

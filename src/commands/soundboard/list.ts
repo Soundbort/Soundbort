@@ -4,12 +4,12 @@ import InteractionRegistry from "../../core/InteractionRegistry.js";
 import { TopCommand } from "../../modules/commands/TopCommand.js";
 import { CommandStringOption } from "../../modules/commands/CommandOption.js";
 import { createChoice } from "../../modules/commands/options/createChoice.js";
-import { createEmbed, EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { SimpleFuncReturn } from "../../modules/commands/types/index.js";
 
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
 import { CustomSample } from "../../core/soundboard/CustomSample.js";
 import { StandardSample } from "../../core/soundboard/StandardSample.js";
-import { SimpleFuncReturn } from "../../modules/commands/types/index.js";
 
 function generateSampleButtons(samples: CustomSample[] | StandardSample[]): Discord.MessageActionRow[] {
     const rows: Discord.MessageActionRow[] = [];

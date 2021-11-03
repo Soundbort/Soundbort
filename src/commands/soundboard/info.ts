@@ -1,10 +1,9 @@
 import Discord from "discord.js";
 
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
-
 import InteractionRegistry from "../../core/InteractionRegistry.js";
 import { CommandStringOption } from "../../modules/commands/CommandOption.js";
 import { TopCommand } from "../../modules/commands/TopCommand.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
 import { CustomSample } from "../../core/soundboard/CustomSample.js";
 import GuildConfigManager from "../../core/managers/GuildConfigManager.js";

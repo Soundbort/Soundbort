@@ -1,4 +1,5 @@
 import Discord from "discord.js";
+
 import { Command } from "./Command.js";
 import { CommandGroup } from "./CommandGroup.js";
 import { CommandTarget, GuildCreateEventHandler, MiddlewareFunc } from "./types/index.js";
