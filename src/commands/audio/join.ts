@@ -1,9 +1,10 @@
 import Discord from "discord.js";
 
-import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
-import InteractionRegistry from "../../core/InteractionRegistry";
-import { TopCommand } from "../../modules/commands/TopCommand";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
+import InteractionRegistry from "../../core/InteractionRegistry.js";
+import { TopCommand } from "../../modules/commands/TopCommand.js";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+
+import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager.js";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "join",

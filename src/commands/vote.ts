@@ -1,15 +1,27 @@
 import { userMention } from "@discordjs/builders";
 import Discord from "discord.js";
 
-import { SAMPLE_TYPES } from "../const";
-import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";
-import InteractionRegistry from "../core/InteractionRegistry";
-import { CustomSample } from "../core/soundboard/CustomSample";
-import { TopCommand } from "../modules/commands/TopCommand";
-import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema";
-import { CmdInstallerArgs } from "../util/types";
-import { createEmbed, replyEmbed } from "../util/builders/embed";
-import * as models from "../modules/database/models";
+import { SAMPLE_TYPES } from "../const.js";
+import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
+
+import InteractionRegistry from "../core/InteractionRegistry.js";
+import { CustomSample } from "../core/soundboard/CustomSample.js";
+import { TopCommand } from "../modules/commands/TopCommand.js";
+import { CmdInstallerArgs } from "../util/types.js";
+import { createEmbed, replyEmbed } from "../util/builders/embed.js";
+
+import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema.js";
+import * as models from "../modules/database/models.js";
+
+// label text max 80 characters
+
+const formatEllipsis = (base: string, insert: string, length: number) => {
+    const leftover_length = length - base.length + 1;
+    if (insert.length > leftover_length) {
+        insert = insert.slice(0, Math.max(0, leftover_length - 3)) + "...";
+    }
+    return base.replace("%", insert);
+};
 
 if (TOP_GG_WEBHOOK_TOKEN) {
     InteractionRegistry.addCommand(new TopCommand({
@@ -32,16 +44,6 @@ if (TOP_GG_WEBHOOK_TOKEN) {
                     "One vote equals one slot. On weekends you get two slots! " +
                     `A soundboard can't have more than ${CustomSample.MAX_SLOTS} slots (at the moment).`,
                 );
-
-            // label text max 80 characters
-
-            const formatEllipsis = (base: string, insert: string, length: number) => {
-                const leftover_length = length - base.length + 1;
-                if (insert.length > leftover_length) {
-                    insert = insert.substring(0, leftover_length - 3) + "...";
-                }
-                return base.replace("%", insert);
-            };
 
             const user = interaction.user;
             const user_vote_link = vote_base_link + "&userId=" + user.id;
@@ -140,13 +142,13 @@ export function install({ client }: CmdInstallerArgs): void {
         if (slot.ref) {
             try {
                 await sendMessageReply(client, slot, new_slots, slot.ref);
-            } catch (_) { _; }
+            } catch (error) { error; }
         }
 
         if (slot.slotType === SAMPLE_TYPES.USER) {
             try {
                 await sendDM(client, slot, new_slots);
-            } catch (_) { _; }
+            } catch (error) { error; }
         }
     });
 }

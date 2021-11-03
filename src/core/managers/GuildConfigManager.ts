@@ -1,8 +1,9 @@
 import Discord from "discord.js";
-import { fetchMember, guessModRole } from "../../util/util";
-import * as models from "../../modules/database/models";
-import { ConfigSchema } from "../../modules/database/schemas/ConfigSchema";
-import { GenericListener, TypedEventEmitter } from "../../util/emitter";
+
+import { fetchMember, guessModRole } from "../../util/util.js";
+import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
+import * as models from "../../modules/database/models.js";
+import { ConfigSchema } from "../../modules/database/schemas/ConfigSchema.js";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type EventMap = {

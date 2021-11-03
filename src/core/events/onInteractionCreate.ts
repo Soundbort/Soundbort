@@ -1,13 +1,13 @@
 import Discord from "discord.js";
 
-import Logger from "../../log";
-import { BUTTON_TYPES } from "../../const";
-import { logErr } from "../../util/util";
-import * as models from "../../modules/database/models";
+import Logger from "../../log.js";
+import { BUTTON_TYPES } from "../../const.js";
+import { logErr } from "../../util/util.js";
+import * as models from "../../modules/database/models.js";
 
-import InteractionRegistry from "../InteractionRegistry";
-import StatsCollectorManager from "../managers/StatsCollectorManager";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import InteractionRegistry from "../InteractionRegistry.js";
+import StatsCollectorManager from "../managers/StatsCollectorManager.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
 const log = Logger.child({ label: "Core => onInteractionCreate" });
 
@@ -63,11 +63,11 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
             // remove this by, like, September 1st to 8th
             if (customId.startsWith("sample.custom.")) {
                 decoded.t = BUTTON_TYPES.PLAY_CUSTOM;
-                decoded.id = customId.substring("sample.custom.".length);
+                decoded.id = customId.slice("sample.custom.".length);
             }
             if (customId.startsWith("sample.predef.")) {
                 decoded.t = BUTTON_TYPES.PLAY_STANDA;
-                decoded.n = customId.substring("sample.predef.".length);
+                decoded.n = customId.slice("sample.predef.".length);
             }
 
             for (const button_handler of InteractionRegistry.buttons) {

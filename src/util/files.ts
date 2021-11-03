@@ -4,7 +4,7 @@ import { pipeline } from "node:stream/promises";
 import fetch from "node-fetch";
 import disk from "diskusage";
 
-import Logger from "../log";
+import Logger from "../log.js";
 
 const log = Logger.child({ label: "util => files" });
 
@@ -25,10 +25,10 @@ export function walk(dir: string): Promise<string[]> {
                     if (stat && stat.isDirectory()) {
                         walk(file)
                             .then(files => {
-                                results = results.concat(files);
+                                results = [...results, ...files];
                                 if (!--pending) resolve(results);
                             })
-                            .catch(err => reject(err));
+                            .catch(error => reject(error));
                     } else {
                         results.push(file);
                         if (!--pending) resolve(results);
@@ -49,6 +49,7 @@ export async function isEnoughDiskSpace(): Promise<boolean> {
 export async function downloadFile(url: string, out_file: string): Promise<void> {
     const res = await fetch(url);
     if (!res.ok) throw new Error("Resource not accessible");
+    if (!res.body) throw new Error("node-fetch.Response.body is undefined");
 
     await pipeline(
         res.body,

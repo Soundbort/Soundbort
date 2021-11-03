@@ -1,8 +1,9 @@
 import Discord from "discord.js";
-import Logger from "../../log";
-import nanoTimer from "../../util/timer";
-import { BaseCommandOption } from "./CommandOption";
-import { SimpleFunc } from "./types";
+
+import Logger from "../../log.js";
+import nanoTimer from "../../util/timer.js";
+import { BaseCommandOption } from "./CommandOption.js";
+import { SimpleFunc } from "./types/index.js";
 
 const log = Logger.child({ label: "Command => autocomplete" });
 
@@ -61,8 +62,7 @@ export class Command {
         const result = await this.func(interaction);
         if (!result || interaction.replied) return;
 
-        if (interaction.deferred) await interaction.editReply(result);
-        else await interaction.reply(result);
+        await (interaction.deferred ? interaction.editReply(result) : interaction.reply(result));
     }
 
     toJSON(): any { // need return type any for TopCommand to work

@@ -1,16 +1,18 @@
 {
     "root": true,
     "parser": "@typescript-eslint/parser",
-    "plugins": [
-        "@typescript-eslint"
-    ],
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "plugin:unicorn/recommended"
+    ],
+    "plugins": [
+        "@typescript-eslint",
+        "unicorn"
     ],
     "parserOptions": {
-        "ecmaVersion": 2020,
+        "ecmaVersion": 2021,
         "sourceType": "module",
         "project": "./tsconfig.json"
     },
@@ -20,10 +22,15 @@
     },
     
     "rules": {
-        "strict": [
-            "error",
-            "global"
-        ],
+        // UNICORN
+        "unicorn/prevent-abbreviations": "off",
+        "unicorn/prefer-ternary": "off",
+        "unicorn/filename-case": "off",
+        "unicorn/no-array-reduce": "off",
+        "unicorn/no-process-exit": "off",
+        "unicorn/prefer-object-from-entries": "off",
+        "unicorn/no-null": "off",
+        // ESLINT
         "getter-return": "error",
         "no-compare-neg-zero": "error",
         "no-unsafe-negation": "error",
@@ -84,14 +91,7 @@
         ],
         "comma-dangle": [
             "error",
-            {
-                "arrays": "always-multiline",
-                "objects": "always-multiline",
-                "imports": "always-multiline",
-                "exports": "always-multiline",
-                // "functions": "never",
-                "functions": "always-multiline"
-            }
+            "always-multiline"
         ],
         "comma-spacing": "off",
         "@typescript-eslint/comma-spacing": "error",
@@ -273,88 +273,6 @@
             "method"
         ],
         "@typescript-eslint/naming-convention": "off",
-        // "@typescript-eslint/naming-convention": [
-        //     "error",
-        //     {
-        //         "selector": "default",
-        //         "format": ["snake_case"]
-        //     },
-        //     {
-        //         "selector": "variable",
-        //         "format": ["snake_case", "UPPER_CASE"],
-        //         "leadingUnderscore": "allow"
-        //     },
-        //     {
-        //         "selector": "variable",
-        //         "format": ["camelCase"],
-        //         "leadingUnderscore": "allow",
-        //         "filter": {
-        //             "match": true,
-        //             "regex": "\\w+Id"
-        //         }
-        //     },
-        //     {
-        //         "selector": "function",
-        //         "format": ["camelCase"]
-        //     },
-        //     {
-        //         "selector": "parameter",
-        //         "format": ["snake_case"],
-        //         "leadingUnderscore": "allow"
-        //     },
-        //     {
-        //         "selector": "parameter",
-        //         "format": ["camelCase"],
-        //         "filter": {
-        //             "match": true,
-        //             "regex": "\\w+Id"
-        //         }
-        //     },
-        //     {
-        //         "selector": "property",
-        //         "format": ["snake_case", "UPPER_CASE"],
-        //         "leadingUnderscore": "allow"
-        //     },
-        //     {
-        //         "selector": "property",
-        //         "format": ["camelCase"],
-        //         "filter": {
-        //             "match": true,
-        //             "regex": "\\w+Id"
-        //         }
-        //     },
-        //     {
-        //         "selector": "property",
-        //         "format": ["snake_case", "UPPER_CASE"],
-        //         "modifiers": ["private"],
-        //         "leadingUnderscore": "require"
-        //     },
-        //     {
-        //         "selector": "property",
-        //         "format": ["camelCase"],
-        //         "modifiers": ["private"],
-        //         "leadingUnderscore": "require",
-        //         "filter": {
-        //             "match": true,
-        //             "regex": "\\w+Id"
-        //         }
-        //     },
-        //     {
-        //         "selector": "method",
-        //         "format": ["camelCase"],
-        //         "leadingUnderscore": "allow"
-        //     },
-        //     {
-        //         "selector": "method",
-        //         "format": ["camelCase"],
-        //         "modifiers": ["private"],
-        //         "leadingUnderscore": "require"
-        //     },
-        //     {
-        //         "selector": "typeLike",
-        //         "format": ["PascalCase"]
-        //     }
-        // ],
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-extra-non-null-assertion": "error",
         "@typescript-eslint/no-floating-promises": "error",

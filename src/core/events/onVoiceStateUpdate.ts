@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import AudioManager from "../audio/AudioManager";
+import AudioManager from "../audio/AudioManager.js";
 
 export default function onVoiceStateUpdate() {
     return (old_state: Discord.VoiceState, new_state: Discord.VoiceState): void => {

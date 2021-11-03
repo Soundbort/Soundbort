@@ -7,16 +7,16 @@ import fs from "fs-extra";
 import Discord from "discord.js";
 import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
-import { SAMPLE_TYPES } from "../../../const";
-import Logger from "../../../log";
-import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
+import { SAMPLE_TYPES } from "../../../const.js";
+import Logger from "../../../log.js";
+import { downloadFile, isEnoughDiskSpace } from "../../../util/files.js";
 
-import SampleID from "../SampleID";
-import { CustomSample } from "../CustomSample";
-import { StandardSample } from "../StandardSample";
-import { isOwner, logErr } from "../../../util/util";
-import { EmbedType, replyEmbed } from "../../../util/builders/embed";
-import GuildConfigManager from "../../managers/GuildConfigManager";
+import SampleID from "../SampleID.js";
+import { CustomSample } from "../CustomSample.js";
+import { StandardSample } from "../StandardSample.js";
+import { isOwner, logErr } from "../../../util/util.js";
+import { EmbedType, replyEmbed } from "../../../util/builders/embed.js";
+import GuildConfigManager from "../../managers/GuildConfigManager.js";
 
 const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<FfprobeData>;
 
@@ -24,7 +24,7 @@ const log = Logger.child({ label: "Sample => Uploader" });
 
 export const MAX_LEN_NAME = 30;
 export const MAX_SIZE = 4;
-export const MAX_DURATION = 30 * 1_000;
+export const MAX_DURATION = 30 * 1000;
 
 export const UploadErrors = {
     OutOfSpace: "Disk space is running out. Please inform the developer.",
@@ -56,7 +56,7 @@ function convertAudio(input: string, output: string): Promise<void> {
             .audioFilter("silenceremove=1:0:-50dB")
             .audioCodec("libopus")
             .audioBitrate("96k")
-            .audioFrequency(48000)
+            .audioFrequency(48_000)
             .audioChannels(2)
             .addOutputOption("-map 0:a:0") // only first input audio stream
             .addOutputOption("-map_metadata -1") // strip all metadata from input
@@ -169,7 +169,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         return await failed(UploadErrors.NameOutOfRange);
     }
 
-    if (!/^[a-zA-Z0-9 .,_-]*$/.test(name)) {
+    if (!/^[\w ,.-]*$/.test(name)) {
         return await failed(UploadErrors.InvalidName);
     }
 

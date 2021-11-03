@@ -1,6 +1,7 @@
 import Discord from "discord.js";
-import { Command, CommandOptions } from "./Command";
-import { GuildCreateEventHandler, CommandTarget } from "./types";
+
+import { Command, CommandOptions } from "./Command.js";
+import { CommandTarget, GuildCreateEventHandler } from "./types/index.js";
 
 export interface TopCommandOptions extends CommandOptions {
     target?: CommandTarget;
@@ -8,7 +9,7 @@ export interface TopCommandOptions extends CommandOptions {
 }
 
 export class TopCommand extends Command {
-    app_command: Discord.ApplicationCommand | null = null;
+    app_command?: Discord.ApplicationCommand;
     target: CommandTarget;
 
     onGuildCreate?: GuildCreateEventHandler;

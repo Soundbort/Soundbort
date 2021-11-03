@@ -1,17 +1,16 @@
 import Discord from "discord.js";
-import path from "node:path";
 import topGGStatsPoster from "topgg-autoposter";
 
-import Logger from "../log";
-import { logErr } from "../util/util";
-import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config";
+import Logger from "../log.js";
+import { logErr } from "../util/util.js";
+import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
-import StatsCollectorManager from "./managers/StatsCollectorManager";
-import WebhookManager from "./managers/WebhookManager";
-import onInteractionCreate from "./events/onInteractionCreate";
-import onVoiceStateUpdate from "./events/onVoiceStateUpdate";
+import StatsCollectorManager from "./managers/StatsCollectorManager.js";
+import WebhookManager from "./managers/WebhookManager.js";
+import onInteractionCreate from "./events/onInteractionCreate.js";
+import onVoiceStateUpdate from "./events/onVoiceStateUpdate.js";
 
-import * as InteractionLoader from "./InteractionLoader";
+import * as InteractionLoader from "./InteractionLoader.js";
 
 const log = Logger.child({ label: "Core" });
 
@@ -39,9 +38,7 @@ export default class Core {
 
         // ///////////////////////
 
-        const commands_path = path.join(__dirname, "..", "commands");
-
-        await InteractionLoader.loadCommands(this.client, this.stats_collector, commands_path);
+        await InteractionLoader.loadCommands(this.client, this.stats_collector);
 
         await InteractionLoader.deployCommands(this.client);
 

@@ -1,16 +1,15 @@
 import Discord from "discord.js";
 
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import InteractionRegistry from "../../core/InteractionRegistry.js";
+import { CommandStringOption } from "../../modules/commands/CommandOption.js";
+import { TopCommand } from "../../modules/commands/TopCommand.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { TopCommand } from "../../modules/commands/TopCommand";
-
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import GuildConfigManager from "../../core/managers/GuildConfigManager";
-import { search } from "../../core/soundboard/methods/searchMany";
-import { findOne } from "../../core/soundboard/methods/findOne";
-import { StandardSample } from "../../core/soundboard/StandardSample";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import GuildConfigManager from "../../core/managers/GuildConfigManager.js";
+import { search } from "../../core/soundboard/methods/searchMany.js";
+import { findOne } from "../../core/soundboard/methods/findOne.js";
+import { StandardSample } from "../../core/soundboard/StandardSample.js";
 
 async function canShowDelete(sample: CustomSample | StandardSample, userId: string, guild: Discord.Guild | null) {
     if (sample instanceof CustomSample) {

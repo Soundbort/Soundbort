@@ -1,14 +1,14 @@
 export enum COLOR {
     // TEXT: 0x2f3136,
     // WHITE: 0xffffff,
-    CHART_FG = 0xffffff,
-    CHART_BG = 0x2f3136,
+    CHART_FG = 0xFF_FF_FF,
+    CHART_BG = 0x2F_31_36,
 
-    PRIMARY = 0x6378CA,
-    INFO = 0xADBCE6,
-    SUCCESS = 0x62D945,
-    WARNING = 0xe6a23c,
-    ERROR = 0xd8315b,
+    PRIMARY = 0x63_78_CA,
+    INFO = 0xAD_BC_E6,
+    SUCCESS = 0x62_D9_45,
+    WARNING = 0xE6_A2_3C,
+    ERROR = 0xD8_31_5B,
 }
 
 export enum EMOJI {

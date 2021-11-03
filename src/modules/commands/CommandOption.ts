@@ -1,6 +1,7 @@
 import Discord from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
-import { ApplicationCommandOptionChoice } from "./options/createChoice";
+
+import { ApplicationCommandOptionChoice } from "./options/createChoice.js";
 
 export type CommandOptionAutocompleteFunc<T = any> = (value: T, interaction: Discord.AutocompleteInteraction) => Discord.Awaitable<Discord.ApplicationCommandOptionChoice[]>;
 

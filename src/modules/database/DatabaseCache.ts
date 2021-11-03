@@ -1,8 +1,11 @@
+// Disable these because unicorn is stupid
+/* eslint-disable unicorn/no-array-callback-reference */
+/* eslint-disable unicorn/no-array-method-this-argument */
 import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OptionalId, UpdateFilter } from "mongodb";
 import { Except } from "type-fest";
 
-import Cache, { CacheOptions } from "../Cache";
-import * as database from ".";
+import Cache, { CacheOptions } from "../Cache.js";
+import * as database from "./index.js";
 
 export interface DatabaseCacheOptions<KeyName> extends CacheOptions {
     indexName: KeyName;
@@ -68,7 +71,7 @@ export default class DatabaseCache<
         return requirements.every(a => a);
     }
 
-    private _findOne(filter: CacheFilter<TSchema>): TSchema | null {
+    private _findOne(filter: CacheFilter<TSchema>): TSchema | undefined {
         // find documents quicker if filter includes index key
         if (typeof filter[this.index_name] !== "undefined") {
             const return_val = this.cache.get(filter[this.index_name] as KeyType);
@@ -77,25 +80,25 @@ export default class DatabaseCache<
                 if (this._filter(return_val, filter)) return return_val;
                 // else directly return, because since this was an indexed field search,
                 // the answer won't be in other parts of the cache
-                return null;
+                return;
             }
         }
 
         return this.cache.find(item => {
             return this._filter(item, filter);
-        }) ?? null;
+        });
     }
 
     // publics
 
-    async findOne(filter: CacheFilter<TSchema>): Promise<TSchema | null> {
-        let doc: TSchema | null;
+    async findOne(filter: CacheFilter<TSchema>): Promise<TSchema | undefined> {
+        let doc: TSchema | undefined;
 
         doc = this._findOne(filter);
         if (doc) return doc;
 
-        doc = await this.collection.findOne(filter);
-        if (!doc) return null;
+        doc = await this.collection.findOne(filter) ?? undefined;
+        if (!doc) return;
 
         this.cache.set(doc[this.index_name], doc);
 
@@ -124,7 +127,7 @@ export default class DatabaseCache<
 
     // async insertMany();
 
-    async updateOne(filter: CacheFilter<TSchema>, update: UpdateFilter<TSchema>, opts?: Except<FindOneAndUpdateOptions, "returnDocument">): Promise<TSchema | null> {
+    async updateOne(filter: CacheFilter<TSchema>, update: UpdateFilter<TSchema>, opts?: Except<FindOneAndUpdateOptions, "returnDocument">): Promise<TSchema | undefined> {
         const result = await this.collection.findOneAndUpdate(
             filter,
             update,
@@ -142,11 +145,9 @@ export default class DatabaseCache<
         // then delete it from cache, so there aren't any confusions
         const doc = this._findOne(filter);
         if (doc) this.cache.delete(doc[this.index_name]);
-
-        return null;
     }
 
-    async replaceOne(filter: CacheFilter<TSchema>, replacement: TSchema, opts: FindOneAndReplaceOptions = {}): Promise<TSchema | null> {
+    async replaceOne(filter: CacheFilter<TSchema>, replacement: TSchema, opts: FindOneAndReplaceOptions = {}): Promise<TSchema | undefined> {
         const result = await this.collection.findOneAndReplace(
             filter,
             replacement,
@@ -164,8 +165,6 @@ export default class DatabaseCache<
         // then delete it from cache, so there aren't any confusions
         const doc = this._findOne(filter);
         if (doc) this.cache.delete(doc[this.index_name]);
-
-        return null;
     }
 
     // async updateMany();

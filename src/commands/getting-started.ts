@@ -1,8 +1,9 @@
-import { BOT_NAME, VERSION } from "../config";
-import InteractionRegistry from "../core/InteractionRegistry";
-import { TopCommand } from "../modules/commands/TopCommand";
-import { CmdInstallerArgs } from "../util/types";
-import { createEmbed } from "../util/builders/embed";
+import { BOT_NAME, VERSION } from "../config.js";
+
+import { CmdInstallerArgs } from "../util/types.js";
+import { createEmbed } from "../util/builders/embed.js";
+import { TopCommand } from "../modules/commands/TopCommand.js";
+import InteractionRegistry from "../core/InteractionRegistry.js";
 
 export function install({ client }: CmdInstallerArgs): void {
     const invite_link = `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=2150943744&scope=bot%20applications.commands&redirect_uri=https%3A%2F%2Fsoundbort-guide.loneless.art%2F`;

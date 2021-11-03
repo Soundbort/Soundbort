@@ -1,13 +1,13 @@
-import "./util/banner_printer";
+import "./util/banner_printer.js";
 
 import Discord from "discord.js";
 
-import Logger from "./log";
-import { DISCORD_TOKEN } from "./config";
-import { exit, onExit } from "./util/exit";
-import Core from "./core/Core";
-import * as database from "./modules/database/index";
-import { logErr } from "./util/util";
+import Logger from "./log.js";
+import { DISCORD_TOKEN } from "./config.js";
+import { exit, onExit } from "./util/exit.js";
+import { logErr } from "./util/util.js";
+import Core from "./core/Core.js";
+import * as database from "./modules/database/index.js";
 
 const log = Logger.child({ label: "Index" });
 const djs_log = Logger.child({ label: "discord.js" });
@@ -45,7 +45,7 @@ const client = new Discord.Client({
         ThreadMemberManager: 0,
         // keep user cache default, because guild member cache depends on it
         // UserManager: 0,
-        VoiceStateManager: Infinity,
+        VoiceStateManager: Number.POSITIVE_INFINITY,
     }),
 });
 
@@ -77,7 +77,7 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 client.on("debug", message => {
-    if (/heartbeat/ig.test(message)) return;
+    if (/heartbeat/gi.test(message)) return;
     djs_log.debug(message);
 });
 
@@ -97,21 +97,18 @@ client.on("shardError", (error, shard_id) => { djs_log.error(`ID:${shard_id}`, {
 
 // ////////////// Initialize Bot //////////////
 
-Promise.resolve()
-    .then(async () => {
-        await database.connect();
+try {
+    await database.connect();
 
-        const ready_promise = new Promise<Discord.Client<true>>(resolve => client.once("ready", resolve));
+    const ready_promise = new Promise<Discord.Client<true>>(resolve => client.once("ready", resolve));
 
-        djs_log.info("Logging in...");
-        await client.login(DISCORD_TOKEN);
-        djs_log.info("Login success");
+    djs_log.info("Logging in...");
+    await client.login(DISCORD_TOKEN);
+    djs_log.info("Login success");
 
-        return await ready_promise;
-    })
-    .then(client => Core.create(client))
-    .catch(error => {
-        console.error(error);
-        log.error({ error: logErr(error), message: "Failed to log in" });
-        exit(1);
-    });
+    await Core.create(await ready_promise);
+} catch (error) {
+    console.error(error);
+    log.error({ error: logErr(error), message: "Failed to log in" });
+    exit(1);
+}

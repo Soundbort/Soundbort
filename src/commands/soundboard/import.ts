@@ -1,16 +1,16 @@
 import Discord from "discord.js";
 
-import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { createChoice } from "../../modules/commands/options/createChoice";
-import { TopCommand } from "../../modules/commands/TopCommand";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import InteractionRegistry from "../../core/InteractionRegistry.js";
+import { CommandStringOption } from "../../modules/commands/CommandOption.js";
+import { createChoice } from "../../modules/commands/options/createChoice.js";
+import { TopCommand } from "../../modules/commands/TopCommand.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import GuildConfigManager from "../../core/managers/GuildConfigManager";
-import { UploadErrors } from "../../core/soundboard/methods/upload";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import GuildConfigManager from "../../core/managers/GuildConfigManager.js";
+import { UploadErrors } from "../../core/soundboard/methods/upload.js";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
     const user = interaction.user;

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { parentPort } from "node:worker_threads";
 import * as Comlink from "comlink";
-import nodeEndpoint from "comlink/dist/umd/node-adapter";
-import Logger from "../../log";
-import { lineGraph } from "./line";
+import nodeEndpoint from "comlink/dist/umd/node-adapter.js";
+
+import Logger from "../../log.js";
+import { lineGraph } from "./line.js";
 
 const log = Logger.child({ label: "Charts => Worker" });
 

@@ -1,9 +1,9 @@
 import Discord from "discord.js";
 
-import { SAMPLE_TYPES } from "../../../const";
-import SampleID from "../SampleID";
-import { CustomSample } from "../CustomSample";
-import { StandardSample } from "../StandardSample";
+import { SAMPLE_TYPES } from "../../../const.js";
+import SampleID from "../SampleID.js";
+import { CustomSample } from "../CustomSample.js";
+import { StandardSample } from "../StandardSample.js";
 
 export const STANDARD_SAMPLE_PREFIX = "%";
 
@@ -24,7 +24,7 @@ export async function findOne(
         // custom samples with the same name => making sure it's being played what was selected
         if (!sample) {
             if (name.startsWith(STANDARD_SAMPLE_PREFIX)) {
-                sample = await StandardSample.findByName(name.substr(STANDARD_SAMPLE_PREFIX.length));
+                sample = await StandardSample.findByName(name.slice(STANDARD_SAMPLE_PREFIX.length));
             } else {
                 sample = await CustomSample.findByName(guildId ?? null, userId, name) ||
                         await StandardSample.findByName(name);
