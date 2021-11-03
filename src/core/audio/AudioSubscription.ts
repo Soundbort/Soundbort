@@ -33,7 +33,7 @@ export class AudioSubscription {
                     the voice connection.
 					*/
                     try {
-                        await Voice.entersState(this.voice_connection, Voice.VoiceConnectionStatus.Connecting, 5_000);
+                        await Voice.entersState(this.voice_connection, Voice.VoiceConnectionStatus.Connecting, 5000);
                         // Probably moved voice channel
                     } catch {
                         this.voice_connection.destroy(); // destroy event will bubble up to execute this.stop()
@@ -43,7 +43,7 @@ export class AudioSubscription {
                     /*
                     The disconnect in this case is recoverable, and we also have <5 repeated attempts so we will reconnect.
 					*/
-                    await timeout((this.voice_connection.rejoinAttempts + 1) * 5_000);
+                    await timeout((this.voice_connection.rejoinAttempts + 1) * 5000);
                     this.voice_connection.rejoin();
                 } else {
                     /*

@@ -28,7 +28,7 @@ function shutdown(force: boolean) {
             log.debug("In no more voice connections. Shutting down.");
             exit(0);
         })
-        .catch(err => log.error("Error in AudioManager#awaitDestroyable", { error: logErr(err) }));
+        .catch(error => log.error("Error in AudioManager#awaitDestroyable", { error: logErr(error) }));
 
     log.info("Queued shutdown");
 

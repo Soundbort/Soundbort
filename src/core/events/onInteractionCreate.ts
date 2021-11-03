@@ -63,11 +63,11 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
             // remove this by, like, September 1st to 8th
             if (customId.startsWith("sample.custom.")) {
                 decoded.t = BUTTON_TYPES.PLAY_CUSTOM;
-                decoded.id = customId.substring("sample.custom.".length);
+                decoded.id = customId.slice("sample.custom.".length);
             }
             if (customId.startsWith("sample.predef.")) {
                 decoded.t = BUTTON_TYPES.PLAY_STANDA;
-                decoded.n = customId.substring("sample.predef.".length);
+                decoded.n = customId.slice("sample.predef.".length);
             }
 
             for (const button_handler of InteractionRegistry.buttons) {

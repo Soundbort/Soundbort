@@ -24,7 +24,7 @@ export async function findOne(
         // custom samples with the same name => making sure it's being played what was selected
         if (!sample) {
             if (name.startsWith(STANDARD_SAMPLE_PREFIX)) {
-                sample = await StandardSample.findByName(name.substr(STANDARD_SAMPLE_PREFIX.length));
+                sample = await StandardSample.findByName(name.slice(STANDARD_SAMPLE_PREFIX.length));
             } else {
                 sample = await CustomSample.findByName(guildId ?? null, userId, name) ||
                         await StandardSample.findByName(name);

@@ -18,11 +18,11 @@ export async function fetchMember(
     guild: Discord.Guild,
     user: Discord.UserResolvable,
     cache: boolean = true,
-): Promise<Discord.GuildMember | null> {
+): Promise<Discord.GuildMember | undefined> {
     try {
         return await guild.members.fetch({ user, cache });
     } catch {
-        return null;
+        return undefined;
     }
 }
 

@@ -18,7 +18,7 @@
     "soundboard"
   ],
   "dependencies": {
-    "@discordjs/builders": "^0.7.0",
+    "@discordjs/builders": "=0.7.0",
     "@discordjs/collection": "^0.3.1",
     "@discordjs/opus": "^0.6.0",
     "@discordjs/voice": "^0.6.0",
@@ -62,6 +62,7 @@
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
     "eslint": "^8.1.0",
+    "eslint-plugin-unicorn": "^37.0.1",
     "rimraf": "^3.0.2",
     "standard-version": "^9.3.1",
     "ts-node": "^10.1.0",
@@ -77,7 +78,7 @@
     "lint": "eslint src/ --ext .ts,.js",
     "lint:fix": "eslint src/ --ext .ts,.js --fix",
     "start:docker": "docker run $(for var in $(cat .env); do echo \"-e $var\"; done) loneless/soundbort",
-    "start:watch": "NODE_ENV=development node --loader node-ts/esm src/index.ts",
+    "start:watch": "NODE_ENV=development node --loader ts-node/esm src/index.ts",
     "start:devel": "NODE_ENV=development node --unhandled-rejections=strict dist/index.js",
     "start": "NODE_ENV=production node dist/index.js",
     "release": "standard-version",

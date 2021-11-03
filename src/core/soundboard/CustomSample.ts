@@ -67,10 +67,10 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     }
 
     isInUsers(userId: Discord.Snowflake): boolean {
-        return this.userIds.some(id => id === userId);
+        return this.userIds.includes(userId);
     }
     isInGuilds(guildId: Discord.Snowflake): boolean {
-        return this.guildIds.some(id => id === guildId);
+        return this.guildIds.includes(guildId);
     }
 
     isCreator(user_guild_id: Discord.Snowflake): boolean {
@@ -183,20 +183,16 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
                 $options: "i",
             };
 
-            if (guildId) {
-                query = {
-                    $or: [
-                        { userIds: userId },
-                        { guildIds: guildId },
-                    ],
-                    name: name_query,
-                };
-            } else {
-                query = {
-                    userId,
-                    name: name_query,
-                };
-            }
+            query = guildId ? {
+                $or: [
+                    { userIds: userId },
+                    { guildIds: guildId },
+                ],
+                name: name_query,
+            } : {
+                userId,
+                name: name_query,
+            };
         }
 
         const docs = await models.custom_sample.findMany(query);

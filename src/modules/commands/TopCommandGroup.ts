@@ -14,7 +14,7 @@ export interface TopCommandGroupOptions {
 }
 
 export class TopCommandGroup extends CommandGroup {
-    app_command: Discord.ApplicationCommand | null = null;
+    app_command?: Discord.ApplicationCommand;
     target: CommandTarget;
 
     onGuildCreate?: GuildCreateEventHandler;

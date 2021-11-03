@@ -87,7 +87,7 @@ export default class StatsCollectorManager extends EventEmitter {
         const uptime = process.uptime();
 
         const cpu_load_avg = os.loadavg() as [number, number, number];
-        const memory_usage = 1.0 - (os.freemem() / os.totalmem());
+        const memory_usage = 1 - (os.freemem() / os.totalmem());
 
         const db_stats = await database.get().stats();
 

@@ -9,7 +9,7 @@ export interface TopCommandOptions extends CommandOptions {
 }
 
 export class TopCommand extends Command {
-    app_command: Discord.ApplicationCommand | null = null;
+    app_command?: Discord.ApplicationCommand;
     target: CommandTarget;
 
     onGuildCreate?: GuildCreateEventHandler;

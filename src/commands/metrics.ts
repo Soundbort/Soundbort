@@ -103,7 +103,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
             embeds.push(createEmbed(`**Last updated**: ${time(aggregation._id, "R")}`)
                 .setAuthor(BOT_NAME, (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined)
                 .addField("Bot Version", VERSION, true)
-                .addField("Node.js Version", process.version.substr(1), true)
+                .addField("Node.js Version", process.version.slice(1), true)
                 .addField("Discord.js Version", Discord.version, true)
 
                 .addField("Uptime", time(new Date(Date.now() - Math.round(process.uptime() * 1000)), "R"), true)

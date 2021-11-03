@@ -10,5 +10,6 @@ export interface CmdInstallerArgs {
 }
 
 export type CmdInstallerFileFunc = (opts: CmdInstallerArgs) => (Promise<void> | void);
-export type CmdInstallerFile =
-    & { install?: CmdInstallerFileFunc; };
+export interface CmdInstallerFile {
+    install?: CmdInstallerFileFunc;
+}

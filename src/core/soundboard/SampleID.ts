@@ -1,22 +1,30 @@
 import { customAlphabet } from "nanoid";
 
-export default class SampleID {
-    /**
-     * Checks if a string is a valid SampleID string
-     * @param {string} id
-     * @returns {boolean}
-     */
-    static isId(id: string): boolean {
-        return SampleID.REGEX.test(id);
-    }
+const PREFIX = "s";
+const CHARSET = "0123456789abcdefghijklmnopqrstuvwxyz";
+const LENGTH = 6;
+const REGEX = new RegExp(`^${PREFIX}[${CHARSET}]{${LENGTH}}$`);
+const nanoid = customAlphabet(CHARSET, LENGTH);
 
-    static generate(): string {
-        return SampleID.PREFIX + SampleID.nanoid();
-    }
-
-    static PREFIX = "s";
-    static CHARSET = "0123456789abcdefghijklmnopqrstuvwxyz";
-    static LENGTH = 6;
-    static REGEX = new RegExp(`^${SampleID.PREFIX}[${SampleID.CHARSET}]{${SampleID.LENGTH}}$`);
-    static nanoid = customAlphabet(SampleID.CHARSET, SampleID.LENGTH);
+/**
+ * Checks if a string is a valid SampleID string
+ * @param {string} id
+ * @returns {boolean}
+ */
+function isId(id: string): boolean {
+    return REGEX.test(id);
 }
+
+function generate(): string {
+    return PREFIX + nanoid();
+}
+
+export default {
+    PREFIX,
+    CHARSET,
+    LENGTH,
+    REGEX,
+    nanoid,
+    isId,
+    generate,
+};

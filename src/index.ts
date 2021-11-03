@@ -45,7 +45,7 @@ const client = new Discord.Client({
         ThreadMemberManager: 0,
         // keep user cache default, because guild member cache depends on it
         // UserManager: 0,
-        VoiceStateManager: Infinity,
+        VoiceStateManager: Number.POSITIVE_INFINITY,
     }),
 });
 
@@ -77,7 +77,7 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 client.on("debug", message => {
-    if (/heartbeat/ig.test(message)) return;
+    if (/heartbeat/gi.test(message)) return;
     djs_log.debug(message);
 });
 
