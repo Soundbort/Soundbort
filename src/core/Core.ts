@@ -1,10 +1,8 @@
 import Discord from "discord.js";
-import path from "node:path";
 import topGGStatsPoster from "topgg-autoposter";
 
 import Logger from "../log.js";
 import { logErr } from "../util/util.js";
-import { getDirname } from "../util/esm.js";
 import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
 import StatsCollectorManager from "./managers/StatsCollectorManager.js";
@@ -40,9 +38,7 @@ export default class Core {
 
         // ///////////////////////
 
-        const commands_path = path.join(__dirname, "..", "commands");
-
-        await InteractionLoader.loadCommands(this.client, this.stats_collector, commands_path);
+        await InteractionLoader.loadCommands(this.client, this.stats_collector);
 
         await InteractionLoader.deployCommands(this.client);
 

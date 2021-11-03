@@ -5,7 +5,7 @@ import { getDirname } from "../esm.js";
 
 export function createWorker(worker_path: string): Worker {
     return new Worker(
-        path.extname(__filename) === ".ts" ? path.resolve(__dirname, "./worker-portal.js") : worker_path.replace(/\.ts$/, ".js"),
+        /\.ts$/.test(import.meta.url) ? path.resolve(getDirname(import.meta.url), "./worker-portal.js") : worker_path.replace(/\.ts$/, ".js"),
         { workerData: { workerPath: worker_path } },
     );
 }

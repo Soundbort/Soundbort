@@ -51,17 +51,20 @@ export const TOP_GG_WEBHOOK_TOKEN = process.env.SOUNDBORT_TOP_GG_WEBHOOK_TOKEN;
 
 // ////////////// INFO //////////////
 
-const package_file: PackageJson = JSON.parse(fs.readFileSync(path.resolve(__dirname, "..", "package.json"), "utf8"));
+const dirname = getDirname(import.meta.url);
+
+export const PROJECT_ROOT = path.normalize(path.resolve(dirname, ".."));
+export const ASSETS_DIR = path.resolve(PROJECT_ROOT, "assets");
+export const DATA_DIR = path.resolve(PROJECT_ROOT, "data");
+export const LOGS_DIR = path.resolve(PROJECT_ROOT, "logs");
+
+const package_file: PackageJson = JSON.parse(fs.readFileSync(path.resolve(PROJECT_ROOT, "package.json"), "utf8"));
 
 export const VERSION = package_file.version as string + (
     ENVIRONMENT !== EnvironmentStages.PROD
         ? `-${ENVIRONMENT.toLowerCase()}`
         : ""
 );
-
-export const PROJECT_ROOT = path.resolve(__dirname, "..");
-
-export const DATA_BASE_PATH = path.resolve(PROJECT_ROOT, "data");
 
 export const METRICS_PORT = 6969;
 export const WEBHOOK_PORT = 8080;

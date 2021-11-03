@@ -6,11 +6,11 @@ import color from "color";
 import moment from "moment";
 
 import { lastItem } from "../../util/array.js";
-import { PROJECT_ROOT } from "../../config.js";
+import { ASSETS_DIR } from "../../config.js";
 import { COLOR } from "../../const.js";
 
-registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
-registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
+registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
+registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
 const WHITE_COLOR = color(COLOR.CHART_BG, "rgb").string();
 const LEGEND_TEXT_COLOR = color(COLOR.CHART_FG, "rgb").mix(color(COLOR.CHART_BG, "rgb"), 0.4).string();

@@ -14,13 +14,15 @@ import { getDirname } from "../util/esm.js";
 
 const log = Logger.child({ label: "Core => InteractionLoader" });
 
-export async function loadCommands(client: Discord.Client<true>, stats_collector: StatsCollectorManager, commands_path: string): Promise<void> {
+export async function loadCommands(client: Discord.Client<true>, stats_collector: StatsCollectorManager): Promise<void> {
     log.info("Installing Commands...");
 
     const timer = nanoTimer();
 
+    const commands_path = path.join(getDirname(import.meta.url), "..", "commands");
+
     const files = await walk(commands_path)
-        .then(files => files.filter(file => path.extname(file) === ".ts" || path.extname(file) === ".js"));
+        .then(files => files.filter(file => /\.(ts|js)$/.test(file)));
 
     const install_opts: CmdInstallerArgs = {
         client: client,
@@ -28,15 +30,18 @@ export async function loadCommands(client: Discord.Client<true>, stats_collector
     };
 
     await Promise.all(files.map(async file => {
-        const relatve_path = path.relative(path.resolve(__dirname, ".."), file);
+        const relatve_path = path.relative(path.resolve(getDirname(import.meta.url), ".."), file);
 
         log.debug("installing...: %s", relatve_path);
 
         const time = nanoTimer();
 
-        const install = require(file) as CmdInstallerFile;
-        if (typeof install.install === "function") {
-            await install.install(install_opts);
+        try {
+            const install = await import(file) as CmdInstallerFile;
+            if (typeof install.install === "function") await install.install(install_opts);
+        } catch (error) {
+            log.error("failed       : %s", relatve_path);
+            throw error;
         }
 
         log.debug("installed    : %s %s ms", relatve_path, nanoTimer.diffMs(time).toFixed(3));

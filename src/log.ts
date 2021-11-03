@@ -1,8 +1,8 @@
-import { ENVIRONMENT, EnvironmentStages } from "./config.js";
-
 import chalk from "chalk";
 import winston from "winston";
 import "winston-daily-rotate-file";
+
+import { ENVIRONMENT, EnvironmentStages, LOGS_DIR } from "./config.js";
 
 const levels = {
     error: 0,
@@ -20,7 +20,6 @@ winston.addColors({
     debug: "white",
 });
 
-const LOGS_DIR = "logs/";
 const rotate_file_opts = {
     datePattern: "YYYY-MM-DD",
     zippedArchive: true,
@@ -54,12 +53,12 @@ const Logger = winston.createLogger({
         }),
         new winston.transports.DailyRotateFile({
             ...rotate_file_opts,
-            filename: `${LOGS_DIR}%DATE%-bot-error.log`,
+            filename: `${LOGS_DIR}/%DATE%-bot-error.log`,
             level: "error",
         }),
         new winston.transports.DailyRotateFile({
             ...rotate_file_opts,
-            filename: `${LOGS_DIR}%DATE%-bot-combined.log`,
+            filename: `${LOGS_DIR}/%DATE%-bot-combined.log`,
             level: "debug",
         }),
     ],
