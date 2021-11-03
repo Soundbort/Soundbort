@@ -260,7 +260,7 @@
         ],
         "no-cond-assign": "off",
         "no-control-regex": "off",
-        "no-console": "off",
+        "no-console": "error",
         "no-async-promise-executor": "off",
         // TYPESCRIPT
         "@typescript-eslint/consistent-type-definitions": [
