@@ -1,16 +1,15 @@
 import Discord from "discord.js";
 
 import { fetchMember, guessModRole } from "../../util/util.js";
-import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
 import * as models from "../../modules/database/models.js";
 import { ConfigSchema } from "../../modules/database/schemas/ConfigSchema.js";
+import { TypedEmitter } from "tiny-typed-emitter";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type EventMap = {
-    adminRoleChange: GenericListener<[guildId: Discord.Snowflake, roleId: Discord.Snowflake]>;
-};
+interface GuildConfigManagerEvents {
+    adminRoleChange(guildId: Discord.Snowflake, roleId: Discord.Snowflake): void;
+}
 
-class GuildConfigManager extends TypedEventEmitter<EventMap> {
+class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
     public async setConfig(guildId: Discord.Snowflake, config: ConfigSchema): Promise<void> {
         await models.config.replaceOne({ guildId }, config, { upsert: true });
     }

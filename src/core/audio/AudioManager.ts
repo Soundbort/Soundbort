@@ -1,9 +1,9 @@
 import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import Logger from "../../log.js";
 import { logErr } from "../../util/util.js";
-import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
 import { AudioSubscription } from "./AudioSubscription.js";
 
 const log = Logger.child({ label: "Audio" });
@@ -15,11 +15,10 @@ export enum JoinFailureTypes {
     FailedTryAgain,
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type EventMap = {
-    destroy: GenericListener<[guildId: Discord.Snowflake]>;
-    destroyAll: GenericListener<[]>;
-};
+interface AudioManagerEvents {
+    destroy(guildId: Discord.Snowflake): void;
+    destroyAll(): void;
+}
 
 // //#region Voice
 
@@ -50,7 +49,7 @@ type EventMap = {
 // //#endregion
 
 // https://github.com/discordjs/voice/blob/main/examples/music-bot/src/bot.ts
-class AudioManager extends TypedEventEmitter<EventMap> {
+class AudioManager extends TypedEmitter<AudioManagerEvents> {
     private subscriptions = new Map<Discord.Snowflake, AudioSubscription>();
 
     public awaitDestroyable(): Promise<void> {

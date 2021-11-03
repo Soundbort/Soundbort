@@ -5,12 +5,12 @@ import fs from "fs-extra";
 import moment from "moment";
 import { Filter } from "mongodb";
 import escapeStringRegexp from "escape-string-regexp";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import Logger from "../../log.js";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
 import { logErr } from "../../util/util.js";
 import { createEmbed } from "../../util/builders/embed.js";
-import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
 
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample.js";
 
@@ -23,6 +23,10 @@ import InteractionRegistry from "../InteractionRegistry.js";
 import WebhookManager from "../managers/WebhookManager.js";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
+
+export interface CustomSampleEmitterEvents {
+    slotAdd(slot: SingleSoundboardSlot, new_: number, old: number): void;
+}
 
 export class CustomSample extends AbstractSample implements SoundboardCustomSampleSchema {
     readonly importable = true;
@@ -340,9 +344,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     static MIN_SLOTS = 10;
     static MAX_SLOTS = 25;
 
-    static emitter = new TypedEventEmitter<{
-        slotAdd: GenericListener<[slot: SingleSoundboardSlot, new: number, old: number]>
-    }>();
+    static emitter = new TypedEmitter<CustomSampleEmitterEvents>();
 
     static async addSlot(vote: VotesSchema): Promise<boolean> {
         const slotType = vote.query.guildId ? SAMPLE_TYPES.SERVER : SAMPLE_TYPES.USER;

@@ -2,12 +2,12 @@ import { Webhook } from "@top-gg/sdk";
 import express from "express";
 import http from "node:http";
 import { promisify } from "node:util";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import { TOP_GG_WEBHOOK_TOKEN, WEBHOOK_PORT } from "../../config.js";
 import Logger from "../../log.js";
 import { logErr } from "../../util/util.js";
 import * as models from "../../modules/database/models.js";
-import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
 import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
 import { onExit } from "../../util/exit.js";
 
@@ -22,12 +22,11 @@ onExit(async () => {
     await promisify(server.close)();
 });
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type EventMap = {
-    vote: GenericListener<[vote: VotesSchema]>;
-};
+interface WebhookManagerEvents {
+    vote(vote: VotesSchema): void;
+}
 
-class WebhookManager extends TypedEventEmitter<EventMap> {
+class WebhookManager extends TypedEmitter<WebhookManagerEvents> {
     private app: express.Express;
 
     constructor() {
