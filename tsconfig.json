@@ -9,11 +9,8 @@
 
         // "allowSyntheticDefaultImports": true,
         // "isolatedModules": true,
-        "strict": true,
         "module": "esnext",
-        // "lib": ["ES2019"],
-        "moduleResolution": "node",
-        // "skipLibCheck": true
+        "moduleResolution": "node"
     },
     "include": ["./src/**/*"],
     "exclude": ["node_modules", "dist"]
