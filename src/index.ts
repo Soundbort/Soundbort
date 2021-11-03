@@ -97,21 +97,18 @@ client.on("shardError", (error, shard_id) => { djs_log.error(`ID:${shard_id}`, {
 
 // ////////////// Initialize Bot //////////////
 
-Promise.resolve()
-    .then(async () => {
-        await database.connect();
+try {
+    await database.connect();
 
-        const ready_promise = new Promise<Discord.Client<true>>(resolve => client.once("ready", resolve));
+    const ready_promise = new Promise<Discord.Client<true>>(resolve => client.once("ready", resolve));
 
-        djs_log.info("Logging in...");
-        await client.login(DISCORD_TOKEN);
-        djs_log.info("Login success");
+    djs_log.info("Logging in...");
+    await client.login(DISCORD_TOKEN);
+    djs_log.info("Login success");
 
-        return await ready_promise;
-    })
-    .then(client => Core.create(client))
-    .catch(error => {
-        console.error(error);
-        log.error({ error: logErr(error), message: "Failed to log in" });
-        exit(1);
-    });
+    await Core.create(await ready_promise);
+} catch (error) {
+    console.error(error);
+    log.error({ error: logErr(error), message: "Failed to log in" });
+    exit(1);
+}
