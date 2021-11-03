@@ -108,7 +108,6 @@ try {
 
     await Core.create(await ready_promise);
 } catch (error) {
-    console.error(error);
     log.error({ error: logErr(error), message: "Failed to log in" });
     exit(1);
 }
