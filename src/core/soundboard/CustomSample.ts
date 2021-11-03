@@ -6,21 +6,21 @@ import moment from "moment";
 import { Filter } from "mongodb";
 import escapeStringRegexp from "escape-string-regexp";
 
-import Logger from "../../log";
-import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
-import { logErr } from "../../util/util";
-import { createEmbed } from "../../util/builders/embed";
-import { GenericListener, TypedEventEmitter } from "../../util/emitter";
+import Logger from "../../log.js";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
+import { logErr } from "../../util/util.js";
+import { createEmbed } from "../../util/builders/embed.js";
+import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
 
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample.js";
 
-import * as models from "../../modules/database/models";
-import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema";
-import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema";
-import { VotesSchema } from "../../modules/database/schemas/VotesSchema";
+import * as models from "../../modules/database/models.js";
+import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema.js";
+import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema.js";
+import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
 
-import InteractionRegistry from "../InteractionRegistry";
-import WebhookManager from "../managers/WebhookManager";
+import InteractionRegistry from "../InteractionRegistry.js";
+import WebhookManager from "../managers/WebhookManager.js";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 

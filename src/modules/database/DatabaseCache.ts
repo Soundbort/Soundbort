@@ -1,8 +1,8 @@
 import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OptionalId, UpdateFilter } from "mongodb";
 import { Except } from "type-fest";
 
-import Cache, { CacheOptions } from "../Cache";
-import * as database from ".";
+import Cache, { CacheOptions } from "../Cache.js";
+import * as database from "./index.js";
 
 export interface DatabaseCacheOptions<KeyName> extends CacheOptions {
     indexName: KeyName;

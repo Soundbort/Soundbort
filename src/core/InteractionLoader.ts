@@ -1,15 +1,16 @@
 import Discord from "discord.js";
-import path from "path";
+import path from "node:path";
 
-import nanoTimer from "../util/timer";
-import Logger from "../log";
-import { walk } from "../util/files";
-import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
-import { logErr } from "../util/util";
+import nanoTimer from "../util/timer.js";
+import Logger from "../log.js";
+import { walk } from "../util/files.js";
+import { CmdInstallerArgs, CmdInstallerFile } from "../util/types.js";
+import { logErr } from "../util/util.js";
 
-import InteractionRegistry from "./InteractionRegistry";
-import GuildConfigManager from "./managers/GuildConfigManager";
-import StatsCollectorManager from "./managers/StatsCollectorManager";
+import InteractionRegistry from "./InteractionRegistry.js";
+import GuildConfigManager from "./managers/GuildConfigManager.js";
+import StatsCollectorManager from "./managers/StatsCollectorManager.js";
+import { getDirname } from "../util/esm.js";
 
 const log = Logger.child({ label: "Core => InteractionLoader" });
 

@@ -1,13 +1,13 @@
 import Discord from "discord.js";
 
-import Logger from "../../log";
-import { BUTTON_TYPES } from "../../const";
-import { logErr } from "../../util/util";
-import * as models from "../../modules/database/models";
+import Logger from "../../log.js";
+import { BUTTON_TYPES } from "../../const.js";
+import { logErr } from "../../util/util.js";
+import * as models from "../../modules/database/models.js";
 
-import InteractionRegistry from "../InteractionRegistry";
-import StatsCollectorManager from "../managers/StatsCollectorManager";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import InteractionRegistry from "../InteractionRegistry.js";
+import StatsCollectorManager from "../managers/StatsCollectorManager.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
 const log = Logger.child({ label: "Core => onInteractionCreate" });
 

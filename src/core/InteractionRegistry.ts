@@ -1,10 +1,10 @@
 import Discord from "discord.js";
 import qs from "query-string";
 
-import { BUTTON_TYPES } from "../const";
-import { TopCommand } from "../modules/commands/TopCommand";
-import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
-import { SimpleFuncReturn } from "../modules/commands/types";
+import { BUTTON_TYPES } from "../const.js";
+import { TopCommand } from "../modules/commands/TopCommand.js";
+import { TopCommandGroup } from "../modules/commands/TopCommandGroup.js";
+import { SimpleFuncReturn } from "../modules/commands/types/index.js";
 
 export type ButtonFilter = Record<string, string>;
 export type ButtonParsed = qs.ParsedQuery<string> & { t: BUTTON_TYPES };

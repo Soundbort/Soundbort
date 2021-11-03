@@ -1,9 +1,9 @@
-import { SAMPLE_TYPES } from "../../const";
+import { SAMPLE_TYPES } from "../../const.js";
 
-import { Command } from "../../modules/commands/Command";
-import { CommandGroup } from "../../modules/commands/CommandGroup";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { upload } from "../../core/soundboard/methods/upload";
+import { Command } from "../../modules/commands/Command.js";
+import { CommandGroup } from "../../modules/commands/CommandGroup.js";
+import { CommandStringOption } from "../../modules/commands/CommandOption.js";
+import { upload } from "../../core/soundboard/methods/upload.js";
 
 export default new CommandGroup({
     name: "upload",

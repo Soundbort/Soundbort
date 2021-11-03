@@ -1,6 +1,6 @@
 import Discord from "discord.js";
-import { Command, CommandOptions } from "./Command";
-import { GuildCreateEventHandler, CommandTarget } from "./types";
+import { Command, CommandOptions } from "./Command.js";
+import { GuildCreateEventHandler, CommandTarget } from "./types/index.js";
 
 export interface TopCommandOptions extends CommandOptions {
     target?: CommandTarget;

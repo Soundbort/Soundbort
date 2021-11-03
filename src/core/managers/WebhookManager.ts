@@ -3,13 +3,13 @@ import express from "express";
 import http from "node:http";
 import { promisify } from "node:util";
 
-import { TOP_GG_WEBHOOK_TOKEN, WEBHOOK_PORT } from "../../config";
-import Logger from "../../log";
-import { logErr } from "../../util/util";
-import * as models from "../../modules/database/models";
-import { TypedEventEmitter, GenericListener } from "../../util/emitter";
-import { VotesSchema } from "../../modules/database/schemas/VotesSchema";
-import { onExit } from "../../util/exit";
+import { TOP_GG_WEBHOOK_TOKEN, WEBHOOK_PORT } from "../../config.js";
+import Logger from "../../log.js";
+import { logErr } from "../../util/util.js";
+import * as models from "../../modules/database/models.js";
+import { TypedEventEmitter, GenericListener } from "../../util/emitter.js";
+import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
+import { onExit } from "../../util/exit.js";
 
 const log = Logger.child({ label: "Core => WebhookManager" });
 

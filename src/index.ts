@@ -1,13 +1,13 @@
-import "./util/banner_printer";
+import "./util/banner_printer.js";
 
 import Discord from "discord.js";
 
-import Logger from "./log";
-import { DISCORD_TOKEN } from "./config";
-import { exit, onExit } from "./util/exit";
-import Core from "./core/Core";
-import * as database from "./modules/database/index";
-import { logErr } from "./util/util";
+import Logger from "./log.js";
+import { DISCORD_TOKEN } from "./config.js";
+import { exit, onExit } from "./util/exit.js";
+import Core from "./core/Core.js";
+import * as database from "./modules/database/index.js";
+import { logErr } from "./util/util.js";
 
 const log = Logger.child({ label: "Index" });
 const djs_log = Logger.child({ label: "discord.js" });

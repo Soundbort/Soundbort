@@ -1,4 +1,4 @@
-import { ENVIRONMENT, EnvironmentStages } from "./config";
+import { ENVIRONMENT, EnvironmentStages } from "./config.js";
 
 import chalk from "chalk";
 import winston from "winston";

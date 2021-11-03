@@ -1,10 +1,10 @@
 import Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 
-import Logger from "../../log";
-import { logErr } from "../../util/util";
-import { GenericListener, TypedEventEmitter } from "../../util/emitter";
-import { AudioSubscription } from "./AudioSubscription";
+import Logger from "../../log.js";
+import { logErr } from "../../util/util.js";
+import { GenericListener, TypedEventEmitter } from "../../util/emitter.js";
+import { AudioSubscription } from "./AudioSubscription.js";
 
 const log = Logger.child({ label: "Audio" });
 

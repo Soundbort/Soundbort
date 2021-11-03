@@ -1,16 +1,16 @@
-import * as database from "./index";
+import * as database from "./index.js";
 
-import DatabaseCache from "./DatabaseCache";
-import databaseProxy from "./databaseProxy";
+import DatabaseCache from "./DatabaseCache.js";
+import databaseProxy from "./databaseProxy.js";
 
-import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
-import { ConfigSchema } from "./schemas/ConfigSchema";
-import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema";
-import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
-import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema";
-import { SoundboardSlotSchema } from "./schemas/SoundboardSlotsSchema";
-import { StatsSchema } from "./schemas/StatsSchema";
-import { VotesSchema } from "./schemas/VotesSchema";
+import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema.js";
+import { ConfigSchema } from "./schemas/ConfigSchema.js";
+import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema.js";
+import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema.js";
+import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema.js";
+import { SoundboardSlotSchema } from "./schemas/SoundboardSlotsSchema.js";
+import { StatsSchema } from "./schemas/StatsSchema.js";
+import { VotesSchema } from "./schemas/VotesSchema.js";
 
 export enum DbCollection {
     BlacklistUser = "blacklist_user",

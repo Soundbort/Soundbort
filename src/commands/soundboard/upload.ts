@@ -1,9 +1,9 @@
-import { SAMPLE_TYPES } from "../../const";
-import InteractionRegistry from "../../core/InteractionRegistry";
-import { TopCommand } from "../../modules/commands/TopCommand";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { createChoice } from "../../modules/commands/options/createChoice";
-import { upload } from "../../core/soundboard/methods/upload";
+import { SAMPLE_TYPES } from "../../const.js";
+import InteractionRegistry from "../../core/InteractionRegistry.js";
+import { TopCommand } from "../../modules/commands/TopCommand.js";
+import { CommandStringOption } from "../../modules/commands/CommandOption.js";
+import { createChoice } from "../../modules/commands/options/createChoice.js";
+import { upload } from "../../core/soundboard/methods/upload.js";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "upload",

@@ -1,11 +1,11 @@
-import { Command } from "../../modules/commands/Command";
-import { CommandGroup } from "../../modules/commands/CommandGroup";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
+import { Command } from "../../modules/commands/Command.js";
+import { CommandGroup } from "../../modules/commands/CommandGroup.js";
+import { CommandStringOption } from "../../modules/commands/CommandOption.js";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import { StandardSample } from "../../core/soundboard/StandardSample";
-import { searchStandard } from "../../core/soundboard/methods/searchMany";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import { StandardSample } from "../../core/soundboard/StandardSample.js";
+import { searchStandard } from "../../core/soundboard/methods/searchMany.js";
 
 const delete_extern_cmd = new Command({
     name: "extern",

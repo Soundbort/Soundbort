@@ -1,11 +1,13 @@
-import { createCanvas, CanvasRenderingContext2D, registerFont } from "canvas";
+// required way to import, because canvas' named exports are messed up when importing from ESM
+import canvasPackage, { CanvasRenderingContext2D } from "canvas";
+const { createCanvas, registerFont } = canvasPackage;
 import path from "node:path";
 import color from "color";
 import moment from "moment";
 
-import { lastItem } from "../../util/array";
-import { PROJECT_ROOT } from "../../config";
-import { COLOR } from "../../const";
+import { lastItem } from "../../util/array.js";
+import { PROJECT_ROOT } from "../../config.js";
+import { COLOR } from "../../const.js";
 
 registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
 registerFont(path.join(PROJECT_ROOT, "assets", "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
