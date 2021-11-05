@@ -15,6 +15,7 @@ RUN apt update \
         libgif-dev \
         librsvg2-dev \
         curl \
+        less \
         ffmpeg
 
 WORKDIR /app
@@ -34,6 +35,7 @@ EXPOSE 8080
 VOLUME /app/data
 VOLUME /app/logs
 
+ENV PATH="/app/bin:${PATH}"
 ENV NODE_ENV=production
 CMD [ "node", "dist/index.js" ]
 

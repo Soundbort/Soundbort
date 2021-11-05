@@ -2,7 +2,6 @@ import Discord from "discord.js";
 import topGGStatsPoster from "topgg-autoposter";
 
 import Logger from "../log.js";
-import { logErr } from "../util/util.js";
 import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
 import StatsCollectorManager from "./managers/StatsCollectorManager.js";
@@ -28,7 +27,7 @@ export default class Core {
                     log.debug("Posted stats to Top.gg!");
                 })
                 .on("error", error => {
-                    log.error("Top.gg posting error", { error: logErr(error) });
+                    log.error("Top.gg posting error", error);
                 });
         }
     }

@@ -3,7 +3,6 @@ import * as Voice from "@discordjs/voice";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 import Logger from "../../log.js";
-import { logErr } from "../../util/util.js";
 import { AudioSubscription } from "./AudioSubscription.js";
 
 const log = Logger.child({ label: "Audio" });
@@ -95,7 +94,7 @@ class AudioManager extends TypedEmitter<AudioManagerEvents> {
             await Voice.entersState(subscription.voice_connection, Voice.VoiceConnectionStatus.Ready, 20e3);
             return subscription;
         } catch (error) {
-            log.warn({ error: logErr(error) });
+            log.warn(error);
             /*
             At this point, the voice connection has not entered the Ready state. We should make
             sure to destroy it, and propagate the error by throwing it, so that the calling function

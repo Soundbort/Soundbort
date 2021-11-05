@@ -9,7 +9,6 @@ import { TypedEmitter } from "tiny-typed-emitter";
 
 import Logger from "../../log.js";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
-import { logErr } from "../../util/util.js";
 import { createEmbed } from "../../util/builders/embed.js";
 
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample.js";
@@ -409,6 +408,6 @@ WebhookManager.on("vote", async vote => {
     try {
         await CustomSample.addSlot(vote);
     } catch (error) {
-        log.error({ error: logErr(error) });
+        log.error("Error while adding a vote (from:%s, amount:%d) to a slot", vote.fromUserId, vote.votes, error);
     }
 });

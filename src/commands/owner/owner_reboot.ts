@@ -1,6 +1,5 @@
 import Logger from "../../log.js";
 import { exit } from "../../util/exit.js";
-import { logErr } from "../../util/util.js";
 
 import { replyEmbed } from "../../util/builders/embed.js";
 import { Command } from "../../modules/commands/Command.js";
@@ -28,7 +27,7 @@ function shutdown(force: boolean) {
             log.debug("In no more voice connections. Shutting down.");
             exit(0);
         })
-        .catch(error => log.error("Error in AudioManager#awaitDestroyable", { error: logErr(error) }));
+        .catch(error => log.error("Error in AudioManager#awaitDestroyable", error));
 
     log.info("Queued shutdown");
 

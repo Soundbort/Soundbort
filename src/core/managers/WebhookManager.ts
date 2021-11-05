@@ -6,7 +6,6 @@ import { TypedEmitter } from "tiny-typed-emitter";
 
 import { TOP_GG_WEBHOOK_TOKEN, WEBHOOK_PORT } from "../../config.js";
 import Logger from "../../log.js";
-import { logErr } from "../../util/util.js";
 import * as models from "../../modules/database/models.js";
 import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
 import { onExit } from "../../util/exit.js";
@@ -36,7 +35,7 @@ class WebhookManager extends TypedEmitter<WebhookManagerEvents> {
 
         const webhook = new Webhook(TOP_GG_WEBHOOK_TOKEN, {
             error(error) {
-                log.error({ error: logErr(error) });
+                log.error("Top.gg webhook error", error);
             },
         });
 

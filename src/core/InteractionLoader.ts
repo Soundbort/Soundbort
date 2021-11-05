@@ -5,7 +5,6 @@ import nanoTimer from "../util/timer.js";
 import Logger from "../log.js";
 import { walk } from "../util/files.js";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types.js";
-import { logErr } from "../util/util.js";
 
 import InteractionRegistry from "./InteractionRegistry.js";
 import GuildConfigManager from "./managers/GuildConfigManager.js";
@@ -31,8 +30,6 @@ export async function loadCommands(client: Discord.Client<true>, stats_collector
 
     await Promise.all(files.map(async file => {
         const relatve_path = path.relative(path.resolve(getDirname(import.meta.url), ".."), file);
-
-        log.debug("installing...: %s", relatve_path);
 
         const time = nanoTimer();
 
@@ -87,7 +84,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
         try {
             await deployToGuild(guild);
         } catch (error) {
-            log.error({ error: logErr(error) });
+            log.error("Deploying to guild %s failed", guild.id, error);
         }
     }
 
@@ -97,7 +94,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
 
             await GuildConfigManager.regenConfig(guild);
         } catch (error) {
-            log.error({ error: logErr(error) });
+            log.error("Deploying to guild %s failed", guild.id, error);
         }
     });
 }

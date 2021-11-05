@@ -14,7 +14,7 @@ import { downloadFile, isEnoughDiskSpace } from "../../../util/files.js";
 import SampleID from "../SampleID.js";
 import { CustomSample } from "../CustomSample.js";
 import { StandardSample } from "../StandardSample.js";
-import { isOwner, logErr } from "../../../util/util.js";
+import { isOwner } from "../../../util/util.js";
 import { EmbedType, replyEmbed } from "../../../util/builders/embed.js";
 import GuildConfigManager from "../../managers/GuildConfigManager.js";
 
@@ -219,7 +219,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
             return await failed(UploadErrors.TooLong);
         }
     } catch (error) {
-        log.debug({ error: logErr(error) });
+        log.debug(error);
         return await failed(UploadErrors.FfProbeError);
     }
 
@@ -235,7 +235,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     try {
         await convertAudio(temp_raw_file, temp_conversion_file);
     } catch (error) {
-        log.debug({ error: logErr(error) });
+        log.debug(error);
         return await failed(UploadErrors.ConversionError);
     }
 
@@ -294,7 +294,7 @@ export async function upload(interaction: Discord.CommandInteraction, name: stri
     try {
         await _upload(interaction, name, scope);
     } catch (error) {
-        log.debug({ error: logErr(error) });
+        log.debug(error);
         await interaction.editReply(replyEmbed(UploadErrors.General, EmbedType.Error));
     } finally {
         await temp.cleanup();

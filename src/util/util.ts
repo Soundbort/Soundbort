@@ -26,19 +26,6 @@ export async function fetchMember(
     }
 }
 
-type _any = any;
-
-export function logErr(error: _any): Error {
-    const err = {
-        ...error,
-        message: error.message,
-        name: error.name,
-        stack: error.stack,
-    };
-    Object.setPrototypeOf(err, Error.prototype);
-    return err;
-}
-
 // a function that does nothing (e.g. for Promise.catch() errors we don't care about)
 export function doNothing(): void {
     // Do nothing

@@ -11,7 +11,6 @@ import Logger from "../../log.js";
 import { CustomSample } from "../soundboard/CustomSample.js";
 import * as models from "../../modules/database/models.js";
 import { METRICS_PORT } from "../../config.js";
-import { logErr } from "../../util/util.js";
 import { lastItem } from "../../util/array.js";
 import { onExit } from "../../util/exit.js";
 
@@ -32,7 +31,7 @@ onExit(async () => {
 export default class StatsCollectorManager extends EventEmitter {
     private job = new CronJob({
         cronTime: "0 */10 * * * *",
-        onTick: () => this.collect().catch(error => log.error({ error: logErr(error) })),
+        onTick: () => this.collect().catch(error => log.error("Error while collecting stats", error)),
     });
 
     private played_samples = 0;
@@ -119,9 +118,7 @@ export default class StatsCollectorManager extends EventEmitter {
 
         this.emit("collect", doc);
 
-        await models.stats.insertOne(
-            doc,
-        );
+        await models.stats.insertOne(doc);
     }
 
     public getStats(timespan: number | Date): Promise<StatsSchema[]> {

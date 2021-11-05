@@ -2,7 +2,6 @@ import Discord from "discord.js";
 
 import Logger from "../../log.js";
 import { BUTTON_TYPES } from "../../const.js";
-import { logErr } from "../../util/util.js";
 import * as models from "../../modules/database/models.js";
 
 import InteractionRegistry from "../InteractionRegistry.js";
@@ -30,7 +29,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
 
                 stats_collector.incCalledCommands(interaction.commandName, 1);
             } catch (error) {
-                log.error({ error: logErr(error) });
+                log.error(error);
 
                 try {
                     const reply = interaction.replied
@@ -38,7 +37,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
                         : interaction.reply;
                     await reply(replyEmbedEphemeral("Some error happened.", EmbedType.Error));
                 } catch (error) {
-                    log.error({ error: logErr(error) });
+                    log.error(error);
                 }
             }
             return;
@@ -51,7 +50,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
 
                 await command.autocomplete(interaction);
             } catch (error) {
-                log.error({ error: logErr(error) });
+                log.error(error);
             }
             return;
         }
@@ -84,7 +83,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
 
                     await interaction.reply(result);
                 } catch (error) {
-                    log.error({ error: logErr(error) });
+                    log.error(error);
                 }
             }
         }

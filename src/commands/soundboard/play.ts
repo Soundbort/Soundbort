@@ -2,7 +2,6 @@ import Discord from "discord.js";
 
 import { BUTTON_TYPES } from "../../const.js";
 import Logger from "../../log.js";
-import { logErr } from "../../util/util.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry.js";
 import { CmdInstallerArgs } from "../../util/types.js";
@@ -46,7 +45,7 @@ export function install({ stats_collector }: CmdInstallerArgs): void {
 
             return replyEmbedEphemeral(`🔊 Playing ${sample.name}`);
         } catch (error) {
-            log.error({ error: logErr(error) });
+            log.error("Error while playing", error);
             return replyEmbedEphemeral("Some error happened and caused some whoopsies", EmbedType.Error);
         }
     }

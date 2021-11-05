@@ -5,7 +5,6 @@ import Discord from "discord.js";
 import Logger from "./log.js";
 import { DISCORD_TOKEN } from "./config.js";
 import { exit, onExit } from "./util/exit.js";
-import { logErr } from "./util/util.js";
 import Core from "./core/Core.js";
 import * as database from "./modules/database/index.js";
 
@@ -67,12 +66,12 @@ process.on("SIGINT", signal => {
 });
 
 process.on("uncaughtException", error => {
-    log.debug(`Uncaught Exception: ${error.message}`, { error: logErr(error) });
+    log.error(`Uncaught Exception: ${error.message}`, error);
     exit(1);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-    log.debug("Unhandled rejection at ", { promise });
+    log.error("Unhandled rejection at ", { promise });
     exit(1);
 });
 
@@ -83,7 +82,7 @@ client.on("debug", message => {
 
 client.on("warn", warn => { djs_log.warn(warn); });
 
-client.on("error", error => { djs_log.error({ error: logErr(error) }); });
+client.on("error", error => { djs_log.error(error); });
 
 client.on("shardDisconnect", (close_event, shard_id) => { djs_log.info(`Disconnected ID:${shard_id}`, close_event); });
 
@@ -93,7 +92,7 @@ client.on("shardResume", (shard_id, replayed) => { djs_log.info(`Replayed ${repl
 
 client.on("shardReady", (shard_id, unavailable) => { djs_log.info(`Ready with ${unavailable?.size ?? 0} unavailable guilds ID:${shard_id}`); });
 
-client.on("shardError", (error, shard_id) => { djs_log.error(`ID:${shard_id}`, { error: logErr(error), shard_id }); });
+client.on("shardError", (error, shard_id) => { djs_log.error(`ID:${shard_id}`, error); });
 
 // ////////////// Initialize Bot //////////////
 
@@ -108,6 +107,6 @@ try {
 
     await Core.create(await ready_promise);
 } catch (error) {
-    log.error({ error: logErr(error), message: "Failed to log in" });
+    log.error("Failed to log in", error);
     exit(1);
 }
