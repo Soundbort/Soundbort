@@ -42,8 +42,6 @@
             "property"
         ],
         "no-else-return": "error",
-        "no-empty-function": "off",
-        "@typescript-eslint/no-empty-function": "error",
         "no-extra-semi": "error",
         "@typescript-eslint/no-extra-semi": "error",
         "no-unused-vars": "off",
@@ -200,15 +198,6 @@
         "prefer-object-spread": "error",
         "semi-spacing": "error",
         "space-before-blocks": "error",
-        "space-before-function-paren": "off",
-        "@typescript-eslint/space-before-function-paren": [
-            "error",
-            {
-                "anonymous": "never",
-                "named": "never",
-                "asyncArrow": "always"
-            }
-        ],
         "space-in-parens": "error",
         "space-infix-ops": "error",
         "space-unary-ops": "error",
@@ -234,15 +223,11 @@
         "rest-spread-spacing": "error",
         "template-curly-spacing": "error",
         "yield-star-spacing": "error",
-        "camelcase": "off",
-        "@typescript-eslint/camelcase": "off",
         "indent": "off",
         "@typescript-eslint/indent": [
             "warn",
             4,
-            {
-                "SwitchCase": 1
-            }
+            { "SwitchCase": 1 }
         ],
         "linebreak-style": [
             "warn",
@@ -255,7 +240,7 @@
         ],
         "semi": "off",
         "@typescript-eslint/semi": [
-            "warn",
+            "error",
             "always"
         ],
         "no-cond-assign": "off",
