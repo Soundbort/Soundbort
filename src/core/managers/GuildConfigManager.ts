@@ -2,7 +2,7 @@ import Discord from "discord.js";
 
 import { fetchMember, guessModRole } from "../../util/util.js";
 import * as models from "../../modules/database/models.js";
-import { ConfigSchema } from "../../modules/database/schemas/ConfigSchema.js";
+import { GuildConfigSchema } from "../../modules/database/schemas/GuildConfigSchema.js";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 interface GuildConfigManagerEvents {
@@ -10,8 +10,8 @@ interface GuildConfigManagerEvents {
 }
 
 class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
-    public async setConfig(guildId: Discord.Snowflake, config: ConfigSchema): Promise<void> {
-        await models.config.replaceOne({ guildId }, config, { upsert: true });
+    public async setConfig(guildId: Discord.Snowflake, config: GuildConfigSchema): Promise<void> {
+        await models.guild_config.replaceOne({ guildId }, config, { upsert: true });
     }
 
     public async regenConfig(guild: Discord.Guild): Promise<void> {
@@ -29,9 +29,9 @@ class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
     /**
      * Get an existing config from the database, check it's values and repair it, or create a new config if it doesn't exist
      */
-    public async findOrGenConfig(guild: Discord.Guild): Promise<ConfigSchema> {
+    public async findOrGenConfig(guild: Discord.Guild): Promise<GuildConfigSchema> {
         // eslint-disable-next-line prefer-const
-        let { guildId, adminRoleId } = await models.config.findOne({ guildId: guild.id }) || { guildId: guild.id };
+        let { guildId, adminRoleId } = await models.guild_config.findOne({ guildId: guild.id }) || { guildId: guild.id };
         let data_changed = false;
 
         // if old admin role has been deleted, default back to the guessed role
@@ -41,7 +41,7 @@ class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
             data_changed = true;
         }
 
-        const config: ConfigSchema = { guildId, adminRoleId };
+        const config: GuildConfigSchema = { guildId, adminRoleId };
 
         if (data_changed) {
             await this.setConfig(guildId, config);

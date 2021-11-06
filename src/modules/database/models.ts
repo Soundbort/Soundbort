@@ -2,7 +2,7 @@ import * as database from "./index.js";
 import DatabaseCache from "./DatabaseCache.js";
 import databaseProxy from "./databaseProxy.js";
 import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema.js";
-import { ConfigSchema } from "./schemas/ConfigSchema.js";
+import { GuildConfigSchema } from "./schemas/GuildConfigSchema.js";
 import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema.js";
 import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema.js";
 import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema.js";
@@ -15,7 +15,7 @@ export enum DbCollection {
     CustomSample = "soundboard_custom_sample",
     StandardSample = "soundboard_pre_sample",
     SampleSlots = "soundboard_slots",
-    Config = "guild_config",
+    GuildConfig = "guild_config",
     Stats = "app_stats",
     Votes = "bot_votes",
     InteractionReplies = "interaction_replies",
@@ -29,7 +29,7 @@ export const standard_sample = new DatabaseCache<SoundboardStandardSampleSchema>
 
 export const sample_slots = databaseProxy<SoundboardSlotSchema>(DbCollection.SampleSlots);
 
-export const config = new DatabaseCache<ConfigSchema>(DbCollection.Config, { indexName: "guildId" });
+export const guild_config = new DatabaseCache<GuildConfigSchema>(DbCollection.GuildConfig, { indexName: "guildId", ttl: 1000 * 3600 });
 
 export const stats = databaseProxy<StatsSchema>(DbCollection.Stats);
 
@@ -49,7 +49,7 @@ database.onConnect(async () => {
 
     await sample_slots.createIndex({ ownerId: 1 }, { unique: true });
 
-    await config.collection.createIndex({ guildId: 1 }, { unique: true });
+    await guild_config.collection.createIndex({ guildId: 1 }, { unique: true });
 
     await votes.createIndex({ ts: 1, userId: 1 }, { unique: true });
 
