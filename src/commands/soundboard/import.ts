@@ -3,8 +3,7 @@ import Discord from "discord.js";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry.js";
-import { CommandStringOption } from "../../modules/commands/CommandOption.js";
-import { createChoice } from "../../modules/commands/options/createChoice.js";
+import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption.js";
 import { TopCommand } from "../../modules/commands/TopCommand.js";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 

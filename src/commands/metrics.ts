@@ -11,8 +11,7 @@ import InteractionRegistry from "../core/InteractionRegistry.js";
 import { TopCommand } from "../modules/commands/TopCommand.js";
 import { EmbedType, createEmbed, replyEmbedEphemeral } from "../util/builders/embed.js";
 import { CmdInstallerArgs } from "../util/types.js";
-import { CommandStringOption } from "../modules/commands/CommandOption.js";
-import { createChoice } from "../modules/commands/options/createChoice.js";
+import { CommandStringOption, createChoice } from "../modules/commands/CommandOption.js";
 
 import { ChartOptionsData } from "../modules/charts/line.js";
 import charts from "../modules/charts/index.js";

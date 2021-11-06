@@ -3,9 +3,19 @@ import Discord from "discord.js";
 import Logger from "../../log.js";
 import nanoTimer from "../../util/timer.js";
 import { BaseCommandOption } from "./CommandOption.js";
-import { SimpleFunc } from "./types/index.js";
 
 const log = Logger.child({ label: "Command => autocomplete" });
+
+export type SimpleFuncReturn = string | Discord.MessagePayload | Discord.InteractionReplyOptions | undefined | void;
+
+export type SimpleFunc = (interaction: Discord.CommandInteraction) => Discord.Awaitable<SimpleFuncReturn>;
+
+export interface CommandTarget {
+    global: boolean;
+    guildHidden: boolean;
+    guild_ids?: Discord.Snowflake[];
+}
+
 
 export interface CommandOptions {
     name: string,

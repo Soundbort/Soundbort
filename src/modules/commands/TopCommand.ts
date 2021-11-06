@@ -1,7 +1,8 @@
 import Discord from "discord.js";
 
-import { Command, CommandOptions } from "./Command.js";
-import { CommandTarget, GuildCreateEventHandler } from "./types/index.js";
+import { Command, CommandOptions, CommandTarget } from "./Command.js";
+
+export type GuildCreateEventHandler = (app_command: Discord.ApplicationCommand, guild: Discord.Guild) => Discord.Awaitable<void>;
 
 export interface TopCommandOptions extends CommandOptions {
     target?: CommandTarget;

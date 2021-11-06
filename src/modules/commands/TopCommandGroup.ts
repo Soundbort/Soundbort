@@ -1,8 +1,8 @@
 import Discord from "discord.js";
 
-import { Command } from "./Command.js";
-import { CommandGroup } from "./CommandGroup.js";
-import { CommandTarget, GuildCreateEventHandler, MiddlewareFunc } from "./types/index.js";
+import { Command, CommandTarget } from "./Command.js";
+import { CommandGroup, MiddlewareFunc } from "./CommandGroup.js";
+import { GuildCreateEventHandler } from "./TopCommand.js";
 
 export interface TopCommandGroupOptions {
     name: string;

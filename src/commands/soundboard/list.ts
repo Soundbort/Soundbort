@@ -1,11 +1,10 @@
 import Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry.js";
+import { SimpleFuncReturn } from "../../modules/commands/Command.js";
 import { TopCommand } from "../../modules/commands/TopCommand.js";
-import { CommandStringOption } from "../../modules/commands/CommandOption.js";
-import { createChoice } from "../../modules/commands/options/createChoice.js";
+import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption.js";
 import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
-import { SimpleFuncReturn } from "../../modules/commands/types/index.js";
 
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
 import { CustomSample } from "../../core/soundboard/CustomSample.js";
