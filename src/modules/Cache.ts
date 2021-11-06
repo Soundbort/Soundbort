@@ -1,5 +1,11 @@
 export interface CacheOptions {
+    /**
+     * maximum age of cache entries in milliseconds
+     */
     ttl?: number;
+    /**
+     * maximum number of cache entries
+     */
     maxSize?: number;
 }
 
@@ -66,13 +72,24 @@ export default class Cache<K, T> extends Map<K, T> {
         return doc;
     }
 
-    find(finder: (item: T, key: K) => boolean): T | undefined {
+    findOne(finder: (item: T, key: K) => boolean): T | undefined {
         for (const [key, item] of this) {
             if (finder(item, key)) {
                 this._setTTLTimeout(key);
                 return item;
             }
         }
+    }
+
+    findMany(finder: (item: T, key: K) => boolean): T[] {
+        const results: T[] = [];
+        for (const [key, item] of this) {
+            if (finder(item, key)) {
+                this._setTTLTimeout(key);
+                results.push(item);
+            }
+        }
+        return results;
     }
 
     has(key: K): boolean {

@@ -1,7 +1,8 @@
 // Disable these because unicorn is stupid
 /* eslint-disable unicorn/no-array-callback-reference */
 /* eslint-disable unicorn/no-array-method-this-argument */
-import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OptionalId, UpdateFilter } from "mongodb";
+import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OptionalId, UpdateFilter, UpdateOptions } from "mongodb";
+import stream from "node:stream";
 import { Except } from "type-fest";
 
 import Cache, { CacheOptions } from "../Cache.js";
@@ -84,7 +85,25 @@ export default class DatabaseCache<
             }
         }
 
-        return this.cache.find(item => {
+        return this.cache.findOne(item => {
+            return this._filter(item, filter);
+        });
+    }
+
+    private _findMany(filter: CacheFilter<TSchema>): TSchema[] {
+        // find documents quicker if filter includes index key
+        if (typeof filter[this.index_name] !== "undefined") {
+            const return_val = this.cache.get(filter[this.index_name] as KeyType);
+            if (return_val) {
+                // it was found in cache! does it match the rest of the filters?
+                if (this._filter(return_val, filter)) return [return_val];
+                // else directly return, because since this was an indexed field search,
+                // the answer won't be in other parts of the cache
+                return [];
+            }
+        }
+
+        return this.cache.findMany(item => {
             return this._filter(item, filter);
         });
     }
@@ -128,6 +147,12 @@ export default class DatabaseCache<
     // async insertMany();
 
     async updateOne(filter: CacheFilter<TSchema>, update: UpdateFilter<TSchema>, opts?: Except<FindOneAndUpdateOptions, "returnDocument">): Promise<TSchema | undefined> {
+        // delete items from cache first, because if mongodb fails halfway through and
+        // some of the data is already mutated, the cache is poisoned and will
+        // return old results
+        const doc = this._findOne(filter);
+        if (doc) this.cache.delete(doc[this.index_name]);
+
         const result = await this.collection.findOneAndUpdate(
             filter,
             update,
@@ -138,16 +163,31 @@ export default class DatabaseCache<
             this.cache.set(result.value[this.index_name], result.value);
             return result.value;
         }
+    }
 
-        // if for a reason it didn't return a value, which
-        // should mostly be because this document doesn't
-        // exist in the collection, but we can't be sure,
-        // then delete it from cache, so there aren't any confusions
-        const doc = this._findOne(filter);
-        if (doc) this.cache.delete(doc[this.index_name]);
+    async updateMany(filter: CacheFilter<TSchema>, update: UpdateFilter<TSchema>, opts: UpdateOptions = {}): Promise<void> {
+        // delete items from cache first, because if mongodb fails halfway through and
+        // some of the data is already mutated, the cache is poisoned and will
+        // return old results
+        const docs = this._findMany(filter);
+        for (const doc of docs) {
+            this.cache.delete(doc[this.index_name]);
+        }
+
+        await this.collection.updateMany(
+            filter,
+            update,
+            opts,
+        );
     }
 
     async replaceOne(filter: CacheFilter<TSchema>, replacement: TSchema, opts: FindOneAndReplaceOptions = {}): Promise<TSchema | undefined> {
+        // delete items from cache first, because if mongodb fails halfway through and
+        // some of the data is already mutated, the cache turns poisoned and will
+        // return old results
+        const doc = this._findOne(filter);
+        if (doc) this.cache.delete(doc[this.index_name]);
+
         const result = await this.collection.findOneAndReplace(
             filter,
             replacement,
@@ -158,16 +198,7 @@ export default class DatabaseCache<
             this.cache.set(result.value[this.index_name], result.value);
             return result.value;
         }
-
-        // if for a reason it didn't return a value, which
-        // should mostly be because this document doesn't
-        // exist in the collection, but we can't be sure,
-        // then delete it from cache, so there aren't any confusions
-        const doc = this._findOne(filter);
-        if (doc) this.cache.delete(doc[this.index_name]);
     }
-
-    // async updateMany();
 
     async deleteOne(filter: CacheFilter<TSchema>): Promise<void> {
         const doc = this._findOne(filter);
@@ -176,13 +207,23 @@ export default class DatabaseCache<
         await this.collection.deleteOne(filter);
     }
 
-    // async deleteMany();
+    async deleteMany(filter: CacheFilter<TSchema>): Promise<void> {
+        // delete items from cache first, because if mongodb fails halfway through and
+        // some of the data is already mutated, the cache is poisoned and will
+        // return old results
+        const docs = this._findMany(filter);
+        for (const doc of docs) {
+            this.cache.delete(doc[this.index_name]);
+        }
 
-    count(filter: Filter<TSchema>): Promise<number> {
-        return this.collection.countDocuments(filter);
+        await this.collection.deleteMany(filter);
     }
 
-    estimatedCount(): Promise<number> {
-        return this.collection.estimatedDocumentCount();
+    async count(filter: Filter<TSchema>): Promise<number> {
+        return await this.collection.countDocuments(filter);
+    }
+
+    async estimatedCount(): Promise<number> {
+        return await this.collection.estimatedDocumentCount();
     }
 }
