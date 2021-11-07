@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import topGGStatsPoster from "topgg-autoposter";
+import { AutoPoster as topGGStatsPoster } from "topgg-autoposter";
 import { CronJob } from "cron";
 
 import Logger from "../log.js";
