@@ -35,7 +35,9 @@ EXPOSE 8080
 VOLUME /app/data
 VOLUME /app/logs
 
+RUN chmod +x /app/bin/*
 ENV PATH="/app/bin:${PATH}"
+
 ENV NODE_ENV=production
 CMD [ "node", "dist/index.js" ]
 
