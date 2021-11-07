@@ -37,10 +37,12 @@ class StatsCollectorManager extends TypedEmitter<StatsCollectorManagerEvents> {
     constructor() {
         super();
 
-        onExit(async () => {
-            log.debug("Closing health monitor server...");
-            await promisify(this.server.close)();
-        });
+        onExit(this.stop);
+    }
+
+    public async stop(): Promise<void> {
+        log.debug("Closing health monitor server...");
+        await promisify(this.server.close)();
     }
 
     public listen(): void {
