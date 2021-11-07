@@ -7,7 +7,7 @@ import { SAMPLE_TYPES } from "../const.js";
 import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
 import StatsCollectorManager from "./data-managers/StatsCollectorManager.js";
-import WebhookManager from "./managers/WebhookManager.js";
+import WebhookListener from "./WebhookListener.js";
 import DataDeletionManager from "./data-managers/DataDeletionManager.js";
 import GuildConfigManager from "./data-managers/GuildConfigManager.js";
 import InteractionRepliesManager from "./data-managers/InteractionRepliesManager.js";
@@ -69,7 +69,7 @@ export default class Core {
         // ///////////////////
 
         StatsCollectorManager.listen();
-        if (TOP_GG_WEBHOOK_TOKEN) WebhookManager.listen();
+        if (TOP_GG_WEBHOOK_TOKEN) WebhookListener.listen();
 
         this.setStatus();
         this.client.on("shardReady", () => this.setStatus());
