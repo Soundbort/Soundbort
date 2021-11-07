@@ -1,14 +1,11 @@
-import { Webhook } from "@top-gg/sdk";
 import express from "express";
 import http from "node:http";
 import { promisify } from "node:util";
-import { TypedEmitter } from "tiny-typed-emitter";
 
-import { TOP_GG_WEBHOOK_TOKEN, WEBHOOK_PORT } from "../../config.js";
 import Logger from "../../log.js";
-import * as models from "../../modules/database/models.js";
-import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
+import { WEBHOOK_PORT } from "../../config.js";
 import { onExit } from "../../util/exit.js";
+import VotesManager from "../data-managers/VotesManager.js";
 
 const log = Logger.child({ label: "Core => WebhookManager" });
 
@@ -21,56 +18,16 @@ onExit(async () => {
     await promisify(server.close)();
 });
 
-interface WebhookManagerEvents {
-    vote(vote: VotesSchema): void;
-}
-
-class WebhookManager extends TypedEmitter<WebhookManagerEvents> {
+class WebhookManager {
     private app: express.Express;
 
     constructor() {
-        super();
-
         this.app = express();
-
-        const webhook = new Webhook(TOP_GG_WEBHOOK_TOKEN, {
-            error(error) {
-                log.error("Top.gg webhook error", error);
-            },
-        });
 
         // eslint-disable-next-line new-cap
         const webhook_router = express.Router();
 
-        webhook_router.post("/topgg", webhook.listener(async vote => {
-            if (vote.type !== "upvote") {
-                log.debug(vote);
-                return;
-            }
-
-            const query = typeof vote.query === "string"
-                ? undefined
-                : vote.query;
-
-            const doc: VotesSchema = {
-                ts: new Date(),
-                fromUserId: vote.user,
-                votes: vote.isWeekend ? 2 : 1,
-                query: {
-                    ref: query?.ref,
-                    guildId: query?.guildId,
-                    userId: query?.userId,
-                },
-            };
-
-            // You can also throw an error to the webhook listener callback in order to
-            // resend the webhook after a few seconds
-            await models.votes.insertOne(doc);
-
-            log.debug(`Vote by ${doc.fromUserId}. votes:${doc.votes}`);
-
-            this.emit("vote", doc);
-        }));
+        webhook_router.post("/topgg", VotesManager.webhookListener);
 
         this.app.use("/webhook", webhook_router);
 

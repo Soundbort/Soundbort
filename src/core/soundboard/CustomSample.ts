@@ -19,7 +19,7 @@ import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/sch
 import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
 
 import InteractionRegistry from "../InteractionRegistry.js";
-import WebhookManager from "../managers/WebhookManager.js";
+import VotesManager from "../data-managers/VotesManager.js";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 
@@ -419,7 +419,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     }
 }
 
-WebhookManager.on("vote", async vote => {
+VotesManager.on("vote", async vote => {
     try {
         await CustomSample.addSlot(vote);
     } catch (error) {
