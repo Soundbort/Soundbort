@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.6.2](https://github.com/LonelessCodes/SoundBort/compare/v0.6.1...v0.6.2) (2021-11-07)
+
+
+### Bug Fixes
+
+* return to commonjs, because @discordjs/voice doesn't support esm at all ([65e3065](https://github.com/LonelessCodes/SoundBort/commit/65e3065fdaf1f38a01809f1d92f12f2b0df86a04))
+
 ### [0.6.1](https://github.com/LonelessCodes/SoundBort/compare/v0.6.0...v0.6.1) (2021-11-07)
 
 
