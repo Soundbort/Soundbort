@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.6.0](https://github.com/LonelessCodes/SoundBort/compare/v0.5.0...v0.6.0) (2021-11-07)
+
+
+### Features
+
+* add basic cli tool to query logs and adjust log.ts ([b5499a4](https://github.com/LonelessCodes/SoundBort/commit/b5499a4412462adc00274b812fe4d7973aaffee1))
+* add DatabaseCache.updateMany() and other improvements ([60e69e1](https://github.com/LonelessCodes/SoundBort/commit/60e69e1969b25e7f31ad5cef8c321323f12cf1b5))
+* automatically delete server associated data 14 days after being kicked from a server ([76ebb37](https://github.com/LonelessCodes/SoundBort/commit/76ebb373e555283be99b636ae2f9fdb2433732ed))
+
+
+### Bug Fixes
+
+* **Dockerfile:** fixed /bin permissions ([abd4497](https://github.com/LonelessCodes/SoundBort/commit/abd4497ac02dc45c35f364c75ee74970fdd15f8f))
+* fix imports ([0491466](https://github.com/LonelessCodes/SoundBort/commit/0491466c2a35d9cd0bf6d8b2a1c6bc6118cb9265))
+
 ## [0.5.0](https://github.com/LonelessCodes/SoundBort/compare/v0.4.3...v0.5.0) (2021-11-02)
 
 
