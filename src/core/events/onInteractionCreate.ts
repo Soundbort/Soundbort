@@ -2,17 +2,17 @@ import Discord from "discord.js";
 
 import Logger from "../../log.js";
 import { BUTTON_TYPES } from "../../const.js";
-import * as models from "../../modules/database/models.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
 import InteractionRegistry from "../InteractionRegistry.js";
 import StatsCollectorManager from "../managers/StatsCollectorManager.js";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import BlacklistManager from "../data-managers/BlacklistManager.js";
 
 const log = Logger.child({ label: "Core => onInteractionCreate" });
 
 export default function onInteractionCreate(stats_collector: StatsCollectorManager) {
     return async (interaction: Discord.Interaction): Promise<void> => {
-        if (await models.blacklist_user.findOne({ userId: interaction.user.id })) {
+        if (await BlacklistManager.isBlacklisted(interaction.user.id)) {
             if (!interaction.isCommand() && !interaction.isButton()) return;
 
             return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));

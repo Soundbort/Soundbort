@@ -3,7 +3,7 @@ import { CommandGroup } from "../../modules/commands/CommandGroup.js";
 import { CommandStringOption } from "../../modules/commands/CommandOption.js";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import * as models from "../../modules/database/models.js";
+import BlacklistManager from "../../core/data-managers/BlacklistManager.js";
 
 const blacklist_add_cmd = new Command({
     name: "add",
@@ -18,11 +18,7 @@ const blacklist_add_cmd = new Command({
     async func(interaction) {
         const userId = interaction.options.getString("user-id", true).trim();
 
-        await models.blacklist_user.updateOne(
-            { userId: userId },
-            { $set: { userId: userId } },
-            { upsert: true },
-        );
+        await BlacklistManager.addUser(userId);
 
         return replyEmbedEphemeral("Blacklisted user.", EmbedType.Success);
     },
@@ -41,9 +37,7 @@ const blacklist_remove_cmd = new Command({
     async func(interaction) {
         const userId = interaction.options.getString("user-id", true).trim();
 
-        await models.blacklist_user.deleteOne(
-            { userId: userId },
-        );
+        await BlacklistManager.removeUser(userId);
 
         return replyEmbedEphemeral("Removed user from blacklist.", EmbedType.Success);
     },
