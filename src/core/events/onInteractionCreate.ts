@@ -5,12 +5,12 @@ import { BUTTON_TYPES } from "../../const.js";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
 import InteractionRegistry from "../InteractionRegistry.js";
-import StatsCollectorManager from "../managers/StatsCollectorManager.js";
 import BlacklistManager from "../data-managers/BlacklistManager.js";
+import StatsCollectorManager from "../data-managers/StatsCollectorManager.js";
 
 const log = Logger.child({ label: "Core => onInteractionCreate" });
 
-export default function onInteractionCreate(stats_collector: StatsCollectorManager) {
+export default function onInteractionCreate() {
     return async (interaction: Discord.Interaction): Promise<void> => {
         if (await BlacklistManager.isBlacklisted(interaction.user.id)) {
             if (!interaction.isCommand() && !interaction.isButton()) return;
@@ -27,7 +27,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
 
                 await command.run(interaction);
 
-                stats_collector.incCalledCommands(interaction.commandName, 1);
+                StatsCollectorManager.incCalledCommands(interaction.commandName, 1);
             } catch (error) {
                 log.error(error);
 
@@ -77,7 +77,7 @@ export default function onInteractionCreate(stats_collector: StatsCollectorManag
 
                     const result = await button_handler.func(interaction, decoded);
 
-                    stats_collector.incCalledButtons(decoded.t, 1);
+                    StatsCollectorManager.incCalledButtons(decoded.t, 1);
 
                     if (!result || interaction.replied) continue;
 

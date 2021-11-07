@@ -1,55 +1,50 @@
 import Discord from "discord.js";
-import { EventEmitter } from "node:events";
-import { CronJob } from "cron";
+import { TypedEmitter } from "tiny-typed-emitter";
 import http from "node:http";
 import os from "node:os";
 import { promisify } from "node:util";
 
-import * as database from "../../modules/database/index.js";
-import { StatsSchema } from "../../modules/database/schemas/StatsSchema.js";
 import Logger from "../../log.js";
-import { CustomSample } from "../soundboard/CustomSample.js";
+
+import * as database from "../../modules/database/index.js";
 import * as models from "../../modules/database/models.js";
+import { StatsSchema } from "../../modules/database/schemas/StatsSchema.js";
+import { CustomSample } from "../soundboard/CustomSample.js";
 import { METRICS_PORT } from "../../config.js";
 import { lastItem } from "../../util/array.js";
 import { onExit } from "../../util/exit.js";
 
 const log = Logger.child({ label: "Core => StatsCollectorManager" });
 
-// setup a health monitoring server for Docker
-// currently does nothing
-const server = http.createServer((req, res) => {
-    res.writeHead(200);
-    res.end("ok");
-});
+interface StatsCollectorManagerEvents {
+    collect(doc: StatsSchema): void;
+}
 
-onExit(async () => {
-    log.debug("Closing health monitor server...");
-    await promisify(server.close)();
-});
-
-export default class StatsCollectorManager extends EventEmitter {
-    private job = new CronJob({
-        cronTime: "0 */10 * * * *",
-        onTick: () => this.collect().catch(error => log.error("Error while collecting stats", error)),
-    });
-
+class StatsCollectorManager extends TypedEmitter<StatsCollectorManagerEvents> {
     private played_samples = 0;
     private commands: { [name: string]: number } = {};
     private buttons: { [type: string]: number } = {};
 
-    public client: Discord.Client<true>;
+    private metricsServerListener: http.RequestListener = (req, res) => {
+        res.writeHead(200);
+        res.end("ok");
+    };
 
-    constructor(client: Discord.Client<true>) {
+    // setup a health monitoring server for Docker
+    // currently does nothing
+    private server = http.createServer(this.metricsServerListener);
+
+    constructor() {
         super();
 
-        this.client = client;
-
-        database.onConnect(() => this.job.start());
+        onExit(async () => {
+            log.debug("Closing health monitor server...");
+            await promisify(this.server.close)();
+        });
     }
 
-    public static listen(): void {
-        server.listen(METRICS_PORT);
+    public listen(): void {
+        this.server.listen(METRICS_PORT);
     }
 
     // /////////////////
@@ -66,11 +61,11 @@ export default class StatsCollectorManager extends EventEmitter {
         this.buttons[type] = (this.buttons[type] || 0) + inc;
     }
 
-    public async collect(): Promise<void> {
+    public async collect(client: Discord.Client<true>): Promise<void> {
         const ts = new Date(Math.floor(Date.now() / 1000) * 1000); // round timestamp to the second
 
-        const guilds = this.client.guilds.cache.size;
-        const voice_connections = this.client.guilds.cache.reduce((acc, curr) => acc + (curr.me?.voice.channelId ? 1 : 0), 0);
+        const guilds = client.guilds.cache.size;
+        const voice_connections = client.guilds.cache.reduce((acc, curr) => acc + (curr.me?.voice.channelId ? 1 : 0), 0);
 
         // Set all command values to 0, so they can increment themselves later
         const commands = this.commands;
@@ -82,7 +77,7 @@ export default class StatsCollectorManager extends EventEmitter {
         const played_samples = this.played_samples;
         this.played_samples = 0;
 
-        const ping = this.client.ws.ping;
+        const ping = client.ws.ping;
         const uptime = process.uptime();
 
         const cpu_load_avg = os.loadavg() as [number, number, number];
@@ -174,3 +169,5 @@ export default class StatsCollectorManager extends EventEmitter {
         return this.aggregateStatsArray(docs);
     }
 }
+
+export default new StatsCollectorManager();

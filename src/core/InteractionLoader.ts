@@ -7,12 +7,11 @@ import { walk } from "../util/files.js";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types.js";
 
 import InteractionRegistry from "./InteractionRegistry.js";
-import StatsCollectorManager from "./managers/StatsCollectorManager.js";
 import { getDirname } from "../util/esm.js";
 
 const log = Logger.child({ label: "Core => InteractionLoader" });
 
-export async function loadCommands(client: Discord.Client<true>, stats_collector: StatsCollectorManager): Promise<void> {
+export async function loadCommands(client: Discord.Client<true>): Promise<void> {
     log.info("Installing Commands...");
 
     const timer = nanoTimer();
@@ -24,7 +23,6 @@ export async function loadCommands(client: Discord.Client<true>, stats_collector
 
     const install_opts: CmdInstallerArgs = {
         client: client,
-        stats_collector: stats_collector,
     };
 
     await Promise.all(files.map(async file => {

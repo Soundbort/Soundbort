@@ -6,7 +6,7 @@ import Logger from "../log.js";
 import { SAMPLE_TYPES } from "../const.js";
 import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
-import StatsCollectorManager from "./managers/StatsCollectorManager.js";
+import StatsCollectorManager from "./data-managers/StatsCollectorManager.js";
 import WebhookManager from "./managers/WebhookManager.js";
 import DataDeletionManager from "./data-managers/DataDeletionManager.js";
 import GuildConfigManager from "./data-managers/GuildConfigManager.js";
@@ -24,16 +24,19 @@ const log = Logger.child({ label: "Core" });
 
 export default class Core {
     public client: Discord.Client<true>;
-    public stats_collector: StatsCollectorManager;
 
     private data_deletion_job = new CronJob({
         cronTime: "0 0 * * * *",
         onTick: () => this.doDataDeletion().catch(error => log.error("Scheduled data deletion failed", error)),
     });
 
+    private stats_collector_job = new CronJob({
+        cronTime: "0 */10 * * * *",
+        onTick: () => StatsCollectorManager.collect(this.client).catch(error => log.error("Error while collecting stats", error)),
+    });
+
     constructor(client: Discord.Client<true>) {
         this.client = client;
-        this.stats_collector = new StatsCollectorManager(this.client);
 
         if (TOP_GG_TOKEN) {
             topGGStatsPoster(TOP_GG_TOKEN, this.client)
@@ -51,8 +54,7 @@ export default class Core {
 
         // ///////////////////////
 
-        await InteractionLoader.loadCommands(this.client, this.stats_collector);
-
+        await InteractionLoader.loadCommands(this.client);
         await InteractionLoader.deployCommands(this.client);
 
         // ///////////////////
@@ -62,6 +64,7 @@ export default class Core {
         this.compareGuildsAndEmit().catch(error => log.error("Failed comparing guilds", error));
 
         this.data_deletion_job.start();
+        this.stats_collector_job.start();
 
         // ///////////////////
 
@@ -78,7 +81,7 @@ export default class Core {
     }
 
     private attachListeners(): void {
-        this.client.on("interactionCreate", onInteractionCreate(this.stats_collector));
+        this.client.on("interactionCreate", onInteractionCreate());
 
         // handle leaving voice channels when users go somewhere else
         this.client.on("voiceStateUpdate", onVoiceStateUpdate());
