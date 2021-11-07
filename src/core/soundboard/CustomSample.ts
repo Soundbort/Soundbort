@@ -149,8 +149,8 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
 
-    static count(): Promise<number> {
-        return models.custom_sample.estimatedCount();
+    static async count(): Promise<number> {
+        return await models.custom_sample.estimatedCount();
     }
 
     static async countUserSamples(userId: Discord.Snowflake): Promise<number> {
@@ -338,6 +338,17 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         await fs.unlink(sample.file);
     }
 
+    /**
+     * Remove all samples in a soundboard
+     */
+    static async removeAll(user_guild_id: Discord.Snowflake, scope: SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<void> {
+        const samples = await (scope === SAMPLE_TYPES.SERVER ? this.getGuildSamples(user_guild_id) : this.getUserSamples(user_guild_id));
+
+        for (const sample of samples) {
+            await this.remove(user_guild_id, sample);
+        }
+    }
+
     // SLOTS
 
     static MIN_SLOTS = 10;
@@ -383,7 +394,11 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return true;
     }
 
-    static async countSlots(ownerId: string): Promise<number> {
+    static async removeSlots(ownerId: Discord.Snowflake): Promise<void> {
+        await models.sample_slots.deleteOne({ ownerId });
+    }
+
+    static async countSlots(ownerId: Discord.Snowflake): Promise<number> {
         const add_slots = await models.sample_slots
             .aggregate()
             .match({ ownerId })

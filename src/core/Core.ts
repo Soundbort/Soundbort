@@ -1,21 +1,34 @@
 import Discord from "discord.js";
 import topGGStatsPoster from "topgg-autoposter";
+import { CronJob } from "cron";
 
 import Logger from "../log.js";
+import { SAMPLE_TYPES } from "../const.js";
 import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
 import StatsCollectorManager from "./managers/StatsCollectorManager.js";
 import WebhookManager from "./managers/WebhookManager.js";
+import DataDeletionManager from "./managers/DataDeletionManager.js";
+import GuildConfigManager from "./managers/GuildConfigManager.js";
 import onInteractionCreate from "./events/onInteractionCreate.js";
 import onVoiceStateUpdate from "./events/onVoiceStateUpdate.js";
+import onGuildCreate from "./events/onGuildCreate.js";
+import onGuildDelete from "./events/onGuildDelete.js";
 
 import * as InteractionLoader from "./InteractionLoader.js";
+
+import { CustomSample } from "./soundboard/CustomSample.js";
 
 const log = Logger.child({ label: "Core" });
 
 export default class Core {
     public client: Discord.Client<true>;
     public stats_collector: StatsCollectorManager;
+
+    private data_deletion_job = new CronJob({
+        cronTime: "0 0 * * * *",
+        onTick: () => this.doDataDeletion().catch(error => log.error("Scheduled data deletion failed", error)),
+    });
 
     constructor(client: Discord.Client<true>) {
         this.client = client;
@@ -45,6 +58,10 @@ export default class Core {
 
         this.attachListeners();
 
+        this.compareGuildsAndEmit().catch(error => log.error("Failed comparing guilds", error));
+
+        this.data_deletion_job.start();
+
         // ///////////////////
 
         StatsCollectorManager.listen();
@@ -64,6 +81,10 @@ export default class Core {
 
         // handle leaving voice channels when users go somewhere else
         this.client.on("voiceStateUpdate", onVoiceStateUpdate());
+
+        this.client.on("guildCreate", onGuildCreate());
+
+        this.client.on("guildDelete", onGuildDelete());
     }
 
     private setStatus(): void {
@@ -72,6 +93,58 @@ export default class Core {
             type: "PLAYING",
             name: "your sound files",
         });
+    }
+
+    private async doDataDeletion(): Promise<void> {
+        const deletableGuildIds = await DataDeletionManager.getDeletableGuildIds();
+
+        for (const guildId of deletableGuildIds) {
+            try {
+                // TODO when sharding, do broadcastEval
+                if (this.client.guilds.cache.has(guildId)) {
+                    await DataDeletionManager.unmarkGuildForDeletion(guildId);
+                    continue;
+                }
+
+                await Promise.all([
+                    GuildConfigManager.removeConfig(guildId),
+                    CustomSample.removeAll(guildId, SAMPLE_TYPES.SERVER),
+                    CustomSample.removeSlots(guildId),
+                    // InteractionReplies,
+                    DataDeletionManager.finallyRemoveGuild(guildId),
+                ]);
+
+                log.debug("Scheduled data deletion of '%s' succeeded", guildId);
+            } catch (error) {
+                log.error("Scheduled data deletion for '%s' failed", guildId, error);
+            }
+        }
+    }
+
+    private async compareGuildsAndEmit(): Promise<void> {
+        /**
+         * In this function we go over and compare the set of guilds from the database
+         * to the set of guilds that we are currently part of acording to the discord api.
+         * Because during bot downtime, we cannot capture guildCreate and guildDelete events.
+         *
+         * Here we only add guilds that the database currently doesn't know about, and don't
+         * delete the guilds that are not part of the list from the discord api! Because the
+         * guilds could be part of another shard and therefore not in the list of guilds this shard
+         * has access to. We would delete guilds that we are actually still part of but this shard
+         * doesn't know that we are!
+         */
+        const activeGuildIds = this.client.guilds.cache.map(guild => guild.id);
+
+        const newGuildIds = await DataDeletionManager.getNewGuilds(activeGuildIds);
+
+        const onGuildCreateFunc = onGuildCreate();
+
+        for (const guildId of newGuildIds) {
+            const guild = this.client.guilds.cache.get(guildId);
+            if (!guild) continue;
+
+            await onGuildCreateFunc(guild);
+        }
     }
 
     static async create(client: Discord.Client<true>): Promise<Core> {

@@ -10,6 +10,10 @@ interface GuildConfigManagerEvents {
 }
 
 class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
+    public async removeConfig(guildId: Discord.Snowflake): Promise<void> {
+        await models.guild_config.deleteOne({ guildId });
+    }
+
     public async setConfig(guildId: Discord.Snowflake, config: GuildConfigSchema): Promise<void> {
         await models.guild_config.replaceOne({ guildId }, config, { upsert: true });
     }

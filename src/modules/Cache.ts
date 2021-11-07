@@ -1,6 +1,6 @@
 export interface CacheOptions {
     /**
-     * maximum age of cache entries in milliseconds
+     * maximum age of cache entries in seconds
      */
     ttl?: number;
     /**

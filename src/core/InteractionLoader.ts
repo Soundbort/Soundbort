@@ -7,7 +7,6 @@ import { walk } from "../util/files.js";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types.js";
 
 import InteractionRegistry from "./InteractionRegistry.js";
-import GuildConfigManager from "./managers/GuildConfigManager.js";
 import StatsCollectorManager from "./managers/StatsCollectorManager.js";
 import { getDirname } from "../util/esm.js";
 
@@ -50,6 +49,8 @@ export async function loadCommands(client: Discord.Client<true>, stats_collector
 }
 
 export async function deployCommands(client: Discord.Client<true>): Promise<void> {
+    log.info("Deploying Commands...");
+
     const global_commands = InteractionRegistry.commands.filter(command => command.target.global);
     const guild_commands = InteractionRegistry.commands.filter(command => !command.target.global);
 
@@ -91,10 +92,10 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
     client.on("guildCreate", async guild => {
         try {
             await deployToGuild(guild);
-
-            await GuildConfigManager.regenConfig(guild);
         } catch (error) {
             log.error("Deploying to guild %s failed", guild.id, error);
         }
     });
+
+    log.info("Commands deployed.");
 }

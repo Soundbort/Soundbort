@@ -9,9 +9,11 @@ import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSamp
 import { SoundboardSlotSchema } from "./schemas/SoundboardSlotsSchema.js";
 import { StatsSchema } from "./schemas/StatsSchema.js";
 import { VotesSchema } from "./schemas/VotesSchema.js";
+import { GuildDeletionTrackerSchema } from "./schemas/GuildDeletionTrackerSchema.js";
 
 export enum DbCollection {
     BlacklistUser = "blacklist_user",
+    GuildDeletionTracker = "guild_deletion_tracker",
     CustomSample = "soundboard_custom_sample",
     StandardSample = "soundboard_pre_sample",
     SampleSlots = "soundboard_slots",
@@ -23,13 +25,15 @@ export enum DbCollection {
 
 export const blacklist_user = new DatabaseCache<BlacklistUserSchema>(DbCollection.BlacklistUser, { indexName: "userId" });
 
+export const guild_deletion_tracker = databaseProxy<GuildDeletionTrackerSchema>(DbCollection.GuildDeletionTracker);
+
 export const custom_sample = new DatabaseCache<SoundboardCustomSampleSchema>(DbCollection.CustomSample, { indexName: "id", maxSize: 1000 });
 
 export const standard_sample = new DatabaseCache<SoundboardStandardSampleSchema>(DbCollection.StandardSample, { indexName: "name" });
 
 export const sample_slots = databaseProxy<SoundboardSlotSchema>(DbCollection.SampleSlots);
 
-export const guild_config = new DatabaseCache<GuildConfigSchema>(DbCollection.GuildConfig, { indexName: "guildId", ttl: 1000 * 3600 });
+export const guild_config = new DatabaseCache<GuildConfigSchema>(DbCollection.GuildConfig, { indexName: "guildId" });
 
 export const stats = databaseProxy<StatsSchema>(DbCollection.Stats);
 
@@ -41,6 +45,9 @@ export const interaction_replies = new DatabaseCache<InteractionRepliesSchema>(D
 
 database.onConnect(async () => {
     await blacklist_user.collection.createIndex({ userId: 1 }, { unique: true });
+
+    await guild_deletion_tracker.createIndex({ guildId: 1 }, { unique: true });
+    await guild_deletion_tracker.createIndex({ markedForDeletionAt: 1 });
 
     await custom_sample.collection.createIndex({ id: 1 }, { unique: true });
     await custom_sample.collection.createIndex({ name: 1 });
