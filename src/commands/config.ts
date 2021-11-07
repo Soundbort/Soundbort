@@ -6,7 +6,7 @@ import { CommandRoleOption } from "../modules/commands/CommandOption.js";
 import { TopCommandGroup } from "../modules/commands/TopCommandGroup.js";
 import { Command } from "../modules/commands/Command.js";
 
-import GuildConfigManager from "../core/managers/GuildConfigManager.js";
+import GuildConfigManager from "../core/data-managers/GuildConfigManager.js";
 
 const set_admin_role_cmd = new Command({
     name: "set-admin-role",

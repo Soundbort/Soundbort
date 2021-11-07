@@ -1,9 +1,9 @@
 import Discord from "discord.js";
+import { TypedEmitter } from "tiny-typed-emitter";
 
 import { fetchMember, guessModRole } from "../../util/util.js";
 import * as models from "../../modules/database/models.js";
 import { GuildConfigSchema } from "../../modules/database/schemas/GuildConfigSchema.js";
-import { TypedEmitter } from "tiny-typed-emitter";
 
 interface GuildConfigManagerEvents {
     adminRoleChange(guildId: Discord.Snowflake, roleId: Discord.Snowflake): void;
@@ -34,8 +34,9 @@ class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
      * Get an existing config from the database, check it's values and repair it, or create a new config if it doesn't exist
      */
     public async findOrGenConfig(guild: Discord.Guild): Promise<GuildConfigSchema> {
-        // eslint-disable-next-line prefer-const
-        let { guildId, adminRoleId } = await models.guild_config.findOne({ guildId: guild.id }) || { guildId: guild.id };
+        const doc = await models.guild_config.findOne({ guildId: guild.id }) || { guildId: guild.id, adminRoleId: undefined };
+        const { guildId } = doc;
+        let { adminRoleId } = doc;
         let data_changed = false;
 
         // if old admin role has been deleted, default back to the guessed role
@@ -48,7 +49,7 @@ class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
         const config: GuildConfigSchema = { guildId, adminRoleId };
 
         if (data_changed) {
-            await this.setConfig(guildId, config);
+            await this.setConfig(config.guildId, config);
         }
 
         return config;

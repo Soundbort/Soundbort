@@ -9,7 +9,7 @@ import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/
 import { DialogOptionsButton, createDialog } from "../../util/builders/dialog.js";
 
 import { CustomSample } from "../../core/soundboard/CustomSample.js";
-import GuildConfigManager from "../../core/managers/GuildConfigManager.js";
+import GuildConfigManager from "../../core/data-managers/GuildConfigManager.js";
 import SampleID from "../../core/soundboard/SampleID.js";
 import { search } from "../../core/soundboard/methods/searchMany.js";
 

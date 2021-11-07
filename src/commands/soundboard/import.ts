@@ -8,7 +8,7 @@ import { TopCommand } from "../../modules/commands/TopCommand.js";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
 import { CustomSample } from "../../core/soundboard/CustomSample.js";
-import GuildConfigManager from "../../core/managers/GuildConfigManager.js";
+import GuildConfigManager from "../../core/data-managers/GuildConfigManager.js";
 import { UploadErrors } from "../../core/soundboard/methods/upload.js";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {

@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import GuildConfigManager from "../managers/GuildConfigManager.js";
+import GuildConfigManager from "../data-managers/GuildConfigManager.js";
 import DataDeletionManager from "../data-managers/DataDeletionManager.js";
 
 export default function onGuildCreate() {

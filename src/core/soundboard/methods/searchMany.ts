@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import GuildConfigManager from "../../managers/GuildConfigManager.js";
+import GuildConfigManager from "../../data-managers/GuildConfigManager.js";
 import { CustomSample } from "../CustomSample.js";
 import { StandardSample } from "../StandardSample.js";
 import { STANDARD_SAMPLE_PREFIX } from "./findOne.js";

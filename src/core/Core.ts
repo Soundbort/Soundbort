@@ -8,8 +8,8 @@ import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
 import StatsCollectorManager from "./managers/StatsCollectorManager.js";
 import WebhookManager from "./managers/WebhookManager.js";
-import GuildConfigManager from "./managers/GuildConfigManager.js";
 import DataDeletionManager from "./data-managers/DataDeletionManager.js";
+import GuildConfigManager from "./data-managers/GuildConfigManager.js";
 import InteractionRepliesManager from "./data-managers/InteractionRepliesManager.js";
 import onInteractionCreate from "./events/onInteractionCreate.js";
 import onVoiceStateUpdate from "./events/onVoiceStateUpdate.js";

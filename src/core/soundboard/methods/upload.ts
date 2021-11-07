@@ -16,7 +16,7 @@ import { CustomSample } from "../CustomSample.js";
 import { StandardSample } from "../StandardSample.js";
 import { isOwner } from "../../../util/util.js";
 import { EmbedType, replyEmbed } from "../../../util/builders/embed.js";
-import GuildConfigManager from "../../managers/GuildConfigManager.js";
+import GuildConfigManager from "../../data-managers/GuildConfigManager.js";
 
 const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<FfprobeData>;
 
