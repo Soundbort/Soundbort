@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import DataDeletionManager from "../managers/DataDeletionManager.js";
+import DataDeletionManager from "../data-managers/DataDeletionManager.js";
 
 /*
  * TODO:
