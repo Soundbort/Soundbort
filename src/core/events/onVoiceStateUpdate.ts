@@ -2,6 +2,11 @@ import Discord from "discord.js";
 
 import AudioManager from "../audio/AudioManager.js";
 
+/*
+ * The following event handler handles how Soundbort automatically
+ * leaves an empty voice channel
+ */
+
 export default function onVoiceStateUpdate() {
     return (old_state: Discord.VoiceState, new_state: Discord.VoiceState): void => {
         const client = old_state.client;
