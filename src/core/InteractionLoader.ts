@@ -7,7 +7,6 @@ import { walk } from "../util/files.js";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types.js";
 
 import InteractionRegistry from "./InteractionRegistry.js";
-import { getDirname } from "../util/esm.js";
 
 const log = Logger.child({ label: "Core => InteractionLoader" });
 
@@ -16,7 +15,7 @@ export async function loadCommands(client: Discord.Client<true>): Promise<void> 
 
     const timer = nanoTimer();
 
-    const commands_path = path.join(getDirname(import.meta.url), "..", "commands");
+    const commands_path = path.join(__dirname, "..", "commands");
 
     const files = await walk(commands_path)
         .then(files => files.filter(file => /\.(ts|js)$/.test(file)));
@@ -26,7 +25,7 @@ export async function loadCommands(client: Discord.Client<true>): Promise<void> 
     };
 
     await Promise.all(files.map(async file => {
-        const relatve_path = path.relative(path.resolve(getDirname(import.meta.url), ".."), file);
+        const relatve_path = path.relative(path.resolve(__dirname, ".."), file);
 
         const time = nanoTimer();
 

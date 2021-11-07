@@ -3,8 +3,6 @@ import dotenv from "dotenv";
 import fs from "fs-extra";
 import { PackageJson } from "type-fest";
 
-import { getDirname } from "./util/esm.js";
-
 dotenv.config();
 
 // ////////////// REQUIRED //////////////
@@ -51,7 +49,7 @@ export const TOP_GG_WEBHOOK_TOKEN = process.env.SOUNDBORT_TOP_GG_WEBHOOK_TOKEN;
 
 // ////////////// INFO //////////////
 
-const dirname = getDirname(import.meta.url);
+const dirname = __dirname;
 
 export const PROJECT_ROOT = path.normalize(path.resolve(dirname, ".."));
 export const ASSETS_DIR = path.resolve(PROJECT_ROOT, "assets");

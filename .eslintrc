@@ -30,6 +30,7 @@
         "unicorn/no-process-exit": "off",
         "unicorn/prefer-object-from-entries": "off",
         "unicorn/no-null": "off",
+        "unicorn/prefer-module": "off",
         // ESLINT
         "getter-return": "error",
         "no-compare-neg-zero": "error",

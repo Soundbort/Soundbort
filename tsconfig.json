@@ -9,8 +9,6 @@
 
         // "allowSyntheticDefaultImports": true,
         // "isolatedModules": true,
-        "module": "esnext",
-        "moduleResolution": "node"
     },
     "include": ["./src/**/*"],
     "exclude": ["node_modules", "dist"]
