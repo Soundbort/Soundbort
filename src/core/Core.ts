@@ -10,6 +10,7 @@ import StatsCollectorManager from "./managers/StatsCollectorManager.js";
 import WebhookManager from "./managers/WebhookManager.js";
 import DataDeletionManager from "./managers/DataDeletionManager.js";
 import GuildConfigManager from "./managers/GuildConfigManager.js";
+import InteractionRepliesManager from "./data-managers/InteractionRepliesManager.js";
 import onInteractionCreate from "./events/onInteractionCreate.js";
 import onVoiceStateUpdate from "./events/onVoiceStateUpdate.js";
 import onGuildCreate from "./events/onGuildCreate.js";
@@ -110,7 +111,7 @@ export default class Core {
                     GuildConfigManager.removeConfig(guildId),
                     CustomSample.removeAll(guildId, SAMPLE_TYPES.SERVER),
                     CustomSample.removeSlots(guildId),
-                    // InteractionReplies,
+                    InteractionRepliesManager.removeFromGuild(guildId),
                     DataDeletionManager.finallyRemoveGuild(guildId),
                 ]);
 

@@ -11,7 +11,7 @@ import { CmdInstallerArgs } from "../util/types.js";
 import { createEmbed, replyEmbed } from "../util/builders/embed.js";
 
 import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema.js";
-import * as models from "../modules/database/models.js";
+import InteractionRepliesManager from "../core/data-managers/InteractionRepliesManager.js";
 
 // label text max 80 characters
 
@@ -73,12 +73,7 @@ if (TOP_GG_WEBHOOK_TOKEN) {
                 embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)], fetchReply: true,
             });
 
-            await models.interaction_replies.insertOne({
-                interactionId: interactionId,
-                guildId: interaction.guildId,
-                channelId: interaction.channelId,
-                messageId: reply.id,
-            });
+            await InteractionRepliesManager.add(interaction, reply.id);
         },
     }));
 }
@@ -86,7 +81,7 @@ if (TOP_GG_WEBHOOK_TOKEN) {
 // 66 lines for this? maybe we can reduce the amount of code later and make it more readable as well
 
 async function sendMessageReply(client: Discord.Client<true>, slot: SingleSoundboardSlot, new_slots: number, refId: Discord.Snowflake): Promise<void> {
-    const doc = await models.interaction_replies.findOne({ interactionId: refId });
+    const doc = await InteractionRepliesManager.fetch(refId);
     if (!doc) return;
 
     if (slot.slotType === SAMPLE_TYPES.SERVER && (!doc.guildId || slot.ownerId !== doc.guildId)) return;
