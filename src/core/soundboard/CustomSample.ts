@@ -10,6 +10,7 @@ import { TypedEmitter } from "tiny-typed-emitter";
 import Logger from "../../log";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 import { createEmbed } from "../../util/builders/embed";
+import canvas from "../../modules/canvas/index";
 
 import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 
@@ -80,7 +81,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return this.creatorId === user_guild_id;
     }
 
-    toEmbed({ show_timestamps = true, show_import = true, show_delete = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
+    async toEmbed({ show_timestamps = true, show_import = true, show_delete = true, description, type }: ToEmbedOptions): Promise<Discord.InteractionReplyOptions> {
         const embed = createEmbed(description, type);
 
         embed.addField("Name", this.name, true);
@@ -94,7 +95,17 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
             if (this.last_played_at) embed.addField("Last Played", moment(this.last_played_at).fromNow(), true);
         }
 
-        embed.addField("Importable", this.importable ? "✅" : "❌", true);
+        // Waveform
+
+        let waveform_attachment: Discord.MessageAttachment | undefined;
+
+        try {
+            const waveform_buffer = Buffer.from(await canvas.visualizeAudio(this.file));
+            waveform_attachment = new Discord.MessageAttachment(waveform_buffer, "waveform.png");
+            embed.setImage("attachment://waveform.png");
+        } catch (error) {
+            log.error("Error creating waveform for %s", this.id, error);
+        }
 
         // Action buttons:
 
@@ -143,8 +154,19 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         return {
             embeds: [embed],
+            files: waveform_attachment ? [waveform_attachment] : [],
             components: rows,
         };
+    }
+
+    // UTILITY
+
+    static async ensureDir(): Promise<void> {
+        await fs.ensureDir(AbstractSample.BASE, 0o0777);
+    }
+
+    static generateFilePath(id: string): string {
+        return path.join(CustomSample.BASE, id + CustomSample.EXT);
     }
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
@@ -406,16 +428,6 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
             .toArray();
 
         return (add_slots[0]?.count ?? 0) + this.MIN_SLOTS;
-    }
-
-    // UTILITY
-
-    static async ensureDir(): Promise<void> {
-        await fs.ensureDir(AbstractSample.BASE, 0o0777);
-    }
-
-    static generateFilePath(id: string): string {
-        return path.join(CustomSample.BASE, id + CustomSample.EXT);
     }
 }
 

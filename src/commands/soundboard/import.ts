@@ -28,7 +28,7 @@ async function importUser(interaction: Discord.ButtonInteraction | Discord.Comma
 
     await CustomSample.import(user, sample);
 
-    return sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
+    return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
 }
 
 async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
@@ -58,7 +58,7 @@ async function importServer(interaction: Discord.ButtonInteraction | Discord.Com
 
     await CustomSample.import(guild, sample);
 
-    return sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
+    return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
 }
 
 InteractionRegistry.addCommand(new TopCommand({

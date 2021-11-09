@@ -287,7 +287,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
         });
     }
 
-    await interaction.editReply(sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
+    await interaction.editReply(await sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
 }
 
 export async function upload(interaction: Discord.CommandInteraction, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {

@@ -7,9 +7,6 @@ import { DATA_DIR } from "../../config";
 import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
 import { EmbedType } from "../../util/builders/embed";
 
-const BASE = path.join(DATA_DIR, "soundboard");
-fs.mkdirpSync(BASE);
-
 export interface ToEmbedOptions {
     show_timestamps?: boolean;
     show_import?: boolean;
@@ -55,8 +52,12 @@ export abstract class AbstractSample implements SoundboardStandardSampleSchema {
 
     abstract play(audio_player: Voice.AudioPlayer): Promise<Voice.AudioResource<AbstractSample>>;
 
-    abstract toEmbed(opts: ToEmbedOptions): Discord.InteractionReplyOptions;
+    abstract toEmbed(opts: ToEmbedOptions): Promise<Discord.InteractionReplyOptions>;
 
-    static BASE = BASE;
+    static BASE = path.join(DATA_DIR, "soundboard");
+    static {
+        fs.mkdirpSync(this.BASE);
+    }
+
     static EXT = ".ogg";
 }

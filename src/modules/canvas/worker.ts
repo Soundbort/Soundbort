@@ -4,11 +4,13 @@ import * as Comlink from "comlink";
 import nodeEndpoint from "comlink/dist/umd/node-adapter";
 
 import Logger from "../../log";
-import { lineGraph } from "./line";
+import { visualizeAudio } from "./visualize-audio";
+import { lineGraph } from "./line-graph";
 
-const log = Logger.child({ label: "Charts => Worker" });
+const log = Logger.child({ label: "Canvas => Worker" });
 
 const api = {
+    visualizeAudio,
     lineGraph,
 };
 Comlink.expose(api, nodeEndpoint(parentPort!));

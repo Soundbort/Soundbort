@@ -5,14 +5,17 @@ import Discord from "discord.js";
 import moment from "moment";
 import escapeStringRegexp from "escape-string-regexp";
 
-import InteractionRegistry from "../InteractionRegistry";
-import { createEmbed } from "../../util/builders/embed";
-
 import { BUTTON_TYPES } from "../../const";
 import Logger from "../../log";
+import { createEmbed } from "../../util/builders/embed";
+import canvas from "../../modules/canvas/index";
+
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+
 import * as models from "../../modules/database/models";
 import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+
+import InteractionRegistry from "../InteractionRegistry";
 
 const log = Logger.child({ label: "SampleManager => StandardSample" });
 
@@ -58,7 +61,7 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         return resource;
     }
 
-    toEmbed({ show_timestamps = true, description, type }: ToEmbedOptions): Discord.InteractionReplyOptions {
+    async toEmbed({ show_timestamps = true, description, type }: ToEmbedOptions): Promise<Discord.InteractionReplyOptions> {
         const embed = createEmbed(description, type);
 
         embed.addField("Name", this.name, true);
@@ -71,7 +74,17 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
             if (this.last_played_at) embed.addField("Last Played", moment(this.last_played_at).fromNow(), true);
         }
 
-        embed.addField("Importable", this.importable ? "✅" : "❌", true);
+        // Waveform
+
+        let waveform_attachment: Discord.MessageAttachment | undefined;
+
+        try {
+            const waveform_buffer = Buffer.from(await canvas.visualizeAudio(this.file));
+            waveform_attachment = new Discord.MessageAttachment(waveform_buffer, "waveform.png");
+            embed.setImage("attachment://waveform.png");
+        } catch (error) {
+            log.error("Error creating waveform for %s", this.name, error);
+        }
 
         const buttons = [];
         buttons.push(
@@ -84,8 +97,24 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
         return {
             embeds: [embed],
+            files: waveform_attachment ? [waveform_attachment] : [],
             components: [new Discord.MessageActionRow().addComponents(buttons)],
         };
+    }
+
+    // UTILITY
+
+    static async ensureDir(): Promise<void> {
+        await fs.ensureDir(StandardSample.BASE, 0o0777);
+    }
+
+    static generateFilePath(name: string): string {
+        return path.join(StandardSample.BASE, name + StandardSample.EXT);
+    }
+
+    static BASE = path.join(AbstractSample.BASE, "standard");
+    static {
+        fs.mkdirpSync(this.BASE);
     }
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
@@ -160,18 +189,6 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         await models.standard_sample.deleteOne({ name: sample.name });
         await fs.unlink(sample.file);
     }
-
-    // UTILITY
-
-    static async ensureDir(): Promise<void> {
-        await fs.ensureDir(StandardSample.BASE, 0o0777);
-    }
-
-    static generateFilePath(name: string): string {
-        return path.join(StandardSample.BASE, name + StandardSample.EXT);
-    }
-
-    static BASE = path.join(AbstractSample.BASE, "standard");
 
     static MAX_SLOTS = 25;
 }

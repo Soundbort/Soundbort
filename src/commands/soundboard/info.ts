@@ -49,6 +49,6 @@ InteractionRegistry.addCommand(new TopCommand({
 
         const show_delete = await canShowDelete(sample, interaction.user.id, interaction.guild);
 
-        return sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
+        return await sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
     },
 }));

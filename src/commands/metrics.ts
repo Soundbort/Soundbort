@@ -14,8 +14,8 @@ import { TopCommand } from "../modules/commands/TopCommand";
 import { EmbedType, createEmbed, replyEmbedEphemeral } from "../util/builders/embed";
 import { CommandStringOption, createChoice } from "../modules/commands/CommandOption";
 
-import { ChartOptionsData } from "../modules/charts/line";
-import charts from "../modules/charts/index";
+import { ChartOptionsData } from "../modules/canvas/line-graph";
+import canvas from "../modules/canvas/index";
 
 enum TimeWindowChoices {
     Day = "24 hours",
@@ -89,7 +89,7 @@ InteractionRegistry.addCommand(new TopCommand({
             })),
         }];
 
-        const cpu_buffer = Buffer.from(await charts.lineGraph({
+        const cpu_buffer = Buffer.from(await canvas.lineGraph({
             data: cpu_data,
             title: "CPU Load Average",
             y: {
@@ -124,7 +124,7 @@ InteractionRegistry.addCommand(new TopCommand({
             })),
         };
 
-        const guild_buffer = Buffer.from(await charts.lineGraph({
+        const guild_buffer = Buffer.from(await canvas.lineGraph({
             data: [guild_data],
         }));
 
@@ -146,7 +146,7 @@ InteractionRegistry.addCommand(new TopCommand({
             })),
         };
 
-        const vc_buffer = Buffer.from(await charts.lineGraph({
+        const vc_buffer = Buffer.from(await canvas.lineGraph({
             data: [vc_data],
         }));
 
@@ -179,7 +179,7 @@ InteractionRegistry.addCommand(new TopCommand({
             })),
         };
 
-        const interactions_buffer = Buffer.from(await charts.lineGraph({
+        const interactions_buffer = Buffer.from(await canvas.lineGraph({
             data: [commands_data, buttons_data],
         }));
 
@@ -216,7 +216,7 @@ InteractionRegistry.addCommand(new TopCommand({
             })),
         };
 
-        const ping_buffer = Buffer.from(await charts.lineGraph({
+        const ping_buffer = Buffer.from(await canvas.lineGraph({
             data: [ping_data],
             y: {
                 label_suffix: "ms",

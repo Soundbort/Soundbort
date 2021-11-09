@@ -1,6 +1,4 @@
-// required way to import, because canvas' named exports are messed up when importing from ESM
-import canvasPackage, { CanvasRenderingContext2D } from "canvas";
-const { createCanvas, registerFont } = canvasPackage;
+import Canvas from "canvas";
 import path from "node:path";
 import color from "color";
 import moment from "moment";
@@ -9,8 +7,8 @@ import { lastItem } from "../../util/array";
 import { ASSETS_DIR } from "../../config";
 import { COLOR } from "../../const";
 
-registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
-registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
+Canvas.registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
+Canvas.registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
 
 const WHITE_COLOR = color(COLOR.CHART_BG, "rgb").string();
 const LEGEND_TEXT_COLOR = color(COLOR.CHART_FG, "rgb").mix(color(COLOR.CHART_BG, "rgb"), 0.4).string();
@@ -65,14 +63,14 @@ interface ChartOptionsIntern extends ChartOptions {
     increment_y: number;
 }
 
-function strokeLine(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number): void {
+function strokeLine(ctx: Canvas.CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number): void {
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.lineTo(x1, y1);
     ctx.stroke();
 }
 
-function drawLegendY(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
+function drawLegendY(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.save();
 
     ctx.fillStyle = LEGEND_TEXT_COLOR;
@@ -113,7 +111,7 @@ function drawLegendY(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     return legend_width;
 }
 
-function drawGrid(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
+function drawGrid(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.save();
     ctx.strokeStyle = LEGEND_TEXT_COLOR;
     ctx.globalAlpha = 0.5;
@@ -146,7 +144,7 @@ function createTimeWindowTable(x_diff: number): ResolutionXTable {
     ].reverse() as ResolutionXTable;
 }
 
-function drawLegendX(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
+function drawLegendX(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.save();
 
     ctx.strokeStyle = LEGEND_TEXT_COLOR;
@@ -234,7 +232,7 @@ function drawLegendX(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern) {
     ctx.restore();
 }
 
-function drawLine(ctx: CanvasRenderingContext2D, data: ChartOptionsData, opts: ChartOptionsIntern) {
+function drawLine(ctx: Canvas.CanvasRenderingContext2D, data: ChartOptionsData, opts: ChartOptionsIntern) {
     ctx.save();
     ctx.strokeStyle = data.color;
     ctx.lineJoin = "round";
@@ -286,7 +284,7 @@ function drawLine(ctx: CanvasRenderingContext2D, data: ChartOptionsData, opts: C
     ctx.restore();
 }
 
-function drawLineChart(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern): void {
+function drawLineChart(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern): void {
     ctx.lineWidth = 1;
 
     const legend_y_width = drawLegendY(ctx, { ...opts, height: opts.height - LABEL_X_HEIGHT });
@@ -315,7 +313,7 @@ function drawLineChart(ctx: CanvasRenderingContext2D, opts: ChartOptionsIntern):
     ctx.restore();
 }
 
-function drawTitle(ctx: CanvasRenderingContext2D, title: string): void {
+function drawTitle(ctx: Canvas.CanvasRenderingContext2D, title: string): void {
     ctx.save();
 
     ctx.fillStyle = TEXT_COLOR;
@@ -327,7 +325,7 @@ function drawTitle(ctx: CanvasRenderingContext2D, title: string): void {
     ctx.restore();
 }
 
-function drawBG(ctx: CanvasRenderingContext2D, { width, height }: { width: number; height: number }): void {
+function drawBG(ctx: Canvas.CanvasRenderingContext2D, { width, height }: { width: number; height: number }): void {
     ctx.save();
 
     ctx.fillStyle = WHITE_COLOR;
@@ -341,7 +339,7 @@ function drawBG(ctx: CanvasRenderingContext2D, { width, height }: { width: numbe
     ctx.restore();
 }
 
-function drawDataLabels(ctx: CanvasRenderingContext2D, data_arr: ChartOptionsData[]): void {
+function drawDataLabels(ctx: Canvas.CanvasRenderingContext2D, data_arr: ChartOptionsData[]): void {
     ctx.save();
 
     ctx.translate(0, (FONT_SIZE / 2));
@@ -421,7 +419,7 @@ export function lineGraph(opts: ChartOptions): Buffer {
     const width = 400;
     const height = 170;
 
-    const canvas = createCanvas(
+    const canvas = Canvas.createCanvas(
         Math.round(width * SCALE),
         Math.round((height + title_height + label_height) * SCALE),
     );
@@ -456,8 +454,5 @@ export function lineGraph(opts: ChartOptions): Buffer {
 
     // can't call toBuffer() with callback, because it will break
     // the process in Node 16
-    return canvas.toBuffer(
-        "image/png",
-        { compressionLevel: 9 },
-    );
+    return canvas.toBuffer("image/png", { compressionLevel: 9 });
 }

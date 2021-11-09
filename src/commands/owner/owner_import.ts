@@ -39,6 +39,6 @@ export default new Command({
 
         const new_sample = await StandardSample.import(sample);
 
-        return new_sample.toEmbed({ description: `Successfully imported sample "${new_sample.name}."`, type: EmbedType.Success });
+        return await new_sample.toEmbed({ description: `Successfully imported sample "${new_sample.name}."`, type: EmbedType.Success });
     },
 });
