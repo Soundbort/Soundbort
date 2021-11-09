@@ -3,7 +3,7 @@ import chalk, { Color, Modifiers } from "chalk";
 import winston from "winston";
 import "winston-daily-rotate-file";
 
-import { ENVIRONMENT, EnvironmentStages, LOGS_DIR } from "./config.js";
+import { ENVIRONMENT, EnvironmentStages, LOGS_DIR } from "./config";
 
 export const levels = {
     error: 0,

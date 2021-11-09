@@ -7,19 +7,19 @@ import { Filter } from "mongodb";
 import escapeStringRegexp from "escape-string-regexp";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import Logger from "../../log.js";
-import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
-import { createEmbed } from "../../util/builders/embed.js";
+import Logger from "../../log";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
+import { createEmbed } from "../../util/builders/embed";
 
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample.js";
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 
-import * as models from "../../modules/database/models.js";
-import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema.js";
-import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema.js";
-import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
+import * as models from "../../modules/database/models";
+import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema";
+import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema";
+import { VotesSchema } from "../../modules/database/schemas/VotesSchema";
 
-import InteractionRegistry from "../InteractionRegistry.js";
-import VotesManager from "../data-managers/VotesManager.js";
+import InteractionRegistry from "../InteractionRegistry";
+import VotesManager from "../data-managers/VotesManager";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 

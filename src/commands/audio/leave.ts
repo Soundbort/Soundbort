@@ -1,10 +1,10 @@
 import Discord from "discord.js";
 
-import InteractionRegistry from "../../core/InteractionRegistry.js";
-import { TopCommand } from "../../modules/commands/TopCommand.js";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import InteractionRegistry from "../../core/InteractionRegistry";
+import { TopCommand } from "../../modules/commands/TopCommand";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
-import AudioManager from "../../core/audio/AudioManager.js";
+import AudioManager from "../../core/audio/AudioManager";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "leave",

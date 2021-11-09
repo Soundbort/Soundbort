@@ -5,14 +5,14 @@ import Discord from "discord.js";
 import moment from "moment";
 import escapeStringRegexp from "escape-string-regexp";
 
-import InteractionRegistry from "../InteractionRegistry.js";
-import { createEmbed } from "../../util/builders/embed.js";
+import InteractionRegistry from "../InteractionRegistry";
+import { createEmbed } from "../../util/builders/embed";
 
-import { BUTTON_TYPES } from "../../const.js";
-import Logger from "../../log.js";
-import * as models from "../../modules/database/models.js";
-import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema.js";
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample.js";
+import { BUTTON_TYPES } from "../../const";
+import Logger from "../../log";
+import * as models from "../../modules/database/models";
+import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
 
 const log = Logger.child({ label: "SampleManager => StandardSample" });
 

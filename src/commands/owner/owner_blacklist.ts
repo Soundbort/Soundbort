@@ -1,9 +1,9 @@
-import { Command } from "../../modules/commands/Command.js";
-import { CommandGroup } from "../../modules/commands/CommandGroup.js";
-import { CommandStringOption } from "../../modules/commands/CommandOption.js";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { Command } from "../../modules/commands/Command";
+import { CommandGroup } from "../../modules/commands/CommandGroup";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
-import BlacklistManager from "../../core/data-managers/BlacklistManager.js";
+import BlacklistManager from "../../core/data-managers/BlacklistManager";
 
 const blacklist_add_cmd = new Command({
     name: "add",

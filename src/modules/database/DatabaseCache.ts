@@ -2,11 +2,10 @@
 /* eslint-disable unicorn/no-array-callback-reference */
 /* eslint-disable unicorn/no-array-method-this-argument */
 import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OptionalId, UpdateFilter, UpdateOptions } from "mongodb";
-import stream from "node:stream";
 import { Except } from "type-fest";
 
-import Cache, { CacheOptions } from "../Cache.js";
-import * as database from "./index.js";
+import Cache, { CacheOptions } from "../Cache";
+import * as database from "./index";
 
 export interface DatabaseCacheOptions<KeyName> extends CacheOptions {
     indexName: KeyName;

@@ -1,9 +1,9 @@
 import Discord from "discord.js";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import { fetchMember, guessModRole } from "../../util/util.js";
-import * as models from "../../modules/database/models.js";
-import { GuildConfigSchema } from "../../modules/database/schemas/GuildConfigSchema.js";
+import { fetchMember, guessModRole } from "../../util/util";
+import * as models from "../../modules/database/models";
+import { GuildConfigSchema } from "../../modules/database/schemas/GuildConfigSchema";
 
 interface GuildConfigManagerEvents {
     adminRoleChange(guildId: Discord.Snowflake, roleId: Discord.Snowflake): void;

@@ -7,16 +7,16 @@ import fs from "fs-extra";
 import Discord from "discord.js";
 import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
-import { SAMPLE_TYPES } from "../../../const.js";
-import Logger from "../../../log.js";
-import { downloadFile, isEnoughDiskSpace } from "../../../util/files.js";
+import { SAMPLE_TYPES } from "../../../const";
+import Logger from "../../../log";
+import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
 
-import SampleID from "../SampleID.js";
-import { CustomSample } from "../CustomSample.js";
-import { StandardSample } from "../StandardSample.js";
-import { isOwner } from "../../../util/util.js";
-import { EmbedType, replyEmbed } from "../../../util/builders/embed.js";
-import GuildConfigManager from "../../data-managers/GuildConfigManager.js";
+import SampleID from "../SampleID";
+import { CustomSample } from "../CustomSample";
+import { StandardSample } from "../StandardSample";
+import { isOwner } from "../../../util/util";
+import { EmbedType, replyEmbed } from "../../../util/builders/embed";
+import GuildConfigManager from "../../data-managers/GuildConfigManager";
 
 const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<FfprobeData>;
 

@@ -1,10 +1,10 @@
-import { SAMPLE_TYPES } from "../../const.js";
+import { SAMPLE_TYPES } from "../../const";
 
-import InteractionRegistry from "../../core/InteractionRegistry.js";
-import { TopCommand } from "../../modules/commands/TopCommand.js";
-import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption.js";
+import InteractionRegistry from "../../core/InteractionRegistry";
+import { TopCommand } from "../../modules/commands/TopCommand";
+import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption";
 
-import { upload } from "../../core/soundboard/methods/upload.js";
+import { upload } from "../../core/soundboard/methods/upload";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "upload",

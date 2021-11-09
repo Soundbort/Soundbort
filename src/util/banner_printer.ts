@@ -4,7 +4,7 @@ import path from "node:path";
 import { format } from "node:util";
 import { PackageJson } from "type-fest";
 
-import { ASSETS_DIR, ENVIRONMENT, PROJECT_ROOT } from "../config.js";
+import { ASSETS_DIR, ENVIRONMENT, PROJECT_ROOT } from "../config";
 
 const package_json: PackageJson = fs.readJSONSync(path.join(PROJECT_ROOT, "package.json"));
 

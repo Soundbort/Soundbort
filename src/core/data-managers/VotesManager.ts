@@ -1,11 +1,11 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import { Webhook, WebhookPayload } from "@top-gg/sdk";
 
-import Logger from "../../log.js";
-import { TOP_GG_WEBHOOK_TOKEN } from "../../config.js";
+import Logger from "../../log";
+import { TOP_GG_WEBHOOK_TOKEN } from "../../config";
 
-import * as models from "../../modules/database/models.js";
-import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
+import * as models from "../../modules/database/models";
+import { VotesSchema } from "../../modules/database/schemas/VotesSchema";
 
 const log = Logger.child({ label: "Core => VotesManager" });
 

@@ -5,9 +5,9 @@ import path from "node:path";
 import color from "color";
 import moment from "moment";
 
-import { lastItem } from "../../util/array.js";
-import { ASSETS_DIR } from "../../config.js";
-import { COLOR } from "../../const.js";
+import { lastItem } from "../../util/array";
+import { ASSETS_DIR } from "../../config";
+import { COLOR } from "../../const";
 
 registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
 registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });

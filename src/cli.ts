@@ -8,7 +8,7 @@ import { Command } from "commander";
 import path from "node:path";
 import { readFileSync } from "node:fs";
 
-import Logger, { printf } from "./log.js";
+import Logger, { printf } from "./log";
 
 const program = new Command();
 

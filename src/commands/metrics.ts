@@ -4,18 +4,18 @@ import color from "color";
 import os from "node:os";
 import { time } from "@discordjs/builders";
 
-import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../const.js";
-import { BOT_NAME, VERSION } from "../config.js";
+import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../const";
+import { BOT_NAME, VERSION } from "../config";
 
-import StatsCollectorManager from "../core/data-managers/StatsCollectorManager.js";
+import StatsCollectorManager from "../core/data-managers/StatsCollectorManager";
 
-import InteractionRegistry from "../core/InteractionRegistry.js";
-import { TopCommand } from "../modules/commands/TopCommand.js";
-import { EmbedType, createEmbed, replyEmbedEphemeral } from "../util/builders/embed.js";
-import { CommandStringOption, createChoice } from "../modules/commands/CommandOption.js";
+import InteractionRegistry from "../core/InteractionRegistry";
+import { TopCommand } from "../modules/commands/TopCommand";
+import { EmbedType, createEmbed, replyEmbedEphemeral } from "../util/builders/embed";
+import { CommandStringOption, createChoice } from "../modules/commands/CommandOption";
 
-import { ChartOptionsData } from "../modules/charts/line.js";
-import charts from "../modules/charts/index.js";
+import { ChartOptionsData } from "../modules/charts/line";
+import charts from "../modules/charts/index";
 
 enum TimeWindowChoices {
     Day = "24 hours",

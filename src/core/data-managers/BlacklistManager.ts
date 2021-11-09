@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import * as models from "../../modules/database/models.js";
+import * as models from "../../modules/database/models";
 
 class BlacklistManager {
     async addUser(userId: Discord.Snowflake): Promise<void> {

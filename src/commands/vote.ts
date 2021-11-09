@@ -1,17 +1,17 @@
 import { userMention } from "@discordjs/builders";
 import Discord from "discord.js";
 
-import { SAMPLE_TYPES } from "../const.js";
-import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
+import { SAMPLE_TYPES } from "../const";
+import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";
 
-import InteractionRegistry from "../core/InteractionRegistry.js";
-import { CustomSample } from "../core/soundboard/CustomSample.js";
-import { TopCommand } from "../modules/commands/TopCommand.js";
-import { CmdInstallerArgs } from "../util/types.js";
-import { createEmbed, replyEmbed } from "../util/builders/embed.js";
+import InteractionRegistry from "../core/InteractionRegistry";
+import { CustomSample } from "../core/soundboard/CustomSample";
+import { TopCommand } from "../modules/commands/TopCommand";
+import { CmdInstallerArgs } from "../util/types";
+import { createEmbed, replyEmbed } from "../util/builders/embed";
 
-import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema.js";
-import InteractionRepliesManager from "../core/data-managers/InteractionRepliesManager.js";
+import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema";
+import InteractionRepliesManager from "../core/data-managers/InteractionRepliesManager";
 
 // label text max 80 characters
 

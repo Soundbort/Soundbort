@@ -1,9 +1,9 @@
 import Discord from "discord.js";
 
-import GuildConfigManager from "../../data-managers/GuildConfigManager.js";
-import { CustomSample } from "../CustomSample.js";
-import { StandardSample } from "../StandardSample.js";
-import { STANDARD_SAMPLE_PREFIX } from "./findOne.js";
+import GuildConfigManager from "../../data-managers/GuildConfigManager";
+import { CustomSample } from "../CustomSample";
+import { StandardSample } from "../StandardSample";
+import { STANDARD_SAMPLE_PREFIX } from "./findOne";
 
 function compareName(a: { name: string }, b: { name: string }) {
     if (a.name < b.name) {

@@ -1,9 +1,9 @@
 import Discord from "discord.js";
 
-import { SAMPLE_TYPES } from "../../../const.js";
-import SampleID from "../SampleID.js";
-import { CustomSample } from "../CustomSample.js";
-import { StandardSample } from "../StandardSample.js";
+import { SAMPLE_TYPES } from "../../../const";
+import SampleID from "../SampleID";
+import { CustomSample } from "../CustomSample";
+import { StandardSample } from "../StandardSample";
 
 export const STANDARD_SAMPLE_PREFIX = "%";
 

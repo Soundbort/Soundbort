@@ -1,12 +1,12 @@
 import Discord from "discord.js";
 import path from "node:path";
 
-import nanoTimer from "../util/timer.js";
-import Logger from "../log.js";
-import { walk } from "../util/files.js";
-import { CmdInstallerArgs, CmdInstallerFile } from "../util/types.js";
+import nanoTimer from "../util/timer";
+import Logger from "../log";
+import { walk } from "../util/files";
+import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
 
-import InteractionRegistry from "./InteractionRegistry.js";
+import InteractionRegistry from "./InteractionRegistry";
 
 const log = Logger.child({ label: "Core => InteractionLoader" });
 

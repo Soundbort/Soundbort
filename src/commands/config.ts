@@ -1,12 +1,12 @@
-import { BOT_NAME } from "../config.js";
+import { BOT_NAME } from "../config";
 
-import InteractionRegistry from "../core/InteractionRegistry.js";
-import { EmbedType, replyEmbed } from "../util/builders/embed.js";
-import { CommandRoleOption } from "../modules/commands/CommandOption.js";
-import { TopCommandGroup } from "../modules/commands/TopCommandGroup.js";
-import { Command } from "../modules/commands/Command.js";
+import InteractionRegistry from "../core/InteractionRegistry";
+import { EmbedType, replyEmbed } from "../util/builders/embed";
+import { CommandRoleOption } from "../modules/commands/CommandOption";
+import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
+import { Command } from "../modules/commands/Command";
 
-import GuildConfigManager from "../core/data-managers/GuildConfigManager.js";
+import GuildConfigManager from "../core/data-managers/GuildConfigManager";
 
 const set_admin_role_cmd = new Command({
     name: "set-admin-role",

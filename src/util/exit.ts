@@ -1,7 +1,7 @@
 import temp from "temp";
 import { Awaitable } from "discord.js";
 
-import Logger from "../log.js";
+import Logger from "../log";
 
 temp.track();
 

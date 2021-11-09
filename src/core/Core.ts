@@ -2,23 +2,23 @@ import Discord from "discord.js";
 import { AutoPoster as topGGStatsPoster } from "topgg-autoposter";
 import { CronJob } from "cron";
 
-import Logger from "../log.js";
-import { SAMPLE_TYPES } from "../const.js";
-import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
+import Logger from "../log";
+import { SAMPLE_TYPES } from "../const";
+import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config";
 
-import StatsCollectorManager from "./data-managers/StatsCollectorManager.js";
-import WebhookListener from "./WebhookListener.js";
-import DataDeletionManager from "./data-managers/DataDeletionManager.js";
-import GuildConfigManager from "./data-managers/GuildConfigManager.js";
-import InteractionRepliesManager from "./data-managers/InteractionRepliesManager.js";
-import onInteractionCreate from "./events/onInteractionCreate.js";
-import onVoiceStateUpdate from "./events/onVoiceStateUpdate.js";
-import onGuildCreate from "./events/onGuildCreate.js";
-import onGuildDelete from "./events/onGuildDelete.js";
+import StatsCollectorManager from "./data-managers/StatsCollectorManager";
+import WebhookListener from "./WebhookListener";
+import DataDeletionManager from "./data-managers/DataDeletionManager";
+import GuildConfigManager from "./data-managers/GuildConfigManager";
+import InteractionRepliesManager from "./data-managers/InteractionRepliesManager";
+import onInteractionCreate from "./events/onInteractionCreate";
+import onVoiceStateUpdate from "./events/onVoiceStateUpdate";
+import onGuildCreate from "./events/onGuildCreate";
+import onGuildDelete from "./events/onGuildDelete";
 
-import * as InteractionLoader from "./InteractionLoader.js";
+import * as InteractionLoader from "./InteractionLoader";
 
-import { CustomSample } from "./soundboard/CustomSample.js";
+import { CustomSample } from "./soundboard/CustomSample";
 
 const log = Logger.child({ label: "Core" });
 

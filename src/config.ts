@@ -49,9 +49,7 @@ export const TOP_GG_WEBHOOK_TOKEN = process.env.SOUNDBORT_TOP_GG_WEBHOOK_TOKEN;
 
 // ////////////// INFO //////////////
 
-const dirname = __dirname;
-
-export const PROJECT_ROOT = path.normalize(path.resolve(dirname, ".."));
+export const PROJECT_ROOT = path.normalize(path.resolve(__dirname, ".."));
 export const ASSETS_DIR = path.resolve(PROJECT_ROOT, "assets");
 export const DATA_DIR = path.resolve(PROJECT_ROOT, "data");
 export const LOGS_DIR = path.resolve(PROJECT_ROOT, "logs");

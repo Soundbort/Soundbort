@@ -1,19 +1,19 @@
 import Discord from "discord.js";
 
-import { BUTTON_TYPES } from "../../const.js";
-import Logger from "../../log.js";
+import { BUTTON_TYPES } from "../../const";
+import Logger from "../../log";
 
-import InteractionRegistry from "../../core/InteractionRegistry.js";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
-import { TopCommand } from "../../modules/commands/TopCommand.js";
-import { CommandStringOption } from "../../modules/commands/CommandOption.js";
+import InteractionRegistry from "../../core/InteractionRegistry";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { TopCommand } from "../../modules/commands/TopCommand";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
 
-import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager.js";
-import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager.js";
-import { CustomSample } from "../../core/soundboard/CustomSample.js";
-import { StandardSample } from "../../core/soundboard/StandardSample.js";
-import { search } from "../../core/soundboard/methods/searchMany.js";
-import { findOne } from "../../core/soundboard/methods/findOne.js";
+import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
+import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { StandardSample } from "../../core/soundboard/StandardSample";
+import { search } from "../../core/soundboard/methods/searchMany";
+import { findOne } from "../../core/soundboard/methods/findOne";
 
 const log = Logger.child({ label: "Command => play" });
 

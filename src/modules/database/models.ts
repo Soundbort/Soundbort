@@ -1,15 +1,15 @@
-import * as database from "./index.js";
-import DatabaseCache from "./DatabaseCache.js";
-import databaseProxy from "./databaseProxy.js";
-import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema.js";
-import { GuildConfigSchema } from "./schemas/GuildConfigSchema.js";
-import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema.js";
-import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema.js";
-import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema.js";
-import { SoundboardSlotSchema } from "./schemas/SoundboardSlotsSchema.js";
-import { StatsSchema } from "./schemas/StatsSchema.js";
-import { VotesSchema } from "./schemas/VotesSchema.js";
-import { GuildDeletionTrackerSchema } from "./schemas/GuildDeletionTrackerSchema.js";
+import * as database from "./index";
+import DatabaseCache from "./DatabaseCache";
+import databaseProxy from "./databaseProxy";
+import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
+import { GuildConfigSchema } from "./schemas/GuildConfigSchema";
+import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema";
+import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
+import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema";
+import { SoundboardSlotSchema } from "./schemas/SoundboardSlotsSchema";
+import { StatsSchema } from "./schemas/StatsSchema";
+import { VotesSchema } from "./schemas/VotesSchema";
+import { GuildDeletionTrackerSchema } from "./schemas/GuildDeletionTrackerSchema";
 
 export enum DbCollection {
     BlacklistUser = "blacklist_user",

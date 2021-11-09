@@ -1,14 +1,14 @@
 import Discord from "discord.js";
 
-import InteractionRegistry from "../../core/InteractionRegistry.js";
-import { SimpleFuncReturn } from "../../modules/commands/Command.js";
-import { TopCommand } from "../../modules/commands/TopCommand.js";
-import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption.js";
-import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import InteractionRegistry from "../../core/InteractionRegistry";
+import { SimpleFuncReturn } from "../../modules/commands/Command";
+import { TopCommand } from "../../modules/commands/TopCommand";
+import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption";
+import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
-import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
-import { CustomSample } from "../../core/soundboard/CustomSample.js";
-import { StandardSample } from "../../core/soundboard/StandardSample.js";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { StandardSample } from "../../core/soundboard/StandardSample";
 
 function generateSampleButtons(samples: CustomSample[] | StandardSample[]): Discord.MessageActionRow[] {
     const rows: Discord.MessageActionRow[] = [];

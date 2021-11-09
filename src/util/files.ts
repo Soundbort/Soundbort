@@ -4,7 +4,7 @@ import { pipeline } from "node:stream/promises";
 import fetch from "node-fetch";
 import disk from "diskusage";
 
-import Logger from "../log.js";
+import Logger from "../log";
 
 const log = Logger.child({ label: "util => files" });
 

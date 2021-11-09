@@ -1,20 +1,20 @@
 import Discord from "discord.js";
 
-import { OWNER_GUILD_IDS, OWNER_IDS } from "../../config.js";
-import { isOwner } from "../../util/util.js";
+import { OWNER_GUILD_IDS, OWNER_IDS } from "../../config";
+import { isOwner } from "../../util/util";
 
-import InteractionRegistry from "../../core/InteractionRegistry.js";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
-import { TopCommandGroup } from "../../modules/commands/TopCommandGroup.js";
-import { createUserPermission } from "../../modules/commands/options/createPermission.js";
+import InteractionRegistry from "../../core/InteractionRegistry";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { TopCommandGroup } from "../../modules/commands/TopCommandGroup";
+import { createUserPermission } from "../../modules/commands/options/createPermission";
 
 // import commands. We can do this, because they don't register any commands by themselves,
 // so if they're already imported by the Core it doesn't matter
-import reboot_cmd from "./owner_reboot.js";
-import blacklist_cmd from "./owner_blacklist.js";
-import upload_standard_cmd from "./owner_upload.js";
-import delete_cmd from "./owner_delete.js";
-import import_cmd from "./owner_import.js";
+import reboot_cmd from "./owner_reboot";
+import blacklist_cmd from "./owner_blacklist";
+import upload_standard_cmd from "./owner_upload";
+import delete_cmd from "./owner_delete";
+import import_cmd from "./owner_import";
 
 InteractionRegistry.addCommand(new TopCommandGroup({
     name: "owner",

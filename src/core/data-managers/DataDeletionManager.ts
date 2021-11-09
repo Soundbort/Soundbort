@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import * as models from "../../modules/database/models.js";
+import * as models from "../../modules/database/models";
 
 const TWO_WEEKS = 1000 * 3600 * 24 * 14;
 

@@ -1,9 +1,9 @@
 import { Awaitable } from "discord.js";
 import { Collection, Db, MongoClient } from "mongodb";
 
-import { BOT_NAME, DB_URI } from "../../config.js";
-import Logger from "../../log.js";
-import { onExit } from "../../util/exit.js";
+import { BOT_NAME, DB_URI } from "../../config";
+import Logger from "../../log";
+import { onExit } from "../../util/exit";
 
 export type QueueFunction = () => Awaitable<void>;
 

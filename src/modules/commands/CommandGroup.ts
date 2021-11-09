@@ -1,6 +1,6 @@
 import Discord from "discord.js";
 
-import { Command } from "./Command.js";
+import { Command } from "./Command";
 
 export type MiddlewareFunc = (interaction: Discord.CommandInteraction) => Discord.Awaitable<boolean>;
 

@@ -1,8 +1,8 @@
 import Discord from "discord.js";
 
-import Logger from "../../log.js";
-import nanoTimer from "../../util/timer.js";
-import { BaseCommandOption } from "./CommandOption.js";
+import Logger from "../../log";
+import nanoTimer from "../../util/timer";
+import { BaseCommandOption } from "./CommandOption";
 
 const log = Logger.child({ label: "Command => autocomplete" });
 

@@ -1,10 +1,10 @@
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
-import { CommandStringOption } from "../../modules/commands/CommandOption.js";
-import { Command } from "../../modules/commands/Command.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { CommandStringOption } from "../../modules/commands/CommandOption";
+import { Command } from "../../modules/commands/Command";
 
-import { CustomSample } from "../../core/soundboard/CustomSample.js";
-import { StandardSample } from "../../core/soundboard/StandardSample.js";
-import { UploadErrors } from "../../core/soundboard/methods/upload.js";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { StandardSample } from "../../core/soundboard/StandardSample";
+import { UploadErrors } from "../../core/soundboard/methods/upload";
 
 export default new Command({
     name: "import",

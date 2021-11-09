@@ -1,5 +1,5 @@
-import { SAMPLE_TYPES } from "../../../const.js";
-import { SoundboardStandardSampleSchema } from "./SoundboardStandardSampleSchema.js";
+import { SAMPLE_TYPES } from "../../../const";
+import { SoundboardStandardSampleSchema } from "./SoundboardStandardSampleSchema";
 
 export type SoundboardCustomSampleScope = SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER;
 

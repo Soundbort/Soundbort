@@ -1,11 +1,11 @@
-import Logger from "../../log.js";
-import { exit } from "../../util/exit.js";
+import Logger from "../../log";
+import { exit } from "../../util/exit";
 
-import { replyEmbed } from "../../util/builders/embed.js";
-import { Command } from "../../modules/commands/Command.js";
-import { CommandBooleanOption } from "../../modules/commands/CommandOption.js";
+import { replyEmbed } from "../../util/builders/embed";
+import { Command } from "../../modules/commands/Command";
+import { CommandBooleanOption } from "../../modules/commands/CommandOption";
 
-import AudioManager from "../../core/audio/AudioManager.js";
+import AudioManager from "../../core/audio/AudioManager";
 
 const log = Logger.child({ label: "Reboot" });
 
