@@ -102,7 +102,7 @@ function drawToBuffer(normalized_data: Float32Array): Buffer {
 
     ctx.lineWidth = LINE_WIDTH;
     ctx.lineCap = "round";
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = "#989898";
 
     // draw the line segments
     const segment_spacing = (WIDTH - LINE_WIDTH) / (normalized_data.length - 1);
