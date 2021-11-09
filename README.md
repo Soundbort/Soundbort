@@ -4,6 +4,9 @@
     <a href="https://soundbort.loneless.art"><img src="assets/readme_banner.jpg" alt="Soundbort banner" width="800" /></a>
   </p>
   <p>
+    <a href="https://ko-fi.com/loneless">
+        <img src="https://ko-fi.com/img/githubbutton_sm.svg" height="20" alt="Support me on ko-fi" />
+    </a>
     <a href="https://discord.gg/94MaVKtTPq">
         <img src="https://img.shields.io/discord/875115596038176830?color=5865F2&logo=discord&logoColor=white" alt="Discord support server" />
     </a>
