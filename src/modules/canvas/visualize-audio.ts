@@ -100,9 +100,14 @@ function drawToBuffer(normalized_data: Float32Array): Buffer {
 
     ctx.translate(0, HEIGHT / 2); // set Y = 0 to be in the middle of the canvas
 
+    const gradient = ctx.createLinearGradient(0, -HEIGHT / 2, 0, HEIGHT / 2);
+    gradient.addColorStop(0, "#647fd2");
+    gradient.addColorStop(0.3, "#647fd2");
+    gradient.addColorStop(1, "#5e55c1");
+
     ctx.lineWidth = LINE_WIDTH;
     ctx.lineCap = "round";
-    ctx.strokeStyle = "#989898";
+    ctx.strokeStyle = gradient;
 
     // draw the line segments
     const segment_spacing = (WIDTH - LINE_WIDTH) / (normalized_data.length - 1);
