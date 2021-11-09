@@ -86,14 +86,13 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
             log.error("Error creating waveform for %s", this.name, error);
         }
 
-        const buttons = [];
-        buttons.push(
+        const buttons = [
             new Discord.MessageButton()
                 .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_STANDA, n: this.name }))
                 .setLabel("Play")
                 .setEmoji("🔉")
-                .setStyle("SUCCESS"),
-        );
+                .setStyle("PRIMARY"),
+        ];
 
         return {
             embeds: [embed],

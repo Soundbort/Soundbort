@@ -135,7 +135,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
                 .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_CUSTOM, id: this.id }))
                 .setLabel("Play")
                 .setEmoji("🔉")
-                .setStyle("SUCCESS"),
+                .setStyle("PRIMARY"),
         ];
 
         if (this.deletable && show_delete) {
