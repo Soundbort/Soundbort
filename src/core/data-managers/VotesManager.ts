@@ -21,7 +21,7 @@ class VotesManager extends TypedEmitter<WebhookManagerEvents> {
     });
 
     get webhookListener() {
-        return this.webhook.listener(this.processVote);
+        return this.webhook.listener(vote => this.processVote(vote));
     }
 
     async processVote(vote: WebhookPayload) {
