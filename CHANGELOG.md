@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.6.3](https://github.com/LonelessCodes/SoundBort/compare/v0.6.2...v0.6.3) (2021-11-14)
+
+
+### Bug Fixes
+
+* fixed "emit" of undefined for wrong "this" in VotesManager.webhookListener ([d6d7e2f](https://github.com/LonelessCodes/SoundBort/commit/d6d7e2fb5833ff48743264a7eb459ef8e36baf5c))
+
 ### [0.6.2](https://github.com/LonelessCodes/SoundBort/compare/v0.6.1...v0.6.2) (2021-11-07)
 
 
