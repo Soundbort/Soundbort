@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.7.0](https://github.com/LonelessCodes/SoundBort/compare/v0.6.3...v0.7.0) (2021-11-20)
+
+
+### Features
+
+* add audio waveform to sample info embeds ([775748e](https://github.com/LonelessCodes/SoundBort/commit/775748ee3d5ff26936d087649ff8358ff3af34a6))
+
+
+### Bug Fixes
+
+* disable gzipping logs so cli tool works ([16c6cb0](https://github.com/LonelessCodes/SoundBort/commit/16c6cb06c6263fe4cbf090eb2a3ab26bdc83e834))
+* revert more of the failed attempt at esm ([3f126ca](https://github.com/LonelessCodes/SoundBort/commit/3f126caee4c4088d40323ae4f48813f223b0ceb4))
+
+
+### Changes
+
+* change play button color to blue bc it looks better ([f2d443b](https://github.com/LonelessCodes/SoundBort/commit/f2d443b4dc6d60fd1798e4d15bbb532ba47fe65c))
+
 ### [0.6.3](https://github.com/LonelessCodes/SoundBort/compare/v0.6.2...v0.6.3) (2021-11-14)
 
 
