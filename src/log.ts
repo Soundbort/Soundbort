@@ -29,7 +29,7 @@ export const colors: ChalkColorLookup = {
 
 const rotate_file_opts = {
     datePattern: "YYYY-MM-DD",
-    zippedArchive: true,
+    zippedArchive: false,
     maxSize: "20m",
     maxFiles: "30d",
     json: true,
