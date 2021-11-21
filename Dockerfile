@@ -16,6 +16,7 @@ RUN apt update \
         librsvg2-dev \
         curl \
         less \
+        gzip \
         ffmpeg
 
 WORKDIR /app
