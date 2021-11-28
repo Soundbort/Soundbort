@@ -40,7 +40,7 @@ RUN chmod +x /app/bin/*
 ENV PATH="/app/bin:${PATH}"
 
 ENV NODE_ENV=production
-CMD [ "node", "dist/index.js" ]
+CMD [ "node", "--enable-source-maps", "dist/index.js" ]
 
 HEALTHCHECK --start-period=5m --interval=30s --timeout=10s CMD npm run health
 # https://docs.docker.com/engine/reference/builder/#healthcheck
