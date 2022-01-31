@@ -1,4 +1,4 @@
-import "./util/banner_printer";
+import "./util/banner-printer";
 
 import Discord from "discord.js";
 
