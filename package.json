@@ -82,7 +82,7 @@
     "lint": "eslint src/ --ext .ts,.js",
     "lint:fix": "eslint src/ --ext .ts,.js --fix",
     "start:docker": "docker run $(for var in $(cat .env); do echo \"-e $var\"; done) loneless/soundbort",
-    "start:watch": "NODE_ENV=development NODE_OPTIONS='--trace-warnings' ts-node --project tsconfig.json src/index.ts",
+    "start:car": "NODE_ENV=development NODE_OPTIONS='--trace-warnings' ts-node --project tsconfig.json src/index.ts",
     "start:devel": "NODE_ENV=development node --unhandled-rejections=strict --trace-warnings --enable-source-maps dist/index.js",
     "start": "NODE_ENV=production node --enable-source-maps dist/index.js",
     "release": "standard-version",

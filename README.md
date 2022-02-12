@@ -77,8 +77,8 @@ In the root folder create an `.env` file based on the `.env.template` file and f
 ### Running
 
 ```sh
-# run for development, compile at runtime
-npm run start:watch
+# run for development, compile at runtime (car)
+npm run start:car
 
 # build for development and run
 npm run build
