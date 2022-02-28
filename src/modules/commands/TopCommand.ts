@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import { Command, CommandOptions, CommandTarget } from "./Command";
 
@@ -15,7 +15,7 @@ export class TopCommand extends Command {
 
     onGuildCreate?: GuildCreateEventHandler;
 
-    private _json?: Discord.ApplicationCommandData;
+    private _json?: Discord.ChatInputApplicationCommandData;
 
     constructor({ name, description, options = [], target = { global: false, guildHidden: false }, func, onGuildCreate }: TopCommandOptions) {
         super({ name, description, options, func });
@@ -24,7 +24,7 @@ export class TopCommand extends Command {
         this.onGuildCreate = onGuildCreate;
     }
 
-    toJSON(): Discord.ApplicationCommandData {
+    toJSON(): Discord.ChatInputApplicationCommandData {
         // save calculations when getting json for thousands of guilds at once
         if (this._json) return this._json;
 

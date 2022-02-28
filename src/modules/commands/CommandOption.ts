@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
 
 export interface ApplicationCommandOptionChoice<T extends string | number> extends Discord.ApplicationCommandOptionChoice {

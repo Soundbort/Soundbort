@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import { Command, CommandTarget } from "./Command";
 import { CommandGroup, MiddlewareFunc } from "./CommandGroup";
@@ -19,7 +19,7 @@ export class TopCommandGroup extends CommandGroup {
 
     onGuildCreate?: GuildCreateEventHandler;
 
-    private _json?: Discord.ApplicationCommandData;
+    private _json?: Discord.ChatInputApplicationCommandData;
 
     constructor({ name, description, commands, target = { global: false, guildHidden: false }, middleware, onGuildCreate }: TopCommandGroupOptions) {
         super({ name, description, commands, middleware });
@@ -49,7 +49,7 @@ export class TopCommandGroup extends CommandGroup {
         await command.run(interaction);
     }
 
-    toJSON(): Discord.ApplicationCommandData {
+    toJSON(): Discord.ChatInputApplicationCommandData {
         // save calculations when getting json for thousands of guilds at once
         if (this._json) return this._json;
 

@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import { AutoPoster as topGGStatsPoster } from "topgg-autoposter";
 import { CronJob } from "cron";
 

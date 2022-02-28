@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import * as models from "../../modules/database/models";
 import { InteractionRepliesSchema } from "../../modules/database/schemas/InteractionRepliesSchema";

@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { promisify } from "node:util";
 import path from "node:path";
 import temp from "temp";
 import fs from "fs-extra";
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
 import { SAMPLE_TYPES } from "../../../const";

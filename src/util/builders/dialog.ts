@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import { BUTTON_TYPES } from "../../const";
 import InteractionRegistry, { ButtonParsed } from "../../core/InteractionRegistry";

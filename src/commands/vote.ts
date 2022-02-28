@@ -1,5 +1,5 @@
 import { userMention } from "@discordjs/builders";
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import { SAMPLE_TYPES } from "../const";
 import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";

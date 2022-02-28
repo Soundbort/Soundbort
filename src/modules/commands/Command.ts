@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import Logger from "../../log";
 import nanoTimer from "../../util/timer";
@@ -15,7 +15,6 @@ export interface CommandTarget {
     guildHidden: boolean;
     guild_ids?: Discord.Snowflake[];
 }
-
 
 export interface CommandOptions {
     name: string,

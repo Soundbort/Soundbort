@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import { TypedEmitter } from "tiny-typed-emitter";
 
 import { fetchMember, guessModRole } from "../../util/util";

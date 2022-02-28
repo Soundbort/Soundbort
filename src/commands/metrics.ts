@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import color from "color";
 import os from "node:os";
 import { time } from "@discordjs/builders";

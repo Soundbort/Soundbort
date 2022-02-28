@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 function createPermission(
     type: Discord.ApplicationCommandPermissionType,

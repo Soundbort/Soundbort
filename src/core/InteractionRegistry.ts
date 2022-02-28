@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import qs from "query-string";
 
 import { BUTTON_TYPES } from "../const";

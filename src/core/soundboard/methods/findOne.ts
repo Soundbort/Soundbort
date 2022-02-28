@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import { SAMPLE_TYPES } from "../../../const";
 import SampleID from "../SampleID";

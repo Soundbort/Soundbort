@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import { TypedEmitter } from "tiny-typed-emitter";
 import http from "node:http";
 import os from "node:os";
