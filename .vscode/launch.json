@@ -5,9 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Debug TS Project",
             "type": "node",
             "request": "launch",
-            "name": "Launch Dev",
             "env": {
                 "NODE_ENV": "development"
             },
@@ -17,7 +17,20 @@
             ],
             "args": [
                 "${workspaceFolder}/src/index.ts"
-            ]
+            ],
+        },
+        {
+            "name": "Debug Build TS Project",
+            "type": "node",
+            "request": "launch",
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "args": [
+                "--enable-source-maps",
+                "${workspaceFolder}/dist/index.js"
+            ],
+            "preLaunchTask": "npm: build",
         }
     ]
 }
