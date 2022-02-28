@@ -65,9 +65,8 @@ function convertAudio(input: string, output: string): Promise<void> {
     });
 }
 
-async function generateId() {
-    let pending = 5;
-    while (pending-- >= 0) {
+async function generateId(retries: number = 5) {
+    while (retries-- >= 0) {
         const id = SampleID.generate();
         const exists = await CustomSample.findById(id);
         if (!exists) return id;
