@@ -1,10 +1,10 @@
 // Disable these because unicorn is stupid
 /* eslint-disable unicorn/no-array-callback-reference */
 /* eslint-disable unicorn/no-array-method-this-argument */
-import { Collection, Document, Filter, FindCursor, FindOneAndReplaceOptions, FindOneAndUpdateOptions, FindOptions, OptionalId, UpdateFilter, UpdateOptions } from "mongodb";
+import * as mongodb from "mongodb";
 import { Except } from "type-fest";
 
-import Cache, { CacheOptions } from "../Cache";
+import { Cache, CacheOptions } from "../Cache";
 import * as database from "./index";
 
 export interface DatabaseCacheOptions<KeyName> extends CacheOptions {
@@ -28,15 +28,15 @@ export type CacheFilter<T> =
  * A MongoDB request cacher for the most important functions
  */
 export default class DatabaseCache<
-    TSchema extends Document,
-    KeyName extends keyof TSchema = keyof TSchema,
-    KeyType = TSchema[KeyName],
+    TSchema extends mongodb.Document,
+    KeyName extends keyof mongodb.WithId<TSchema> = keyof mongodb.WithId<TSchema>,
+    KeyType = mongodb.WithId<TSchema>[KeyName],
 > {
-    public readonly cache: Cache<KeyType, TSchema>;
+    public readonly cache: Cache<KeyType, mongodb.WithId<TSchema>>;
     public readonly collection_name: string;
     public readonly index_name: KeyName;
 
-    public get collection(): Collection<TSchema> {
+    public get collection(): mongodb.Collection<TSchema> {
         return database.collection<TSchema>(this.collection_name);
     }
 
@@ -46,7 +46,7 @@ export default class DatabaseCache<
         this.index_name = opts.indexName;
     }
 
-    private _filter(item: TSchema, filter: CacheFilter<TSchema>): boolean {
+    private _filter(item: mongodb.WithId<TSchema>, filter: CacheFilter<TSchema>): boolean {
         const requirements: boolean[] = [];
 
         const filter_keys = Object.keys(filter).filter(key => !/^\$/g.test(key));
@@ -71,7 +71,7 @@ export default class DatabaseCache<
         return requirements.every(a => a);
     }
 
-    private _findOne(filter: CacheFilter<TSchema>): TSchema | undefined {
+    private _findOne(filter: CacheFilter<mongodb.WithId<TSchema>>): mongodb.WithId<TSchema> | undefined {
         // find documents quicker if filter includes index key
         if (typeof filter[this.index_name] !== "undefined") {
             const return_val = this.cache.get(filter[this.index_name] as KeyType);
@@ -89,7 +89,7 @@ export default class DatabaseCache<
         });
     }
 
-    private _findMany(filter: CacheFilter<TSchema>): TSchema[] {
+    private _findMany(filter: CacheFilter<mongodb.WithId<TSchema>>): mongodb.WithId<TSchema>[] {
         // find documents quicker if filter includes index key
         if (typeof filter[this.index_name] !== "undefined") {
             const return_val = this.cache.get(filter[this.index_name] as KeyType);
@@ -107,10 +107,10 @@ export default class DatabaseCache<
         });
     }
 
-    // publics
+    /* PUBLIC METHODS */
 
-    async findOne(filter: CacheFilter<TSchema>): Promise<TSchema | undefined> {
-        let doc: TSchema | undefined;
+    async findOne(filter: CacheFilter<mongodb.WithId<TSchema>>): Promise<mongodb.WithId<TSchema> | undefined> {
+        let doc: mongodb.WithId<TSchema> | undefined;
 
         doc = this._findOne(filter);
         if (doc) return doc;
@@ -123,10 +123,11 @@ export default class DatabaseCache<
         return doc;
     }
 
-    async findMany(filter: Filter<TSchema>, cursor_func?: (cursor: FindCursor<TSchema>) => void, options?: FindOptions<TSchema>): Promise<TSchema[]> {
-        const cursor = this.collection.find(filter, options);
-        if (cursor_func) cursor_func(cursor);
-        const docs = await cursor.toArray();
+    async findMany(
+        filter: mongodb.Filter<TSchema>,
+        options?: mongodb.FindOptions<TSchema>,
+    ): Promise<mongodb.WithId<TSchema>[]> {
+        const docs = await this.collection.find(filter, options).toArray();
 
         for (const doc of docs) {
             this.cache.set(doc[this.index_name], doc);
@@ -135,17 +136,28 @@ export default class DatabaseCache<
         return docs;
     }
 
-    async insertOne(doc: TSchema): Promise<TSchema> {
-        await this.collection.insertOne(doc as OptionalId<TSchema>);
+    async insertOne(doc: mongodb.OptionalUnlessRequiredId<TSchema>): Promise<mongodb.WithId<TSchema>> {
+        const insert_return = await this.collection.insertOne(doc);
 
-        this.cache.set(doc[this.index_name], doc);
+        // To ensure semantic correctness, add _id field to inserted document with the
+        // id the server used
+        const inserted_doc = {
+            ...doc,
+            _id: insert_return.insertedId,
+        } as mongodb.WithId<TSchema>;
 
-        return doc;
+        this.cache.set(inserted_doc[this.index_name], inserted_doc);
+
+        return inserted_doc;
     }
 
     // async insertMany();
 
-    async updateOne(filter: CacheFilter<TSchema>, update: UpdateFilter<TSchema>, opts?: Except<FindOneAndUpdateOptions, "returnDocument">): Promise<TSchema | undefined> {
+    async updateOne(
+        filter: CacheFilter<TSchema>,
+        update: mongodb.UpdateFilter<TSchema>,
+        opts?: Except<mongodb.FindOneAndUpdateOptions, "returnDocument">,
+    ): Promise<mongodb.WithId<TSchema> | undefined> {
         // delete items from cache first, because if mongodb fails halfway through and
         // some of the data is already mutated, the cache is poisoned and will
         // return old results
@@ -164,7 +176,11 @@ export default class DatabaseCache<
         }
     }
 
-    async updateMany(filter: CacheFilter<TSchema>, update: UpdateFilter<TSchema>, opts: UpdateOptions = {}): Promise<void> {
+    async updateMany(
+        filter: CacheFilter<TSchema>,
+        update: mongodb.UpdateFilter<TSchema>,
+        opts: mongodb.UpdateOptions = {},
+    ): Promise<void> {
         // delete items from cache first, because if mongodb fails halfway through and
         // some of the data is already mutated, the cache is poisoned and will
         // return old results
@@ -180,7 +196,7 @@ export default class DatabaseCache<
         );
     }
 
-    async replaceOne(filter: CacheFilter<TSchema>, replacement: TSchema, opts: FindOneAndReplaceOptions = {}): Promise<TSchema | undefined> {
+    async replaceOne(filter: CacheFilter<TSchema>, replacement: mongodb.WithoutId<TSchema>, opts: mongodb.FindOneAndReplaceOptions = {}): Promise<mongodb.WithId<TSchema> | undefined> {
         // delete items from cache first, because if mongodb fails halfway through and
         // some of the data is already mutated, the cache turns poisoned and will
         // return old results
@@ -218,7 +234,7 @@ export default class DatabaseCache<
         await this.collection.deleteMany(filter);
     }
 
-    async count(filter: Filter<TSchema>): Promise<number> {
+    async count(filter: mongodb.Filter<TSchema>): Promise<number> {
         return await this.collection.countDocuments(filter);
     }
 
