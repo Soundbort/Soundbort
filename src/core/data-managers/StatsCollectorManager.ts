@@ -161,8 +161,8 @@ class StatsCollectorManager extends TypedEmitter<StatsCollectorManagerEvents> {
         return result;
     }
 
-    public aggregateCummulativeStats(since: Date): Promise<StatsSchema>
-    public aggregateCummulativeStats(timespan: number): Promise<StatsSchema>
+    public aggregateCummulativeStats(since: Date): Promise<StatsSchema>;
+    public aggregateCummulativeStats(timespan: number): Promise<StatsSchema>;
     public async aggregateCummulativeStats(timespan: number | Date): Promise<StatsSchema> {
         // refactor this to use the MongoDb aggregation pipeline at some point
 
