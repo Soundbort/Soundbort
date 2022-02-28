@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
+// Power to the workers
 import { parentPort } from "node:worker_threads";
 import * as Comlink from "comlink";
 import nodeEndpoint from "comlink/dist/umd/node-adapter";
@@ -13,6 +13,7 @@ const api = {
     visualizeAudio,
     lineGraph,
 };
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 Comlink.expose(api, nodeEndpoint(parentPort!));
 
 log.info("Ready.");
