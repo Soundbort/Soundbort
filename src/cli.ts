@@ -6,13 +6,13 @@
 
 import { Command } from "commander";
 import path from "node:path";
-import { readFileSync } from "node:fs";
+import fs from "fs-extra";
 
 import Logger, { printf } from "./log";
 
 const program = new Command();
 
-program.version(JSON.parse(readFileSync(path.resolve(process.cwd(), "package.json"), "utf-8")).version);
+program.version(fs.readJsonSync(path.resolve(process.cwd(), "package.json")).version);
 
 program
     .command("logs")

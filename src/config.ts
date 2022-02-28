@@ -54,7 +54,7 @@ export const ASSETS_DIR = path.resolve(PROJECT_ROOT, "assets");
 export const DATA_DIR = path.resolve(PROJECT_ROOT, "data");
 export const LOGS_DIR = path.resolve(PROJECT_ROOT, "logs");
 
-const package_file: PackageJson = JSON.parse(fs.readFileSync(path.resolve(PROJECT_ROOT, "package.json"), "utf8"));
+const package_file: PackageJson = fs.readJsonSync(path.resolve(PROJECT_ROOT, "package.json"));
 
 export const VERSION = package_file.version as string + (
     ENVIRONMENT !== EnvironmentStages.PROD
