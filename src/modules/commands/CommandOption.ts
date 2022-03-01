@@ -31,7 +31,11 @@ export interface CommandOptionChannelData {
 }
 
 export abstract class BaseCommandOption {
-    readonly data: Discord.ApplicationCommandOptionData;
+    // Yes, explicit any type is boo, but I literally couldn't make a
+    // nice and clean solution to this problem after discord.js
+    // changed the types to be so cryptic and explicit
+    // Discord.ApplicationCommandOptionData
+    readonly data: any;
 
     autocomplete: CommandOptionAutocompleteFunc | undefined;
 
@@ -91,3 +95,8 @@ export class CommandMentionableOption extends BaseCommandOption {
         super("MENTIONABLE", data);
     }
 }
+// export class CommandAttachmentOption extends BaseCommandOption {
+//     constructor(data: BaseCommandOptionData) {
+//         super("ATTACHMENT", data);
+//     }
+// }

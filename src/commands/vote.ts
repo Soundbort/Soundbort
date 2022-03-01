@@ -87,7 +87,7 @@ async function sendMessageReply(client: Discord.Client<true>, slot: SingleSoundb
     if (slot.slotType === SAMPLE_TYPES.SERVER && (!doc.guildId || slot.ownerId !== doc.guildId)) return;
 
     // get channel
-    let channel: Discord.Channel | null | undefined;
+    let channel: Discord.AnyChannel | null | undefined;
     if (doc.guildId) {
         const guild = await client.guilds.fetch(doc.guildId);
         channel = await guild.channels.fetch(doc.channelId);
