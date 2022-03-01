@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 import { TypedEmitter } from "tiny-typed-emitter";
 

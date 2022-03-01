@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 import { promisify } from "node:util";
 import path from "node:path";
 import temp from "temp";
 import fs from "fs-extra";
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
 import { SAMPLE_TYPES } from "../../../const";
@@ -67,9 +65,8 @@ function convertAudio(input: string, output: string): Promise<void> {
     });
 }
 
-async function generateId() {
-    let pending = 5;
-    while (pending-- >= 0) {
+async function generateId(retries: number = 5) {
+    while (retries-- >= 0) {
         const id = SampleID.generate();
         const exists = await CustomSample.findById(id);
         if (!exists) return id;

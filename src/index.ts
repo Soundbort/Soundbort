@@ -1,6 +1,6 @@
-import "./util/banner_printer";
+import "./util/banner-printer";
 
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import Logger from "./log";
 import { DISCORD_TOKEN } from "./config";

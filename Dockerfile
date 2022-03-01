@@ -1,5 +1,5 @@
 # Build stage
-FROM node:16.13.2-slim
+FROM node:16.14-slim
 
 LABEL maintainer="Christian Schäfer <lonelessart@gmail.com> (@lonelesscodes)"
 

@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";

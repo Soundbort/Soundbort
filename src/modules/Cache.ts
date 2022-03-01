@@ -14,7 +14,7 @@ const DEFAULTS: Required<CacheOptions> = {
     ttl: 0,
 };
 
-export default class Cache<K, T> extends Map<K, T> {
+export class Cache<K, T> extends Map<K, T> {
     public readonly ttl: number;
     public readonly maxSize: number;
 

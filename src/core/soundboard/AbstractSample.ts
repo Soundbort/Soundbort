@@ -1,7 +1,7 @@
 import fs from "fs-extra";
 import path from "node:path";
 import * as Voice from "@discordjs/voice";
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 
 import { DATA_DIR } from "../../config";
 import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";

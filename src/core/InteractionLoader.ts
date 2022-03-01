@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import * as Discord from "discord.js";
 import path from "node:path";
 
 import nanoTimer from "../util/timer";
