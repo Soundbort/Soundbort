@@ -37,7 +37,10 @@ if (TOP_GG_WEBHOOK_TOKEN) {
             const vote_base_link = `https://top.gg/bot/868296331234521099/vote?ref=${interactionId}`;
 
             const embed = createEmbed()
-                .setAuthor(BOT_NAME + " | Voting", client.user.avatarURL({ size: 32, dynamic: true }) || undefined)
+                .setAuthor({
+                    name: BOT_NAME + " | Voting",
+                    iconURL: client.user.avatarURL({ size: 32, dynamic: true }) || undefined,
+                })
                 .setDescription(
                     "To get more slots for your soundboard you can upvote the bot through the links below.\n" +
                     "Other users can use these links as well to give you or this server more slots.\n" +

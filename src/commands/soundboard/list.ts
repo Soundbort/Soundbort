@@ -43,12 +43,15 @@ function generateSampleMessage(
 ): Discord.InteractionReplyOptions {
     const rows = generateSampleButtons(samples);
 
-    const embed = createEmbed().setAuthor(title, iconUrl ?? undefined);
+    const embed = createEmbed().setAuthor({
+        name: title,
+        iconURL: iconUrl ?? undefined,
+    });
     if (joinNotice) embed.setDescription("Join a voice channel and click on one of the buttons below. ✨");
-    if (slots) embed.setFooter(
-        `Slots: ${samples.length} / ${slots} used.` +
-        ((slots < CustomSample.MAX_SLOTS) ? " See /vote to get more slots" : ""),
-    );
+    if (slots) embed.setFooter({
+        text: `Slots: ${samples.length} / ${slots} used.` +
+            ((slots < CustomSample.MAX_SLOTS) ? " See /vote to get more slots" : ""),
+    });
 
     return { embeds: [embed], components: rows };
 }

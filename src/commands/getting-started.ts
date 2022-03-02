@@ -35,8 +35,13 @@ export function install({ client }: CmdInstallerArgs): void {
                     "🔒 Privacy notice and data deletion: [soundbort-guide.loneless.art/privacy](https://soundbort-guide.loneless.art/privacy)",
                 )
                 .setImage("https://raw.githubusercontent.com/LonelessCodes/Soundbort/main/assets/readme_banner.jpg")
-                .setFooter(`${BOT_NAME} v${VERSION}`)
-                .setAuthor(BOT_NAME + " | Getting started", client.user.avatarURL({ size: 32, dynamic: true }) || undefined);
+                .setFooter({
+                    text: `${BOT_NAME} v${VERSION}`,
+                })
+                .setAuthor({
+                    name: BOT_NAME + " | Getting started",
+                    iconURL: client.user.avatarURL({ size: 32, dynamic: true }) || undefined,
+                });
 
             return { embeds: [embed] };
         },

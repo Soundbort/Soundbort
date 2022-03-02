@@ -99,7 +99,10 @@ InteractionRegistry.addCommand(new TopCommand({
         files.push(new Discord.MessageAttachment(cpu_buffer, "cpu_load_avg.png"));
 
         embeds.push(createEmbed(`**Last updated**: ${time(aggregation._id, "R")}`)
-            .setAuthor(BOT_NAME, (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined)
+            .setAuthor({
+                name: BOT_NAME,
+                iconURL: (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined,
+            })
             .addField("Bot Version", VERSION, true)
             .addField("Node.js Version", process.version.slice(1), true)
             .addField("Discord.js Version", Discord.version, true)
@@ -110,7 +113,9 @@ InteractionRegistry.addCommand(new TopCommand({
             .addField("CPU Load Average", aggregation.cpu_load_avg.map(v => `${(v * 100).toFixed(0)} %`).join(" / "), true)
             .addField("CPU Cores", os.cpus().length.toLocaleString("en"), true)
 
-            .setFooter(`${BOT_NAME} v${VERSION}`)
+            .setFooter({
+                text: `${BOT_NAME} v${VERSION}`,
+            })
             .setImage("attachment://cpu_load_avg.png"));
 
         // GUILDS
