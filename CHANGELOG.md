@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.1](https://github.com/LonelessCodes/SoundBort/compare/v0.7.0...v0.7.1) (2022-03-02)
+
+
+### Bug Fixes
+
+* add gzip to Dockerfile for log querying ([8f618a8](https://github.com/LonelessCodes/SoundBort/commit/8f618a819ad49154a4f40330a94f29b09cd460ce))
+
 ## [0.7.0](https://github.com/LonelessCodes/SoundBort/compare/v0.6.3...v0.7.0) (2021-11-20)
 
 
