@@ -5,6 +5,9 @@
 
 const { workerData } = require("node:worker_threads");
 
-require("ts-node").register();
+// Check if ts-node is already registered in this context
+if (!process[Symbol.for("ts-node.register.instance")]) {
+    require("ts-node").register();
+}
 // resolve to source dir
 require(workerData.workerPath);
