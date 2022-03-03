@@ -18,9 +18,11 @@
             "args": [
                 "${workspaceFolder}/src/index.ts"
             ],
+            "console": "internalConsole", 
+            "outputCapture": "std",
         },
         {
-            "name": "Debug Build TS Project",
+            "name": "Debug Precompile TS Project",
             "type": "node",
             "request": "launch",
             "env": {
@@ -31,6 +33,8 @@
                 "${workspaceFolder}/dist/index.js"
             ],
             "preLaunchTask": "npm: build",
+            "console": "internalConsole", 
+            "outputCapture": "std",
         }
     ]
 }
