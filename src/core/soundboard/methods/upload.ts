@@ -53,7 +53,7 @@ function convertAudio(input: string, output: string): Promise<void> {
         ffmpeg(input)
             .audioFilter("silenceremove=1:0:-50dB")
             .audioCodec("libopus")
-            .audioBitrate(96_000)
+            .audioBitrate(96)
             .audioFrequency(48_000)
             .audioChannels(2)
             .addOutputOption("-map 0:a:0") // only first input audio stream
