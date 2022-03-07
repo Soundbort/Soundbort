@@ -1,10 +1,12 @@
 import { SAMPLE_TYPES } from "../../const";
 
+import { replyEmbedEphemeral } from "../../util/builders/embed";
+
 import { Command } from "../../modules/commands/Command";
 import { CommandGroup } from "../../modules/commands/CommandGroup";
 import { CommandStringOption } from "../../modules/commands/CommandOption";
 
-import { upload } from "../../core/soundboard/methods/upload";
+import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
 
 export default new CommandGroup({
     name: "upload",
@@ -21,6 +23,10 @@ export default new CommandGroup({
                 }),
             ],
             async func(interaction) {
+                if (!interaction.inCachedGuild()) {
+                    return replyEmbedEphemeral(UploadErrors.NotInGuild);
+                }
+
                 const name = interaction.options.getString("name", true).trim();
 
                 await upload(interaction, name, SAMPLE_TYPES.STANDARD);
