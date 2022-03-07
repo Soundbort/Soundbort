@@ -19,11 +19,7 @@ const set_admin_role_cmd = new Command({
         }),
     ],
     async func(interaction) {
-        if (!interaction.inGuild()) {
-            return;
-        }
-
-        if (!interaction.guild || !await GuildConfigManager.isModerator(interaction.guild, interaction.user.id)) {
+        if (!interaction.inCachedGuild() || !await GuildConfigManager.isModerator(interaction.guild, interaction.user.id)) {
             return;
         }
 
@@ -39,12 +35,7 @@ const show_admin_role_cmd = new Command({
     name: "show-admin-role",
     description: `Shows the (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
     async func(interaction) {
-        if (!interaction.inGuild()) {
-            return;
-        }
-        if (!interaction.guild) {
-            return;
-        }
+        if (!interaction.inCachedGuild()) return;
 
         const config = await GuildConfigManager.findOrGenConfig(interaction.guild);
         if (!config) {

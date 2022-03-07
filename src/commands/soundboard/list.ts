@@ -109,7 +109,7 @@ async function scopeStandard(interaction: Discord.CommandInteraction): Promise<S
 }
 
 async function scopeServer(interaction: Discord.CommandInteraction): Promise<SimpleFuncReturn> {
-    if (!interaction.inGuild() || !interaction.guild) {
+    if (!interaction.inCachedGuild()) {
         return replyEmbedEphemeral("Call this command in a server to get the server list.", EmbedType.Error);
     }
 

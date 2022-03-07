@@ -17,15 +17,9 @@ import { findOne } from "../../core/soundboard/methods/findOne";
 
 const log = Logger.child({ label: "Command => play" });
 
-async function play(interaction: Discord.CommandInteraction | Discord.ButtonInteraction, sample: CustomSample | StandardSample) {
+async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.ButtonInteraction<"cached">, sample: CustomSample | StandardSample) {
     try {
-        // shouldn't true, but Typescript wants it
-        if (!interaction.inGuild()) return;
-
-        const member = await interaction.guild?.members.fetch(interaction.user.id);
-        if (!member) {
-            throw new Error("interaction.guild ist nicht definiert.");
-        }
+        const member = await interaction.guild.members.fetch(interaction.user.id);
 
         const subscription = await AudioManager.join(member);
         if (subscription === JoinFailureTypes.FailedNotInVoiceChannel) {
@@ -34,7 +28,7 @@ async function play(interaction: Discord.CommandInteraction | Discord.ButtonInte
         if (subscription === JoinFailureTypes.FailedTryAgain) {
             return replyEmbedEphemeral("Connecting to the voice channel failed. Try again later.", EmbedType.Error);
         }
-        if (AudioManager.has(interaction.guildId) && interaction.guild?.me?.voice.channelId && member.voice.channelId !== interaction.guild.me.voice.channelId) {
+        if (AudioManager.has(interaction.guildId) && interaction.guild.me?.voice.channelId && member.voice.channelId !== interaction.guild.me.voice.channelId) {
             return replyEmbedEphemeral("You need to be in the same voice channel as the bot!", EmbedType.Info);
         }
 
@@ -50,7 +44,7 @@ async function play(interaction: Discord.CommandInteraction | Discord.ButtonInte
 }
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_CUSTOM }, async (interaction, decoded) => {
-    if (!interaction.inGuild()) return;
+    if (!interaction.inCachedGuild()) return;
 
     const id = decoded.id as string;
 
@@ -61,7 +55,7 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_CUSTOM }, async (interactio
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_STANDA }, async (interaction, decoded) => {
-    if (!interaction.inGuild()) return;
+    if (!interaction.inCachedGuild()) return;
 
     const name = decoded.n as string;
 
@@ -85,7 +79,7 @@ InteractionRegistry.addCommand(new TopCommand({
         }),
     ],
     async func(interaction) {
-        if (!interaction.inGuild()) {
+        if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error);
         }
 

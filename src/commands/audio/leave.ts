@@ -10,7 +10,7 @@ InteractionRegistry.addCommand(new TopCommand({
     name: "leave",
     description: "Leave the voice channel.",
     func(interaction: Discord.CommandInteraction) {
-        if (!interaction.inGuild() || !interaction.guild) {
+        if (!interaction.inGuild()) {
             return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);
         }
 

@@ -66,9 +66,7 @@ export class Command {
     }
 
     async run(interaction: Discord.CommandInteraction): Promise<void> {
-        if (!this.func) return;
-
-        const result = await this.func(interaction);
+        const result = await this.func?.(interaction); // Optional chaining (?.), the function will only be called if this.func property is not nullish
         if (!result || interaction.replied) return;
 
         await (interaction.deferred ? interaction.editReply(result) : interaction.reply(result));

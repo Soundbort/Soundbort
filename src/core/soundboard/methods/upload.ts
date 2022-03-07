@@ -53,7 +53,7 @@ function convertAudio(input: string, output: string): Promise<void> {
         ffmpeg(input)
             .audioFilter("silenceremove=1:0:-50dB")
             .audioCodec("libopus")
-            .audioBitrate("96k")
+            .audioBitrate(96_000)
             .audioFrequency(48_000)
             .audioChannels(2)
             .addOutputOption("-map 0:a:0") // only first input audio stream
@@ -73,7 +73,7 @@ async function generateId(retries: number = 5) {
     }
 }
 
-async function _upload(interaction: Discord.CommandInteraction, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
+async function _upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     await interaction.deferReply();
 
     const failed = (desc: string) => interaction.editReply(replyEmbed(desc, EmbedType.Error));
@@ -84,22 +84,16 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     }
 
     const userId = interaction.user.id;
+    const guildId = interaction.guildId;
+    const guild = interaction.guild;
 
-    if (scope === SAMPLE_TYPES.SERVER) {
-        if (!interaction.inGuild()) {
-            return await failed(UploadErrors.NotInGuild);
-        }
-
-        if (!interaction.guild || !await GuildConfigManager.isModerator(interaction.guild, userId)) {
-            return await failed(UploadErrors.NotModerator);
-        }
+    if (scope === SAMPLE_TYPES.SERVER && !await GuildConfigManager.isModerator(guild, userId)) {
+        return await failed(UploadErrors.NotModerator);
     }
 
     if (scope === SAMPLE_TYPES.STANDARD && !isOwner(userId)) {
         return await failed(UploadErrors.NotOwner);
     }
-
-    const guildId = interaction.guildId!;
 
     // is soundboard full?
     if (scope === SAMPLE_TYPES.STANDARD) {
@@ -287,7 +281,7 @@ async function _upload(interaction: Discord.CommandInteraction, name: string, sc
     await interaction.editReply(await sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
 }
 
-export async function upload(interaction: Discord.CommandInteraction, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
+export async function upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     try {
         await _upload(interaction, name, scope);
     } catch (error) {

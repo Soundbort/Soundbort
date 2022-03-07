@@ -32,13 +32,13 @@ async function importUser(interaction: Discord.ButtonInteraction | Discord.Comma
 }
 
 async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
+    if (!interaction.inCachedGuild()) {
+        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
+    }
+
     const guildId = interaction.guildId;
     const guild = interaction.guild;
     const user = interaction.user;
-
-    if (!guildId || !guild) {
-        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
-    }
 
     if (!await GuildConfigManager.isModerator(guild, user.id)) {
         return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
@@ -98,8 +98,6 @@ InteractionRegistry.addCommand(new TopCommand({
 }));
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.IMPORT_USER }, async (interaction, decoded) => {
-    if (!interaction.inGuild()) return;
-
     const id = decoded.id as string;
 
     const sample = await CustomSample.findById(id);
@@ -109,8 +107,6 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.IMPORT_USER }, async (interactio
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.IMPORT_SERVER }, async (interaction, decoded) => {
-    if (!interaction.inGuild()) return;
-
     const id = decoded.id as string;
 
     const sample = await CustomSample.findById(id);

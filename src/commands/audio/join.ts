@@ -10,7 +10,7 @@ InteractionRegistry.addCommand(new TopCommand({
     name: "join",
     description: "Join the voice channel you are in.",
     async func(interaction: Discord.CommandInteraction) {
-        if (!interaction.inGuild() || !interaction.guild) {
+        if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);
         }
 

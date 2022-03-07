@@ -181,8 +181,6 @@ InteractionRegistry.addCommand(new TopCommand({
 }));
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction, decoded) => {
-    if (!interaction.inGuild()) return;
-
     const id = decoded.id as string;
 
     const sample = await CustomSample.findById(id);
@@ -190,11 +188,10 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction
         return replyEmbedEphemeral("This sample doesn't exist anymore", EmbedType.Info);
     }
 
-    const userId = interaction.user.id;
-    const guildId = interaction.guildId;
-
-    const hasInUser = sample.isInUsers(userId);
-    const hasInGuild = interaction.guild && await GuildConfigManager.isModerator(interaction.guild, userId) && sample.isInGuilds(guildId);
+    const hasInUser = sample.isInUsers(interaction.user.id);
+    const hasInGuild = interaction.inCachedGuild()
+        && await GuildConfigManager.isModerator(interaction.guild, interaction.user.id)
+        && sample.isInGuilds(interaction.guildId);
 
     if (!hasInUser && !hasInGuild) {
         return replyEmbedEphemeral("You can't delete this sample from your personal or this server's soundboard.", EmbedType.Info);
@@ -241,16 +238,14 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_USER }, async (interactio
 });
 
 InteractionRegistry.addButton({ t: BUTTON_TYPES.DELETE_SERVER }, async (interaction, decoded) => {
-    if (!interaction.inGuild()) return;
+    if (!interaction.inCachedGuild()) {
+        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
+    }
 
     const id = decoded.id as string;
 
     const userId = interaction.user.id;
     const guildId = interaction.guildId;
-
-    if (!interaction.guild) {
-        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
-    }
 
     if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
         return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);

@@ -4,7 +4,8 @@ import InteractionRegistry from "../../core/InteractionRegistry";
 import { TopCommand } from "../../modules/commands/TopCommand";
 import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption";
 
-import { upload } from "../../core/soundboard/methods/upload";
+import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
+import { replyEmbedEphemeral } from "../../util/builders/embed";
 
 InteractionRegistry.addCommand(new TopCommand({
     name: "upload",
@@ -25,6 +26,10 @@ InteractionRegistry.addCommand(new TopCommand({
         }),
     ],
     async func(interaction) {
+        if (!interaction.inCachedGuild()) {
+            return replyEmbedEphemeral(UploadErrors.NotInGuild);
+        }
+
         const name = interaction.options.getString("name", true).trim();
         const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
 
