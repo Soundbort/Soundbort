@@ -57,8 +57,8 @@ export class AudioSubscription {
                 this.stop();
                 this._onDestroyed();
             } else if (
-                !this.ready_lock &&
-				(newState.status === Voice.VoiceConnectionStatus.Connecting || newState.status === Voice.VoiceConnectionStatus.Signalling)
+                !this.ready_lock
+				&& (newState.status === Voice.VoiceConnectionStatus.Connecting || newState.status === Voice.VoiceConnectionStatus.Signalling)
             ) {
                 /*
                 In the Signalling or Connecting states, we set a 20 second time limit for the connection to become ready

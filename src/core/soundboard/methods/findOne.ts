@@ -26,8 +26,8 @@ export async function findOne(
             if (name.startsWith(STANDARD_SAMPLE_PREFIX)) {
                 sample = await StandardSample.findByName(name.slice(STANDARD_SAMPLE_PREFIX.length));
             } else {
-                sample = await CustomSample.findByName(guildId ?? null, userId, name) ||
-                        await StandardSample.findByName(name);
+                sample = await CustomSample.findByName(guildId ?? null, userId, name)
+                      || await StandardSample.findByName(name);
             }
         }
 

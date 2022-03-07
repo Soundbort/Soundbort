@@ -63,8 +63,8 @@ export async function createDialog({ interaction, dialog_text, dialog_type = Emb
             filter: new_inter => {
                 const decoded = InteractionRegistry.decodeButtonId(new_inter.customId);
 
-                return new_inter.user.id === interaction.user.id &&
-                    decoded.did === dialogId;
+                return new_inter.user.id === interaction.user.id
+                    && decoded.did === dialogId;
             },
             componentType: "BUTTON",
             time: 5 * 60 * 1000,
@@ -73,9 +73,9 @@ export async function createDialog({ interaction, dialog_text, dialog_type = Emb
         await interaction.channel.messages.delete(replied_msg.id).catch(doNothing);
     } catch (error: any) {
         // "time" is an expected error. Only bubble up when error reason is not "time"
-        if (error.code === "INTERACTION_COLLECTOR_ERROR" &&
-            typeof error.message === "string" &&
-            error.message.endsWith("time")) return;
+        if (error.code === "INTERACTION_COLLECTOR_ERROR"
+            && typeof error.message === "string"
+            && error.message.endsWith("time")) return;
 
         throw error;
     }

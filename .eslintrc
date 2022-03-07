@@ -180,11 +180,11 @@
         "operator-assignment": "error",
         "operator-linebreak": [
             "error",
-            "after",
+            "before",
             {
                 "overrides": {
-                    "?": "before",
-                    ":": "before"
+                    "+": "after",
+                    "-": "after"
                 }
             }
         ],

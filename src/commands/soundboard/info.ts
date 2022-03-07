@@ -17,10 +17,10 @@ async function canShowDelete(sample: CustomSample | StandardSample, userId: stri
         if (sample.isInUsers(userId)) return true;
         // ok then not, but has sample in server soundboard?
         else if (
-            guild &&
-            sample.isInGuilds(guild.id) &&
+            guild
+            && sample.isInGuilds(guild.id)
             // is a moderator? can remove sample?
-            await GuildConfigManager.isModerator(guild, userId)
+            && await GuildConfigManager.isModerator(guild, userId)
         ) return true;
     }
     return false;
