@@ -123,7 +123,7 @@ function drawToBuffer(normalized_data: Float32Array): Buffer {
 }
 
 export async function visualizeAudio(ogg_audio_path: string): Promise<Buffer> {
-    log.debug("Visualizing %s to %s", ogg_audio_path);
+    log.debug("Visualizing %s", ogg_audio_path);
 
     const start = Date.now();
 
