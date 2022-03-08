@@ -35,10 +35,16 @@ export abstract class AbstractSample implements SoundboardStandardSampleSchema {
 
     abstract get file(): string;
 
-    protected _play(audio_player: Voice.AudioPlayer): Voice.AudioResource<AbstractSample> {
+    protected _play(audio_player: Voice.AudioPlayer, volume: number): Voice.AudioResource<AbstractSample> {
         // Attempt to convert the Sound into an AudioResource
         const stream = fs.createReadStream(this.file);
-        const resource = Voice.createAudioResource(stream, { metadata: this, inputType: Voice.StreamType.OggOpus });
+        const resource = Voice.createAudioResource(stream, {
+            metadata: this,
+            inputType: Voice.StreamType.OggOpus,
+            inlineVolume: volume < 1,
+        });
+        // resource.volume is undefined when inlineVolume is false => when volume == 1
+        if (resource.volume) resource.volume.setVolume(volume);
 
         /*
         We will now play this to the audio player. By default, the audio player will not play until
@@ -50,7 +56,7 @@ export abstract class AbstractSample implements SoundboardStandardSampleSchema {
         return resource;
     }
 
-    abstract play(audio_player: Voice.AudioPlayer): Promise<Voice.AudioResource<AbstractSample>>;
+    abstract play(audio_player: Voice.AudioPlayer, volume: number): Promise<Voice.AudioResource<AbstractSample>>;
 
     abstract toEmbed(opts: ToEmbedOptions): Promise<Discord.InteractionReplyOptions>;
 

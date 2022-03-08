@@ -52,10 +52,10 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return CustomSample.generateFilePath(this.id);
     }
 
-    async play(audio_player: Voice.AudioPlayer): Promise<Voice.AudioResource<AbstractSample>> {
+    async play(audio_player: Voice.AudioPlayer, volume: number): Promise<Voice.AudioResource<AbstractSample>> {
         log.debug("Playing custom sample %s (%s)", this.id, this.name);
 
-        const resource = this._play(audio_player);
+        const resource = this._play(audio_player, volume);
 
         const now = new Date();
 
