@@ -1,5 +1,5 @@
-// eslint-disable-next-line unicorn/import-style
-import chalk, { Color, Modifiers } from "chalk";
+import * as util from "node:util";
+import chalk from "chalk";
 import winston from "winston";
 import "winston-daily-rotate-file";
 
@@ -13,7 +13,7 @@ export const levels = {
     debug: 4,
 };
 
-declare type ChalkKeywords = typeof Color | typeof Modifiers;
+declare type ChalkKeywords = typeof chalk.Color | typeof chalk.Modifiers;
 
 interface ChalkColorLookup {
     [level: string]: ChalkKeywords[] | undefined;
@@ -62,7 +62,7 @@ const Logger = winston.createLogger({
  * properties.
  */
 function rest(info: any): string {
-    return JSON.stringify({
+    const obj = {
         ...info,
         timestamp: undefined,
         shard: undefined,
@@ -70,7 +70,12 @@ function rest(info: any): string {
         level: undefined,
         message: undefined,
         stack: undefined,
-    }, null, 2);
+    };
+    // fix issue with circular json
+    return util.formatWithOptions({
+        depth: Number.POSITIVE_INFINITY,
+        colors: true,
+    }, "%j", obj);
 }
 
 function colorize(lookup: string, message?: string): string | undefined {
