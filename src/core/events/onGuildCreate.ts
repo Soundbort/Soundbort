@@ -7,6 +7,6 @@ export default function onGuildCreate() {
     return async (guild: Discord.Guild): Promise<void> => {
         await DataDeletionManager.unmarkGuildForDeletion(guild.id);
 
-        await GuildConfigManager.regenConfig(guild);
+        await GuildConfigManager.createOrRegenerateConfig(guild);
     };
 }

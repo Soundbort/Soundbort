@@ -43,10 +43,10 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         return StandardSample.generateFilePath(this.name);
     }
 
-    async play(audio_player: Voice.AudioPlayer): Promise<Voice.AudioResource<AbstractSample>> {
+    async play(audio_player: Voice.AudioPlayer, volume: number): Promise<Voice.AudioResource<AbstractSample>> {
         log.debug("Playing standard sample %s", this.name);
 
-        const resource = this._play(audio_player);
+        const resource = this._play(audio_player, volume);
 
         const now = new Date();
 
