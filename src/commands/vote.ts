@@ -26,7 +26,7 @@ const formatEllipsis = (base: string, insert: string, length: number) => {
 if (TOP_GG_WEBHOOK_TOKEN) {
     InteractionRegistry.addCommand(new TopCommand({
         name: "vote",
-        description: "Upvote Soundbort on top.gg to get more sample slots for your or someone else's soundboard.",
+        description: `Upvote ${BOT_NAME} on top.gg to get more sample slots for your or someone else's soundboard.`,
         target: {
             global: true,
             guildHidden: false,

@@ -10,9 +10,9 @@ export function install({ client }: CmdInstallerArgs): void {
 
     const embed = createEmbed()
         .setDescription(
-            "__**So you've chosen Soundbort. What now?**__\n" +
+            `__**So you've chosen ${BOT_NAME}. What now?**__\n` +
             "\n" +
-            "Soundbort is a soundboard bot for Discord with actual buttons to click. Add audio samples " +
+            `${BOT_NAME} is a soundboard bot for Discord with actual buttons to click. Add audio samples ` +
             "to **your personal** or **your server's soundboard** by uploading the audio file to a " +
             "channel and then typing `/upload` and Discord will help you with the rest.\n" +
             "Type `/list` to see a list of samples you can already play.\n" +
@@ -22,11 +22,11 @@ export function install({ client }: CmdInstallerArgs): void {
             "\n" +
             `:inbox_tray: Invite: [invite link](${invite_link})\n` +
             ":money_with_wings: Donate: [ko-fi.com/loneless](https://ko-fi.com/loneless)\n" +
-            ":woman_technologist: Contributing: [github.com/LonelessCodes/Soundbort](https://github.com/LonelessCodes/Soundbort)\n" +
+            ":woman_technologist: Contributing: [github.com/Soundbort/Soundbort](https://github.com/Soundbort/Soundbort)\n" +
             "\n" +
             "🔒 Privacy notice and data deletion: [soundbort-guide.loneless.art/privacy](https://soundbort-guide.loneless.art/privacy)",
         )
-        .setImage("https://raw.githubusercontent.com/LonelessCodes/Soundbort/main/assets/readme_banner.jpg")
+        .setImage("https://raw.githubusercontent.com/Soundbort/Soundbort/main/assets/readme_banner.jpg")
         .setFooter({
             text: `${BOT_NAME} v${VERSION}`,
         })
