@@ -22,6 +22,8 @@ import { CustomSample } from "./soundboard/CustomSample";
 
 const log = Logger.child({ label: "Core" });
 
+let instance: Core;
+
 export default class Core {
     public client: Discord.Client<true>;
 
@@ -35,7 +37,7 @@ export default class Core {
         onTick: () => StatsCollectorManager.collect(this.client).catch(error => log.error("Error while collecting stats", error)),
     });
 
-    constructor(client: Discord.Client<true>) {
+    private constructor(client: Discord.Client<true>) {
         this.client = client;
 
         if (TOP_GG_TOKEN) {
@@ -151,7 +153,13 @@ export default class Core {
         }
     }
 
-    static async create(client: Discord.Client<true>): Promise<Core> {
-        return await new Core(client).setup();
+    /**
+     * Prevent multiple instances being created, which is NOT supported!
+     */
+    static async createInstance(client: Discord.Client<true>): Promise<Core> {
+        if (instance) {
+            return instance;
+        }
+        return await (instance = new Core(client)).setup();
     }
 }

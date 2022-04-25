@@ -106,7 +106,7 @@ Promise.resolve()
         await client.login(DISCORD_TOKEN);
         djs_log.info("Login success");
 
-        await Core.create(await ready_promise);
+        await Core.createInstance(await ready_promise);
     })
     .catch(error => {
         log.error("Failed to log in", error);
