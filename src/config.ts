@@ -49,12 +49,12 @@ export const TOP_GG_WEBHOOK_TOKEN = process.env.SOUNDBORT_TOP_GG_WEBHOOK_TOKEN;
 
 // ////////////// INFO //////////////
 
-export const PROJECT_ROOT = path.normalize(path.resolve(__dirname, ".."));
-export const ASSETS_DIR = path.resolve(PROJECT_ROOT, "assets");
-export const DATA_DIR = path.resolve(PROJECT_ROOT, "data");
-export const LOGS_DIR = path.resolve(PROJECT_ROOT, "logs");
+export const PROJECT_ROOT = path.normalize(path.join(__dirname, ".."));
+export const ASSETS_DIR = path.join(PROJECT_ROOT, "assets");
+export const DATA_DIR = path.join(PROJECT_ROOT, "data");
+export const LOGS_DIR = path.join(PROJECT_ROOT, "logs");
 
-const package_file: PackageJson = fs.readJsonSync(path.resolve(PROJECT_ROOT, "package.json"));
+const package_file: PackageJson = fs.readJsonSync(path.join(PROJECT_ROOT, "package.json"));
 
 export const VERSION = package_file.version as string + (
     ENVIRONMENT !== EnvironmentStages.PROD

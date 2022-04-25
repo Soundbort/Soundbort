@@ -18,7 +18,7 @@ export function walk(dir: string): Promise<string[]> {
             if (!pending) return resolve(results);
 
             for (let file of files) {
-                file = path.resolve(dir, file);
+                file = path.join(dir, file);
 
                 fs.stat(file, (err, stat) => {
                     if (err) return reject(err);

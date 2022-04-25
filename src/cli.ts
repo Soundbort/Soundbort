@@ -12,7 +12,7 @@ import Logger, { printf } from "./log";
 
 const program = new Command();
 
-program.version(fs.readJsonSync(path.resolve(process.cwd(), "package.json")).version);
+program.version(fs.readJsonSync(path.join(process.cwd(), "package.json")).version);
 
 program
     .command("logs")

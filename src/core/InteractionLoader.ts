@@ -25,7 +25,7 @@ export async function loadCommands(client: Discord.Client<true>): Promise<void> 
     };
 
     await Promise.all(files.map(async file => {
-        const relative_path = path.relative(path.resolve(__dirname, ".."), file);
+        const relative_path = path.relative(path.join(__dirname, ".."), file);
 
         const time = nanoTimer();
 
