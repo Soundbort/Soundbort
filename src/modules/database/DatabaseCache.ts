@@ -68,7 +68,7 @@ export default class DatabaseCache<
             );
         }
 
-        return requirements.every(a => a);
+        return requirements.every(Boolean);
     }
 
     private _findOne(filter: CacheFilter<mongodb.WithId<TSchema>>): mongodb.WithId<TSchema> | undefined {
