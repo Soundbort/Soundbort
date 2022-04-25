@@ -3,8 +3,8 @@
  */
 
 import Canvas from "canvas";
-import fs from "node:fs";
-import { opus } from "prism-media";
+import ffmpeg from "fluent-ffmpeg";
+import concatStream from "concat-stream";
 
 import Logger from "../../log";
 
@@ -17,28 +17,21 @@ const PADDING = 10;
 const LINE_WIDTH = 2;
 const SAMPLES = 40; // Number of samples we want to have in our final data set
 
-function oggToPCMBuffer(ogg_audio_path: string): Promise<Buffer> {
-    return new Promise((res, rej): void => {
-        const bufs: Buffer[] = [];
+function toPCMBuffer(ogg_audio_path: string): Promise<Buffer> {
+    return new Promise((res, rej) => {
+        const stream = concatStream(res);
 
-        /**
-         * convert ogg to pcm using prism-media instead of ffmpeg, because ffmpeg
-         * adds a startup time penality
-         */
-
-        fs.createReadStream(ogg_audio_path)
-            .pipe(new opus.OggDemuxer())
-            .pipe(new opus.Decoder({ channels: 1, rate: 48_000, frameSize: 960 })) // use same audio rate as in soundboard/upload.ts
-            .on("error", (error: Error) => {
-                log.error("prism-media error on pcm transform", error);
+        ffmpeg(ogg_audio_path)
+            .outputFormat("s16le")
+            .audioCodec("pcm_s16le")
+            .audioFrequency(48_000)
+            .audioChannels(1)
+            .output(stream)
+            .once("error", error => {
+                log.error("fluent-ffmpeg error on pcm transform", error);
                 rej(error);
             })
-            .on("end", () => {
-                res(Buffer.concat(bufs));
-            })
-            .on("data", (d: Buffer) => {
-                bufs.push(d);
-            });
+            .run();
     });
 }
 
@@ -128,7 +121,7 @@ export async function visualizeAudio(ogg_audio_path: string): Promise<Buffer> {
     const start = Date.now();
 
     try {
-        const buffer = await oggToPCMBuffer(ogg_audio_path)
+        const buffer = await toPCMBuffer(ogg_audio_path)
             .then(toSigned16Bit)
             .then(filterData)
             .then(normalizeData)
