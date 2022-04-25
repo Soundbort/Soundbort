@@ -25,7 +25,7 @@ export async function loadCommands(client: Discord.Client<true>): Promise<void> 
     };
 
     await Promise.all(files.map(async file => {
-        const relatve_path = path.relative(path.resolve(__dirname, ".."), file);
+        const relative_path = path.relative(path.resolve(__dirname, ".."), file);
 
         const time = nanoTimer();
 
@@ -33,11 +33,11 @@ export async function loadCommands(client: Discord.Client<true>): Promise<void> 
             const install = await import(file) as CmdInstallerFile;
             if (typeof install.install === "function") await install.install(install_opts);
         } catch (error) {
-            log.error("failed       : %s", relatve_path);
+            log.error("failed       : %s", relative_path);
             throw error;
         }
 
-        log.debug("installed    : %s %s ms", relatve_path, nanoTimer.diffMs(time).toFixed(3));
+        log.debug("installed    : %s %s ms", relative_path, nanoTimer.diffMs(time).toFixed(3));
     }));
 
     const install_time = nanoTimer.diff(timer) / nanoTimer.NS_PER_SEC;
