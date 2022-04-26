@@ -1,22 +1,21 @@
 import { SAMPLE_TYPES } from "../../const";
 
+import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup";
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
+import { createStringOption } from "../../modules/commands/options/string";
 import { replyEmbedEphemeral } from "../../util/builders/embed";
-
-import { Command } from "../../modules/commands/Command";
-import { CommandGroup } from "../../modules/commands/CommandGroup";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
 
 import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
 
-export default new CommandGroup({
+export default new SlashSubCommandGroup({
     name: "upload",
     description: "Add a sample to standard soundboard. Upload the audio file first, then call this command.",
     commands: [
-        new Command({
+        new SlashSubCommand({
             name: "standard",
             description: "Add a sample to standard soundboard. Upload the audio file first, then call this command.",
             options: [
-                new CommandStringOption({
+                createStringOption({
                     name: "name",
                     description: "Name for the sample",
                     required: true,

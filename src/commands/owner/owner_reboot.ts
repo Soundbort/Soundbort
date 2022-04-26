@@ -1,9 +1,9 @@
 import Logger from "../../log";
 import { exit } from "../../util/exit";
 
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
+import { createBooleanOption } from "../../modules/commands/options/boolean";
 import { replyEmbed } from "../../util/builders/embed";
-import { Command } from "../../modules/commands/Command";
-import { CommandBooleanOption } from "../../modules/commands/CommandOption";
 
 import AudioManager from "../../core/audio/AudioManager";
 
@@ -34,11 +34,11 @@ function shutdown(force: boolean) {
     return replyEmbed("Gracefully shutting down. Waiting for all voice connections to be destroyed.");
 }
 
-export default new Command({
+export default new SlashSubCommand({
     name: "reboot",
     description: "Reboot the bot",
     options: [
-        new CommandBooleanOption({
+        createBooleanOption({
             name: "force",
             description: "Disconnect everything and restart immediately. If false, wait for all voice connections to end.",
         }),

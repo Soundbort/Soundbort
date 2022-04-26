@@ -1,15 +1,15 @@
-import { Command } from "../../modules/commands/Command";
-import { CommandGroup } from "../../modules/commands/CommandGroup";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
+import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup";
+import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import BlacklistManager from "../../core/data-managers/BlacklistManager";
 
-const blacklist_add_cmd = new Command({
+const blacklist_add_cmd = new SlashSubCommand({
     name: "add",
     description: "Blacklist a user from using this bot.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "user-id",
             description: "User id to blacklist",
             required: true,
@@ -24,11 +24,11 @@ const blacklist_add_cmd = new Command({
     },
 });
 
-const blacklist_remove_cmd = new Command({
+const blacklist_remove_cmd = new SlashSubCommand({
     name: "remove",
     description: "Remove blacklisting of user.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "user-id",
             description: "User id to remove from blacklist",
             required: true,
@@ -43,7 +43,7 @@ const blacklist_remove_cmd = new Command({
     },
 });
 
-export default new CommandGroup({
+export default new SlashSubCommandGroup({
     name: "blacklist",
     description: "Blacklist a user from using this bot.",
     commands: [

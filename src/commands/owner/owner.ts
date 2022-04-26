@@ -1,12 +1,10 @@
-import * as Discord from "discord.js";
-
 import { OWNER_GUILD_IDS, OWNER_IDS } from "../../config";
 import { isOwner } from "../../util/util";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
-import { TopCommandGroup } from "../../modules/commands/TopCommandGroup";
-import { createUserPermission } from "../../modules/commands/options/createPermission";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { createUserPermission } from "../../modules/commands/permission";
 
 // import commands. We can do this, because they don't register any commands by themselves,
 // so if they're already imported by the Core it doesn't matter
@@ -16,7 +14,7 @@ import upload_standard_cmd from "./owner_upload";
 import delete_cmd from "./owner_delete";
 import import_cmd from "./owner_import";
 
-InteractionRegistry.addCommand(new TopCommandGroup({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "owner",
     description: "A set of owner commands.",
     commands: [
@@ -40,7 +38,7 @@ InteractionRegistry.addCommand(new TopCommandGroup({
         return false;
     },
     async onGuildCreate(app_command) {
-        const permissions: Discord.ApplicationCommandPermissionData[] = OWNER_IDS.map(id => createUserPermission(id, true));
+        const permissions = OWNER_IDS.map(id => createUserPermission(id, true));
         await app_command.permissions.set({ permissions });
     },
 }));

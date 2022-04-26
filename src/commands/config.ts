@@ -2,17 +2,17 @@ import { BOT_NAME } from "../config";
 
 import InteractionRegistry from "../core/InteractionRegistry";
 import { EmbedType, replyEmbed } from "../util/builders/embed";
-import { CommandRoleOption } from "../modules/commands/CommandOption";
-import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
-import { Command } from "../modules/commands/Command";
+import { SlashCommand } from "../modules/commands/SlashCommand";
+import { SlashSubCommand } from "../modules/commands/SlashSubCommand";
+import { createRoleOption } from "../modules/commands/options/role";
 
 import GuildConfigManager from "../core/data-managers/GuildConfigManager";
 
-const set_admin_role_cmd = new Command({
+const set_admin_role_cmd = new SlashSubCommand({
     name: "set-admin-role",
     description: `Set the (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
     options: [
-        new CommandRoleOption({
+        createRoleOption({
             name: "role",
             description: `The (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
             required: true,
@@ -31,7 +31,7 @@ const set_admin_role_cmd = new Command({
     },
 });
 
-const show_admin_role_cmd = new Command({
+const show_admin_role_cmd = new SlashSubCommand({
     name: "show-admin-role",
     description: `Shows the (admin) role ${BOT_NAME} uses to allow / disallow access to admin commands.`,
     async func(interaction) {
@@ -48,7 +48,7 @@ const show_admin_role_cmd = new Command({
     },
 });
 
-InteractionRegistry.addCommand(new TopCommandGroup({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "config",
     description: `Configure ${BOT_NAME} for your server.`,
     commands: [

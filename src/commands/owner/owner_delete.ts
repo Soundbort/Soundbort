@@ -1,17 +1,17 @@
-import { Command } from "../../modules/commands/Command";
-import { CommandGroup } from "../../modules/commands/CommandGroup";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
+import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup";
+import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import { searchStandard } from "../../core/soundboard/methods/searchMany";
 
-const delete_extern_cmd = new Command({
+const delete_extern_cmd = new SlashSubCommand({
     name: "extern",
     description: "Delete a custom sample by id.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "id",
             description: "Id of the custom sample to delete.",
             required: true,
@@ -31,11 +31,11 @@ const delete_extern_cmd = new Command({
     },
 });
 
-const delete_standard_cmd = new Command({
+const delete_standard_cmd = new SlashSubCommand({
     name: "standard",
     description: "Delete a standard sample by name.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "name",
             description: "Name of the standard sample to delete.",
             required: true,
@@ -58,7 +58,7 @@ const delete_standard_cmd = new Command({
     },
 });
 
-export default new CommandGroup({
+export default new SlashSubCommandGroup({
     name: "delete",
     description: "Import a sample to standard soundboard.",
     commands: [

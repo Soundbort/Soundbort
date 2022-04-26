@@ -2,7 +2,7 @@ import { BOT_NAME, VERSION } from "../config";
 
 import { CmdInstallerArgs } from "../util/types";
 import { createEmbed } from "../util/builders/embed";
-import { TopCommand } from "../modules/commands/TopCommand";
+import { SlashCommand } from "../modules/commands/SlashCommand";
 import InteractionRegistry from "../core/InteractionRegistry";
 
 export function install({ client }: CmdInstallerArgs): void {
@@ -35,7 +35,7 @@ export function install({ client }: CmdInstallerArgs): void {
             iconURL: client.user.avatarURL({ size: 32, dynamic: true }) || undefined,
         });
 
-    InteractionRegistry.addCommand(new TopCommand({
+    InteractionRegistry.addCommand(new SlashCommand({
         name: "getting-started",
         description: `A getting-started guide that will help you find your way around ${BOT_NAME}.`,
         target: {

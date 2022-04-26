@@ -1,22 +1,23 @@
 import { SAMPLE_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { TopCommand } from "../../modules/commands/TopCommand";
-import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption";
-
-import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { createChoice } from "../../modules/commands/choice";
+import { createStringOption } from "../../modules/commands/options/string";
 import { replyEmbedEphemeral } from "../../util/builders/embed";
 
-InteractionRegistry.addCommand(new TopCommand({
+import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
+
+InteractionRegistry.addCommand(new SlashCommand({
     name: "upload",
     description: "Add a sound sample to your soundboard. Upload the audio file first, then call this command.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "name",
             description: "Name for the sample",
             required: true,
         }),
-        new CommandStringOption({
+        createStringOption({
             name: "to",
             description: "Choose the soundboard to add the sound to. Defaults to your personal soundboard.",
             choices: [

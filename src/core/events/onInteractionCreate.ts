@@ -23,7 +23,7 @@ export default function onInteractionCreate() {
                 const command = InteractionRegistry.commands.get(interaction.commandName);
                 if (!command) return await interaction.reply(replyEmbedEphemeral("This command doesn't exist anymore or some other thing screwed up.", EmbedType.Error));
 
-                log.debug("Command '%s' by %s in %s (%s)", command.name, interaction.user.id, interaction.channelId, interaction.channel?.type);
+                log.debug("Command '%s' by %s in %s (%s)", command.data.name, interaction.user.id, interaction.channelId, interaction.channel?.type);
 
                 await command.run(interaction);
 

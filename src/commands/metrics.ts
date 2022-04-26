@@ -9,9 +9,10 @@ import { BOT_NAME, VERSION } from "../config";
 import StatsCollectorManager from "../core/data-managers/StatsCollectorManager";
 
 import InteractionRegistry from "../core/InteractionRegistry";
-import { TopCommand } from "../modules/commands/TopCommand";
+import { SlashCommand } from "../modules/commands/SlashCommand";
 import { EmbedType, createEmbed, replyEmbedEphemeral } from "../util/builders/embed";
-import { CommandStringOption, createChoice } from "../modules/commands/CommandOption";
+import { createStringOption } from "../modules/commands/options/string";
+import { createChoice } from "../modules/commands/choice";
 
 import { ChartOptionsData } from "../modules/canvas/line-graph";
 import canvas from "../modules/canvas/index";
@@ -23,11 +24,11 @@ enum TimeWindowChoices {
     Month = "4 weeks",
 }
 
-InteractionRegistry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "metrics",
     description: "Display bot metrics and health statistics for anyone interested.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "time_window",
             description: "The time window that's analyzed.",
             choices: [

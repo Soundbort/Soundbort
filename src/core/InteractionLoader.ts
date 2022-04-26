@@ -1,6 +1,7 @@
-import * as Discord from "discord.js";
 import path from "node:path";
+import * as Discord from "discord.js";
 
+// import { DISCORD_TOKEN } from "../config";
 import nanoTimer from "../util/timer";
 import Logger from "../log";
 import { walk } from "../util/files";
@@ -54,26 +55,29 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
     if (client.application.partial) await client.application.fetch();
 
     // DEPLOY GLOBAL
-    const global_commands_data = global_commands.map(command => command.toJSON());
+    const global_commands_data = global_commands.map(command => command.data);
 
-    await client.application.commands.set(global_commands_data);
+    // global_commands_data is actually RESTPostAPIApplicationCommandsJSONBody[]!! but
+    // discord.js types will hint an error, because it depends on an older version of
+    // discord-api-types
+    // therefore need to cast it as any
+    await client.application.commands.set(global_commands_data as any[]);
 
     // DEPLOY GUILDS
     const deployToGuild = async (guild: Discord.Guild) => {
         const guild_commands_data = guild_commands
             // filter out owner commands in guilds that don't need them
             .filter(command => !command.target.guild_ids || command.target.guild_ids.includes(guild.id))
-            .map(command => command.toJSON());
+            .map(command => command.data);
 
-        const app_commands = await guild.commands.set(guild_commands_data);
+        // same thing as with global commands up-top
+        const app_commands = await guild.commands.set(guild_commands_data as any[]);
 
         for (const [, app_command] of app_commands) {
             const command = guild_commands.get(app_command.name);
-            if (command) {
-                command.app_command = app_command;
-                if (typeof command.onGuildCreate === "function") {
-                    await command.onGuildCreate(app_command, guild);
-                }
+
+            if (command && typeof command.onGuildCreate === "function") {
+                await command.onGuildCreate(app_command, guild);
             }
         }
     };

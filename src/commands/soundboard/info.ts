@@ -1,8 +1,8 @@
 import * as Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { TopCommand } from "../../modules/commands/TopCommand";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
@@ -26,11 +26,11 @@ async function canShowDelete(sample: CustomSample | StandardSample, userId: stri
     return false;
 }
 
-InteractionRegistry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "info",
     description: "Display information about a sample.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "sample",
             description: "A sample name or sample identifier (sXXXXXX)",
             required: true,

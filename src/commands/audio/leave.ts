@@ -1,12 +1,12 @@
 import * as Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { TopCommand } from "../../modules/commands/TopCommand";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import AudioManager from "../../core/audio/AudioManager";
 
-InteractionRegistry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "leave",
     description: "Leave the voice channel.",
     func(interaction: Discord.CommandInteraction) {

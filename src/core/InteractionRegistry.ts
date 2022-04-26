@@ -2,9 +2,8 @@ import * as Discord from "discord.js";
 import qs from "query-string";
 
 import { BUTTON_TYPES } from "../const";
-import { SimpleFuncReturn } from "../modules/commands/Command";
-import { TopCommand } from "../modules/commands/TopCommand";
-import { TopCommandGroup } from "../modules/commands/TopCommandGroup";
+import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
+import { SlashCommand } from "../modules/commands/SlashCommand";
 
 export type ButtonFilter = Record<string, string>;
 export type ButtonParsed = qs.ParsedQuery<string> & { t: BUTTON_TYPES };
@@ -12,13 +11,13 @@ export type ButtonParsed = qs.ParsedQuery<string> & { t: BUTTON_TYPES };
 export type ButtonHandler = (interaction: Discord.ButtonInteraction, decoded: ButtonParsed) => (Promise<SimpleFuncReturn> | SimpleFuncReturn);
 
 class InteractionRegistry {
-    public commands: Discord.Collection<string, TopCommand | TopCommandGroup> = new Discord.Collection();
+    public commands: Discord.Collection<string, SlashCommand> = new Discord.Collection();
     public buttons: { filter: ButtonFilter; func: ButtonHandler }[] = [];
 
-    public addCommand(command: TopCommand | TopCommandGroup): void {
-        if (this.commands.has(command.name)) throw new Error("Command name already exists");
+    public addCommand(command: SlashCommand): void {
+        if (this.commands.has(command.data.name)) throw new Error("Command name already exists");
 
-        this.commands.set(command.name, command);
+        this.commands.set(command.data.name, command);
     }
 
     public addButton(filter: ButtonFilter, func: ButtonHandler): void {

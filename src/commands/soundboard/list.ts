@@ -1,9 +1,10 @@
 import * as Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { SimpleFuncReturn } from "../../modules/commands/Command";
-import { TopCommand } from "../../modules/commands/TopCommand";
-import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { createStringOption } from "../../modules/commands/options/string";
+import { createChoice } from "../../modules/commands/choice";
+import { SimpleFuncReturn } from "../../modules/commands/AbstractSharedCommand";
 import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
@@ -138,11 +139,11 @@ async function scopeUser(interaction: Discord.CommandInteraction): Promise<Simpl
     );
 }
 
-InteractionRegistry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "list",
     description: "Generate a list of all accessable samples with clickable buttons to trigger them.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "from",
             description: "What soundboards to output.",
             choices: [

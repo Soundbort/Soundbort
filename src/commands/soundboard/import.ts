@@ -3,8 +3,9 @@ import * as Discord from "discord.js";
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { CommandStringOption, createChoice } from "../../modules/commands/CommandOption";
-import { TopCommand } from "../../modules/commands/TopCommand";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { createStringOption } from "../../modules/commands/options/string";
+import { createChoice } from "../../modules/commands/choice";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
@@ -61,16 +62,16 @@ async function importServer(interaction: Discord.ButtonInteraction | Discord.Com
     return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
 }
 
-InteractionRegistry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "import",
     description: "Import a sample from another user or server to your or your server's soundboard.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "sample_id",
             description: "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.",
             required: true,
         }),
-        new CommandStringOption({
+        createStringOption({
             name: "to",
             description: "Choose the soundboard to import the sound to. Defaults to your personal soundboard.",
             choices: [

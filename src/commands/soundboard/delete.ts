@@ -3,8 +3,8 @@ import * as Discord from "discord.js";
 import { BUTTON_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { TopCommand } from "../../modules/commands/TopCommand";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 import { DialogOptionsButton, createDialog } from "../../util/builders/dialog";
 
@@ -55,11 +55,11 @@ async function dialogSameName(interaction: Discord.CommandInteraction, userSampl
     });
 }
 
-InteractionRegistry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "delete",
     description: "Remove a sample from one of your soundboards.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "sample",
             description: "A sample name or sample identifier (sXXXXXX)",
             required: true,

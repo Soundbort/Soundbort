@@ -1,16 +1,16 @@
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
+import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
-import { Command } from "../../modules/commands/Command";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import { UploadErrors } from "../../core/soundboard/methods/upload";
 
-export default new Command({
+export default new SlashSubCommand({
     name: "import",
     description: "Import a sample from another user or server to your or your server's soundboard.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "sample_id",
             description: "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.",
             required: true,

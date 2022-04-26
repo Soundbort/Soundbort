@@ -5,8 +5,8 @@ import Logger from "../../log";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
-import { TopCommand } from "../../modules/commands/TopCommand";
-import { CommandStringOption } from "../../modules/commands/CommandOption";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { createStringOption } from "../../modules/commands/options/string";
 
 import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
 import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager";
@@ -65,11 +65,11 @@ InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_STANDA }, async (interactio
     return await play(interaction, sample);
 });
 
-InteractionRegistry.addCommand(new TopCommand({
+InteractionRegistry.addCommand(new SlashCommand({
     name: "play",
     description: "Joins the voice channel if needed and plays the sound sample.",
     options: [
-        new CommandStringOption({
+        createStringOption({
             name: "sample",
             description: "A sample name or sample identifier (sXXXXXX)",
             required: true,

@@ -6,7 +6,7 @@ import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";
 
 import InteractionRegistry from "../core/InteractionRegistry";
 import { CustomSample } from "../core/soundboard/CustomSample";
-import { TopCommand } from "../modules/commands/TopCommand";
+import { SlashCommand } from "../modules/commands/SlashCommand";
 import { CmdInstallerArgs } from "../util/types";
 import { createEmbed, replyEmbed } from "../util/builders/embed";
 
@@ -24,7 +24,7 @@ const formatEllipsis = (base: string, insert: string, length: number) => {
 };
 
 if (TOP_GG_WEBHOOK_TOKEN) {
-    InteractionRegistry.addCommand(new TopCommand({
+    InteractionRegistry.addCommand(new SlashCommand({
         name: "vote",
         description: `Upvote ${BOT_NAME} on top.gg to get more sample slots for your or someone else's soundboard.`,
         target: {
