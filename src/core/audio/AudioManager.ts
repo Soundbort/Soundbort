@@ -97,10 +97,13 @@ class AudioManager extends TypedEmitter<AudioManagerEvents> {
             log.warn(error);
             /*
             At this point, the voice connection has not entered the Ready state. We should make
-            sure to destroy it, and propagate the error by throwing it, so that the calling function
-            is aware that we failed to connect to the channel.
+            sure to destroy it.
             */
-            subscription.voice_connection.destroy();
+            try {
+                subscription.voice_connection.destroy();
+            } catch (error) {
+                log.error("Error destroying Voice Connection", error);
+            }
             return JoinFailureTypes.FailedTryAgain;
         }
     }
