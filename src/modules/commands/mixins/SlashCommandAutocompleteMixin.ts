@@ -28,6 +28,10 @@ export abstract class SlashCommandAutocompleteMixin {
             } else {
                 choices = await option.autocomplete(focused.value as string, interaction);
             }
+
+            // Do not return more than the top 25 choices
+            // "data.choices: Must be 25 or fewer in length"
+            choices = choices.slice(0, 25);
         } catch (error) {
             const exec_time = nanoTimer.diff(timer) / nanoTimer.NS_PER_MS;
             log.debug("%s='%s' for '%s' by %s in %s (%s) finished in %sms", focused.name, focused.value, this.data.name, interaction.user.id, interaction.channelId, interaction.channel?.type, exec_time.toFixed(3));
