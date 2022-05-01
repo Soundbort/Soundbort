@@ -2,6 +2,7 @@ import * as Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 import { createChoice } from "../../modules/commands/choice";
 import { SimpleFuncReturn } from "../../modules/commands/AbstractSharedCommand";
@@ -154,6 +155,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             ],
         }),
     ],
+    permissions: SlashCommandPermissions.GUILD_EVERYONE,
     func(interaction) {
         const scope = interaction.options.getString("from") as ("all" | SAMPLE_TYPES.STANDARD | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.USER | null) || "all";
 

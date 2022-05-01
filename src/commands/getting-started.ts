@@ -3,6 +3,7 @@ import { BOT_NAME, VERSION } from "../config";
 import { CmdInstallerArgs } from "../util/types";
 import { createEmbed } from "../util/builders/embed";
 import { SlashCommand } from "../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
 import InteractionRegistry from "../core/InteractionRegistry";
 
 export function install({ client }: CmdInstallerArgs): void {
@@ -38,10 +39,7 @@ export function install({ client }: CmdInstallerArgs): void {
     InteractionRegistry.addCommand(new SlashCommand({
         name: "getting-started",
         description: `A getting-started guide that will help you find your way around ${BOT_NAME}.`,
-        target: {
-            global: true,
-            guildHidden: false,
-        },
+        permissions: SlashCommandPermissions.GLOBAL,
         func() {
             return { embeds: [embed] };
         },

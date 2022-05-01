@@ -1,10 +1,9 @@
-import { OWNER_GUILD_IDS, OWNER_IDS } from "../../config";
 import { isOwner } from "../../util/util";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { createUserPermission } from "../../modules/commands/permission";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 
 // import commands. We can do this, because they don't register any commands by themselves,
 // so if they're already imported by the Core it doesn't matter
@@ -24,21 +23,11 @@ InteractionRegistry.addCommand(new SlashCommand({
         import_cmd,
         reboot_cmd,
     ],
-    target: {
-        global: false,
-        guildHidden: true,
-        // this way, owner commands are only available in specific guilds
-        // (since they are greyed out instead of hidden if users dont have the permissions to use them)
-        guild_ids: OWNER_GUILD_IDS,
-    },
+    permissions: SlashCommandPermissions.OWNER,
     async middleware(interaction) {
         if (isOwner(interaction.user.id)) return true;
 
         await interaction.reply(replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error));
         return false;
-    },
-    async onGuildCreate(app_command) {
-        const permissions = OWNER_IDS.map(id => createUserPermission(id, true));
-        await app_command.permissions.set({ permissions });
     },
 }));

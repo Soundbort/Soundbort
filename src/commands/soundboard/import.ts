@@ -4,6 +4,7 @@ import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 import { createChoice } from "../../modules/commands/choice";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
@@ -80,6 +81,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             ],
         }),
     ],
+    permissions: SlashCommandPermissions.GUILD_EVERYONE,
     async func(interaction) {
         const id = interaction.options.getString("sample_id", true).trim();
         const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;

@@ -7,6 +7,7 @@ import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";
 import InteractionRegistry from "../core/InteractionRegistry";
 import { CustomSample } from "../core/soundboard/CustomSample";
 import { SlashCommand } from "../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
 import { CmdInstallerArgs } from "../util/types";
 import { createEmbed, replyEmbed } from "../util/builders/embed";
 
@@ -27,10 +28,7 @@ if (TOP_GG_WEBHOOK_TOKEN) {
     InteractionRegistry.addCommand(new SlashCommand({
         name: "vote",
         description: `Upvote ${BOT_NAME} on top.gg to get more sample slots for your or someone else's soundboard.`,
-        target: {
-            global: true,
-            guildHidden: false,
-        },
+        permissions: SlashCommandPermissions.GLOBAL,
         async func(interaction) {
             const interactionId = interaction.id;
             const client = interaction.client as Discord.Client<true>;

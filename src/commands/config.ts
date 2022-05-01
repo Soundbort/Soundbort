@@ -4,6 +4,7 @@ import InteractionRegistry from "../core/InteractionRegistry";
 import { EmbedType, replyEmbed } from "../util/builders/embed";
 import { SlashCommand } from "../modules/commands/SlashCommand";
 import { SlashSubCommand } from "../modules/commands/SlashSubCommand";
+import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
 import { createRoleOption } from "../modules/commands/options/role";
 
 import GuildConfigManager from "../core/data-managers/GuildConfigManager";
@@ -55,12 +56,9 @@ InteractionRegistry.addCommand(new SlashCommand({
         set_admin_role_cmd,
         show_admin_role_cmd,
     ],
-    target: {
-        global: false,
-        guildHidden: false,
-    },
+    permissions: SlashCommandPermissions.GUILD_ADMIN,
     // called every time the bot starts
-    async onGuildCreate(app_command, guild) {
+    async onGuildCreate(guild) {
         // generate config
         await GuildConfigManager.findOrGenConfig(guild);
     },

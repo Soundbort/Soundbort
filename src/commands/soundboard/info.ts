@@ -2,6 +2,7 @@ import * as Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
@@ -39,6 +40,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             },
         }),
     ],
+    permissions: SlashCommandPermissions.GUILD_EVERYONE,
     async func(interaction) {
         const name = interaction.options.getString("sample", true).trim();
 

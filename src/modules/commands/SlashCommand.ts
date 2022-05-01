@@ -4,23 +4,14 @@ import * as Discord from "discord.js";
 import { SharedCommandOptions, MiddlewareFunc, SimpleFunc } from "./AbstractSharedCommand";
 import { SlashCommandAutocompleteMixin } from "./mixins/SlashCommandAutocompleteMixin";
 import { CommandOptionData } from "./options";
+import { SlashCommandPermissions } from "./permission/SlashCommandPermissions";
 import { SlashSubCommand } from "./SlashSubCommand";
 import { SlashSubCommandGroup } from "./SlashSubCommandGroup";
 
-export interface CommandTarget {
-    global: boolean;
-    guildHidden: boolean;
-    guild_ids?: Discord.Snowflake[];
-}
-
-export type GuildCreateEventHandler = (
-    app_command: Discord.ApplicationCommand,
-    // setPermissions: (permissions: APIApplicationCommandPermission[]) => Promise<RESTPutAPIGuildApplicationCommandsPermissionsJSONBody>,
-    guild: Discord.Guild,
-) => Discord.Awaitable<void>;
+export type GuildCreateEventHandler = (guild: Discord.Guild) => Discord.Awaitable<void>;
 
 export interface SlashBaseCommandOptions extends SharedCommandOptions {
-    target?: CommandTarget;
+    permissions: SlashCommandPermissions;
     onGuildCreate?: GuildCreateEventHandler;
 }
 
@@ -36,13 +27,19 @@ export interface SlashSingleCommandOptions extends SlashBaseCommandOptions {
 
 export type SlashCommandOptions = SlashGroupCommandOptions | SlashSingleCommandOptions;
 
+// patch for permissions v2
+export type RESTPostAPIChatInputApplicationCommand = Omit<RESTPostAPIChatInputApplicationCommandsJSONBody, "default_permission"> & {
+    default_member_permissions?: string;
+    dm_permission?: boolean;
+};
+
 export class SlashCommand extends SlashCommandAutocompleteMixin {
-    readonly data: Readonly<RESTPostAPIChatInputApplicationCommandsJSONBody>;
+    readonly data: Readonly<RESTPostAPIChatInputApplicationCommand>;
 
     readonly func?: SimpleFunc;
     readonly middleware?: MiddlewareFunc;
     readonly onGuildCreate?: GuildCreateEventHandler;
-    readonly target: CommandTarget;
+    readonly permissions: SlashCommandPermissions;
     readonly options: Map<string, CommandOptionData> = new Map();
     readonly commands: Map<string, SlashSubCommand | SlashSubCommandGroup> = new Map();
 
@@ -55,7 +52,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
     constructor(options: SlashCommandOptions) {
         super();
 
-        this.target = options.target ?? { global: false, guildHidden: false };
+        this.permissions = options.permissions;
 
         this.onGuildCreate = options.onGuildCreate;
 
@@ -66,7 +63,9 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
             name_localizations: options.name_localizations,
             description: options.description,
             description_localizations: options.description_localizations,
-            default_permission: !(this.target.guildHidden),
+
+            default_member_permissions: options.permissions.data.default_member_permissions,
+            dm_permission: options.permissions.data.dm_permission,
 
             options: "commands" in options
                 ? options.commands.map(command => command.data)

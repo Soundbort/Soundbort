@@ -2,6 +2,7 @@ import { SAMPLE_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createChoice } from "../../modules/commands/choice";
 import { createStringOption } from "../../modules/commands/options/string";
 import { replyEmbedEphemeral } from "../../util/builders/embed";
@@ -26,6 +27,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             ],
         }),
     ],
+    permissions: SlashCommandPermissions.GUILD_EVERYONE,
     async func(interaction) {
         if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral(UploadErrors.NotInGuild);

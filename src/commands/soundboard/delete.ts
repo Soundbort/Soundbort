@@ -4,6 +4,7 @@ import { BUTTON_TYPES } from "../../const";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 import { DialogOptionsButton, createDialog } from "../../util/builders/dialog";
@@ -68,6 +69,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             },
         }),
     ],
+    permissions: SlashCommandPermissions.GUILD_EVERYONE,
     async func(interaction) {
         const name = interaction.options.getString("sample", true).trim();
 

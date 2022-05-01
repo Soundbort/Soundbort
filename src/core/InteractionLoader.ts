@@ -52,17 +52,15 @@ export async function installCommands(client: Discord.Client<true>): Promise<voi
 async function deployToGuild(guild_commands: Discord.Collection<string, SlashCommand>, guild: Discord.Guild) {
     const guild_commands_data = guild_commands
         // filter out owner commands in guilds that don't need them
-        .filter(command => !command.target.guild_ids || command.target.guild_ids.includes(guild.id))
+        .filter(command => command.permissions.testGuild(guild.id))
         .map(command => command.data);
 
     // same thing as with global commands up-top
-    const app_commands = await guild.commands.set(guild_commands_data as any[]);
+    await guild.commands.set(guild_commands_data as any[]);
 
-    for (const [, app_command] of app_commands) {
-        const command = guild_commands.get(app_command.name);
-
-        if (command && typeof command.onGuildCreate === "function") {
-            await command.onGuildCreate(app_command, guild);
+    for (const [, command] of guild_commands) {
+        if (typeof command.onGuildCreate === "function") {
+            await command.onGuildCreate(guild);
         }
     }
 }
@@ -73,7 +71,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
     if (client.application.partial) await client.application.fetch();
 
     // DEPLOY GLOBAL
-    const global_commands = InteractionRegistry.commands.filter(command => command.target.global);
+    const global_commands = InteractionRegistry.commands.filter(command => command.permissions.is_global);
     const global_commands_data = global_commands.map(command => command.data);
 
     // global_commands_data is actually RESTPostAPIApplicationCommandsJSONBody[]!! but
@@ -83,7 +81,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
     await client.application.commands.set(global_commands_data as any[]);
 
     // DEPLOY GUILDS
-    const guild_commands = InteractionRegistry.commands.filter(command => !command.target.global);
+    const guild_commands = InteractionRegistry.commands.filter(command => !command.permissions.is_global);
 
     client.on("guildCreate", async guild => {
         // eslint-disable-next-line no-constant-condition

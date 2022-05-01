@@ -6,6 +6,7 @@ import Logger from "../../log";
 import InteractionRegistry from "../../core/InteractionRegistry";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 
 import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
@@ -78,6 +79,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             },
         }),
     ],
+    permissions: SlashCommandPermissions.GUILD_EVERYONE,
     async func(interaction) {
         if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error);

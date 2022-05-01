@@ -10,6 +10,7 @@ import StatsCollectorManager from "../core/data-managers/StatsCollectorManager";
 
 import InteractionRegistry from "../core/InteractionRegistry";
 import { SlashCommand } from "../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
 import { EmbedType, createEmbed, replyEmbedEphemeral } from "../util/builders/embed";
 import { createStringOption } from "../modules/commands/options/string";
 import { createChoice } from "../modules/commands/choice";
@@ -39,10 +40,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             ],
         }),
     ],
-    target: {
-        global: true,
-        guildHidden: false,
-    },
+    permissions: SlashCommandPermissions.GLOBAL,
     async func(interaction) {
         await interaction.deferReply();
 
