@@ -54,10 +54,14 @@ export default class Core {
     public async setup(): Promise<this> {
         log.info("Client ready. Running preparations...");
 
-        // ///////////////////////
+        // /////////// Install Commands ////////////
 
-        await InteractionLoader.loadCommands(this.client);
-        await InteractionLoader.deployCommands(this.client);
+        await InteractionLoader.installCommands(this.client);
+
+        // /////////// Deploy commands non-blocking ////////////
+
+        InteractionLoader.deployCommands(this.client)
+            .catch(error => log.error("Deploying commands failed.", error));
 
         // ///////////////////
 
