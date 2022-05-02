@@ -40,7 +40,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             },
         }),
     ],
-    permissions: SlashCommandPermissions.GUILD_EVERYONE,
+    permissions: SlashCommandPermissions.EVERYONE,
     async func(interaction) {
         const name = interaction.options.getString("sample", true).trim();
 

@@ -155,7 +155,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             ],
         }),
     ],
-    permissions: SlashCommandPermissions.GUILD_EVERYONE,
+    permissions: SlashCommandPermissions.EVERYONE,
     func(interaction) {
         const scope = interaction.options.getString("from") as ("all" | SAMPLE_TYPES.STANDARD | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.USER | null) || "all";
 

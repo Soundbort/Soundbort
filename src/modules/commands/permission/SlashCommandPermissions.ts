@@ -1,5 +1,4 @@
 import * as Discord from "discord.js";
-import { Permissions } from "discord.js";
 import { ENVIRONMENT, EnvironmentStages, OWNER_GUILD_IDS } from "../../../config";
 
 export type SlashCommandPermissionsOptions = {
@@ -10,14 +9,14 @@ export type SlashCommandPermissionsOptions = {
      *  @default true */
     dm_permission?: boolean;
     /** 0n if no one is allowed to use the command */
-    default_member_permissions?: Permissions;
+    default_member_permissions?: Discord.Permissions;
 } | {
     /** Whether the command should be deployed as a global command */
     is_global: false;
     /** Array is guild ids the command is exclusively available in */
     allowed_guild_ids?: Discord.Snowflake[];
     /** 0n if no one is allowed to use the command */
-    default_member_permissions?: Permissions;
+    default_member_permissions?: Discord.Permissions;
 };
 
 const IS_DEV = ENVIRONMENT === EnvironmentStages.DEVEL;
@@ -25,10 +24,10 @@ const IS_DEV = ENVIRONMENT === EnvironmentStages.DEVEL;
 export class SlashCommandPermissions {
     public readonly is_global: boolean;
     public readonly allowed_guild_ids: Discord.Snowflake[];
-    public readonly data: {
+    public readonly data: Readonly<{
         default_member_permissions?: string;
         dm_permission?: boolean;
-    };
+    }>;
 
     constructor(opts: SlashCommandPermissionsOptions) {
         this.is_global = opts.is_global;
@@ -63,18 +62,18 @@ export class SlashCommandPermissions {
 
     static OWNER = new SlashCommandPermissions({
         is_global: false,
-        default_member_permissions: new Permissions(0n),
+        default_member_permissions: new Discord.Permissions(0n),
         // this way, owner commands are only available in specific guilds
         allowed_guild_ids: OWNER_GUILD_IDS,
     });
 
-    static GUILD_ADMIN = new SlashCommandPermissions({
+    static ADMIN = new SlashCommandPermissions({
         is_global: !IS_DEV,
         dm_permission: false,
-        default_member_permissions: new Permissions(Permissions.FLAGS.ADMINISTRATOR),
+        default_member_permissions: new Discord.Permissions(Discord.Permissions.FLAGS.ADMINISTRATOR),
     });
 
-    static GUILD_EVERYONE = new SlashCommandPermissions({
+    static EVERYONE = new SlashCommandPermissions({
         is_global: !IS_DEV,
         dm_permission: false,
     });

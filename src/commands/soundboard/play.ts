@@ -79,7 +79,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             },
         }),
     ],
-    permissions: SlashCommandPermissions.GUILD_EVERYONE,
+    permissions: SlashCommandPermissions.EVERYONE,
     async func(interaction) {
         if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error);

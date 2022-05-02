@@ -56,7 +56,7 @@ InteractionRegistry.addCommand(new SlashCommand({
         set_admin_role_cmd,
         show_admin_role_cmd,
     ],
-    permissions: SlashCommandPermissions.GUILD_ADMIN,
+    permissions: SlashCommandPermissions.ADMIN,
     // called every time the bot starts
     async onGuildCreate(guild) {
         // generate config

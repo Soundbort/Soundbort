@@ -27,7 +27,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             ],
         }),
     ],
-    permissions: SlashCommandPermissions.GUILD_EVERYONE,
+    permissions: SlashCommandPermissions.EVERYONE,
     async func(interaction) {
         if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral(UploadErrors.NotInGuild);

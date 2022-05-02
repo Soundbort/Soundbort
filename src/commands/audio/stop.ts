@@ -10,7 +10,7 @@ import AudioManager from "../../core/audio/AudioManager";
 InteractionRegistry.addCommand(new SlashCommand({
     name: "stop",
     description: "Stops all currently playing audio.",
-    permissions: SlashCommandPermissions.GUILD_EVERYONE,
+    permissions: SlashCommandPermissions.EVERYONE,
     func(interaction: Discord.CommandInteraction) {
         if (!interaction.inGuild()) {
             return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);

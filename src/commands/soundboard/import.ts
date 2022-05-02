@@ -81,7 +81,7 @@ InteractionRegistry.addCommand(new SlashCommand({
             ],
         }),
     ],
-    permissions: SlashCommandPermissions.GUILD_EVERYONE,
+    permissions: SlashCommandPermissions.EVERYONE,
     async func(interaction) {
         const id = interaction.options.getString("sample_id", true).trim();
         const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;

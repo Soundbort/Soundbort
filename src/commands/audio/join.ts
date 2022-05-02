@@ -10,7 +10,7 @@ import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
 InteractionRegistry.addCommand(new SlashCommand({
     name: "join",
     description: "Join the voice channel you are in.",
-    permissions: SlashCommandPermissions.GUILD_EVERYONE,
+    permissions: SlashCommandPermissions.EVERYONE,
     async func(interaction: Discord.CommandInteraction) {
         if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);
