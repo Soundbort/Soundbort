@@ -5,7 +5,7 @@ import "winston-daily-rotate-file";
 
 import { ENVIRONMENT, EnvironmentStages, LOGS_DIR } from "./config";
 
-export const levels = {
+const levels = {
     error: 0,
     warn: 1,
     info: 2,
@@ -19,7 +19,7 @@ interface ChalkColorLookup {
     [level: string]: ChalkKeywords[] | undefined;
 }
 
-export const colors: ChalkColorLookup = {
+const colors: ChalkColorLookup = {
     error: ["bold", "bgRed", "white"],
     warn: ["yellow"],
     info: ["green"],
@@ -99,7 +99,7 @@ function colorize(lookup: string, message?: string): string | undefined {
     return state ? state(message) : message;
 }
 
-export function printf(info: any): string {
+function printf(info: any): string {
     let str = `${info.timestamp} > `;
 
     if (typeof info.shard !== "undefined") {
