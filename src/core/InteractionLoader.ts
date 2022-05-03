@@ -52,7 +52,7 @@ export async function installCommands(client: Discord.Client<true>): Promise<voi
 async function deployToGuild(guild_commands: Discord.Collection<string, SlashCommand>, guild: Discord.Guild) {
     const guild_commands_data = guild_commands
         // filter out owner commands in guilds that don't need them
-        .filter(command => command.permissions.testGuild(guild.id))
+        .filter(command => command.exclusive_guild_ids.includes(guild.id))
         .map(command => command.data);
 
     // same thing as with global commands up-top
@@ -71,7 +71,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
     if (client.application.partial) await client.application.fetch();
 
     // DEPLOY GLOBAL
-    const global_commands = InteractionRegistry.commands.filter(command => command.permissions.is_global);
+    const global_commands = InteractionRegistry.commands.filter(command => command.exclusive_guild_ids.length === 0);
     const global_commands_data = global_commands.map(command => command.data);
 
     // global_commands_data is actually RESTPostAPIApplicationCommandsJSONBody[]!! but
@@ -80,8 +80,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
     // therefore need to cast it as any
     await client.application.commands.set(global_commands_data as any[]);
 
-    // DEPLOY GUILDS
-    const guild_commands = InteractionRegistry.commands.filter(command => !command.permissions.is_global);
+    const guild_commands = InteractionRegistry.commands.filter(command => command.exclusive_guild_ids.length > 0);
 
     client.on("guildCreate", async guild => {
         // eslint-disable-next-line no-constant-condition

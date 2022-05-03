@@ -1,3 +1,5 @@
+import { OWNER_GUILD_IDS } from "../../config";
+
 import { isOwner } from "../../util/util";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
@@ -23,7 +25,9 @@ InteractionRegistry.addCommand(new SlashCommand({
         import_cmd,
         reboot_cmd,
     ],
-    permissions: SlashCommandPermissions.OWNER,
+    permissions: SlashCommandPermissions.HIDDEN,
+    // this way, owner commands are only available in specific guilds
+    exclusive_guild_ids: OWNER_GUILD_IDS,
     async middleware(interaction) {
         if (isOwner(interaction.user.id)) return true;
 

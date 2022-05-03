@@ -12,6 +12,12 @@ export type GuildCreateEventHandler = (guild: Discord.Guild) => Discord.Awaitabl
 
 export interface SlashBaseCommandOptions extends SharedCommandOptions {
     permissions: SlashCommandPermissions;
+    /**
+     * An array of guild ids the command is exclusively available in.
+     * By default every command is global unless it is exclusive to
+     * specific guilds.
+     */
+    exclusive_guild_ids?: Discord.Snowflake[];
     onGuildCreate?: GuildCreateEventHandler;
 }
 
@@ -36,12 +42,14 @@ export type RESTPostAPIChatInputApplicationCommand = Omit<RESTPostAPIChatInputAp
 export class SlashCommand extends SlashCommandAutocompleteMixin {
     readonly data: Readonly<RESTPostAPIChatInputApplicationCommand>;
 
-    readonly func?: SimpleFunc;
-    readonly middleware?: MiddlewareFunc;
-    readonly onGuildCreate?: GuildCreateEventHandler;
+    readonly exclusive_guild_ids: Discord.Snowflake[];
     readonly permissions: SlashCommandPermissions;
     readonly options: Map<string, CommandOptionData> = new Map();
     readonly commands: Map<string, SlashSubCommand | SlashSubCommandGroup> = new Map();
+
+    readonly func?: SimpleFunc;
+    readonly middleware?: MiddlewareFunc;
+    readonly onGuildCreate?: GuildCreateEventHandler;
 
     get is_group_command() {
         // If at least one subcommand exists, this is a group
@@ -53,6 +61,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         super();
 
         this.permissions = options.permissions;
+        this.exclusive_guild_ids = options.exclusive_guild_ids ?? [];
 
         this.onGuildCreate = options.onGuildCreate;
 
@@ -64,8 +73,8 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
             description: options.description,
             description_localizations: options.description_localizations,
 
-            default_member_permissions: options.permissions.data.default_member_permissions,
-            dm_permission: options.permissions.data.dm_permission,
+            default_member_permissions: options.permissions.default_member_permissions,
+            dm_permission: options.permissions.dm_permission,
 
             options: "commands" in options
                 ? options.commands.map(command => command.data)
@@ -108,7 +117,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         await this._autocomplete(interaction);
     }
 
-    private async runGroupCommand(interaction: Discord.CommandInteraction) {
+    private async _runGroupCommand(interaction: Discord.CommandInteraction) {
         if (this.middleware && !await this.middleware(interaction)) return;
 
         const command = this._getSubcommand(interaction);
@@ -116,7 +125,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
 
         await command.run(interaction);
     }
-    private async runSingleCommand(interaction: Discord.CommandInteraction) {
+    private async _runSingleCommand(interaction: Discord.CommandInteraction) {
         const result = await this.func?.(interaction); // Optional chaining (?.), the function will only be called if this.func property is not nullish
         if (!result || interaction.replied) return;
 
@@ -125,9 +134,9 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
 
     async run(interaction: Discord.CommandInteraction): Promise<void> {
         if (this.is_group_command) {
-            await this.runGroupCommand(interaction);
+            await this._runGroupCommand(interaction);
         } else {
-            await this.runSingleCommand(interaction);
+            await this._runSingleCommand(interaction);
         }
     }
 }
