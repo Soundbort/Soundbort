@@ -15,8 +15,6 @@ RUN apt update \
         libgif-dev \
         librsvg2-dev \
         curl \
-        less \
-        gzip \
         ffmpeg
 
 WORKDIR /app
@@ -35,9 +33,6 @@ EXPOSE 8080
 
 VOLUME /app/data
 VOLUME /app/logs
-
-RUN chmod +x /app/bin/*
-ENV PATH="/app/bin:${PATH}"
 
 ENV NODE_ENV=production
 CMD [ "node", "--enable-source-maps", "dist/index.js" ]
