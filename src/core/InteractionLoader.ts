@@ -6,6 +6,7 @@ import { timeout } from "../util/promises";
 import Logger from "../log";
 import { walk } from "../util/files";
 import { CmdInstallerArgs, CmdInstallerFile } from "../util/types";
+import DiscordPermissions2VUtils from "../util/discord-patch/DiscordPermissionsV2Utils";
 
 import InteractionRegistry from "./InteractionRegistry";
 import { SlashCommand } from "../modules/commands/SlashCommand";
@@ -49,14 +50,13 @@ export async function installCommands(client: Discord.Client<true>): Promise<voi
 
 // DEPLOYING
 
-async function deployToGuild(guild_commands: Discord.Collection<string, SlashCommand>, guild: Discord.Guild) {
+async function deployToGuild(perms_utils: DiscordPermissions2VUtils, guild: Discord.Guild, guild_commands: Discord.Collection<string, SlashCommand>) {
     const guild_commands_data = guild_commands
         // filter out owner commands in guilds that don't need them
         .filter(command => command.exclusive_guild_ids.includes(guild.id))
         .map(command => command.data);
 
-    // same thing as with global commands up-top
-    await guild.commands.set(guild_commands_data as any[]);
+    await perms_utils.setApplicationGuildCommands(guild.id, guild_commands_data);
 
     for (const [, command] of guild_commands) {
         if (typeof command.onGuildCreate === "function") {
@@ -66,19 +66,18 @@ async function deployToGuild(guild_commands: Discord.Collection<string, SlashCom
 }
 
 export async function deployCommands(client: Discord.Client<true>): Promise<void> {
+    const perms_utils = DiscordPermissions2VUtils.client(client);
+
     log.info("Deploying Commands...");
 
-    if (client.application.partial) await client.application.fetch();
+    // ///////// DEPLOY COMMANDS /////////
 
-    // DEPLOY GLOBAL
     const global_commands = InteractionRegistry.commands.filter(command => command.exclusive_guild_ids.length === 0);
     const global_commands_data = global_commands.map(command => command.data);
 
-    // global_commands_data is actually RESTPostAPIApplicationCommandsJSONBody[]!! but
-    // discord.js types will hint an error, because it depends on an older version of
-    // discord-api-types
-    // therefore need to cast it as any
-    await client.application.commands.set(global_commands_data as any[]);
+    await perms_utils.setApplicationCommands(global_commands_data);
+
+    // ///////// DEPLOY EXCLUSIVE GUILD COMMANDS /////////
 
     const guild_commands = InteractionRegistry.commands.filter(command => command.exclusive_guild_ids.length > 0);
 
@@ -86,7 +85,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
         // eslint-disable-next-line no-constant-condition
         while (true) {
             try {
-                await deployToGuild(guild_commands, guild);
+                await deployToGuild(perms_utils, guild, guild_commands);
                 break;
             } catch (error) {
                 log.error("Deploying to guild %s failed. Retrying later", guild.id, error);
@@ -102,7 +101,7 @@ export async function deployCommands(client: Discord.Client<true>): Promise<void
     while (undeployed_guilds.size > 0) {
         for (const [, guild] of client.guilds.cache) {
             try {
-                await deployToGuild(guild_commands, guild);
+                await deployToGuild(perms_utils, guild, guild_commands);
                 undeployed_guilds.delete(guild.id);
             } catch (error) {
                 log.error("Deploying to guild %s failed. Retrying later", guild.id, error);
