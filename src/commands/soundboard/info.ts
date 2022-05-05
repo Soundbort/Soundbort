@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
+import { CmdInstallerArgs } from "../../util/types";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
@@ -27,30 +27,32 @@ async function canShowDelete(sample: CustomSample | StandardSample, userId: stri
     return false;
 }
 
-InteractionRegistry.addCommand(new SlashCommand({
-    name: "info",
-    description: "Display information about a sample.",
-    options: [
-        createStringOption({
-            name: "sample",
-            description: "A sample name or sample identifier (sXXXXXX)",
-            required: true,
-            async autocomplete(value, interaction) {
-                return await search(value, interaction.user.id, interaction.guild);
-            },
-        }),
-    ],
-    permissions: SlashCommandPermissions.EVERYONE,
-    async func(interaction) {
-        const name = interaction.options.getString("sample", true).trim();
+export function install({ registry }: CmdInstallerArgs): void {
+    registry.addCommand(new SlashCommand({
+        name: "info",
+        description: "Display information about a sample.",
+        options: [
+            createStringOption({
+                name: "sample",
+                description: "A sample name or sample identifier (sXXXXXX)",
+                required: true,
+                async autocomplete(value, interaction) {
+                    return await search(value, interaction.user.id, interaction.guild);
+                },
+            }),
+        ],
+        permissions: SlashCommandPermissions.EVERYONE,
+        async func(interaction) {
+            const name = interaction.options.getString("sample", true).trim();
 
-        const sample = await findOne(name, interaction.user.id, interaction.guildId);
-        if (!sample) {
-            return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
-        }
+            const sample = await findOne(name, interaction.user.id, interaction.guildId);
+            if (!sample) {
+                return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
+            }
 
-        const show_delete = await canShowDelete(sample, interaction.user.id, interaction.guild);
+            const show_delete = await canShowDelete(sample, interaction.user.id, interaction.guild);
 
-        return await sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
-    },
-}));
+            return await sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
+        },
+    }));
+}

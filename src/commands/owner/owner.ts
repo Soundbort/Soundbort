@@ -2,7 +2,7 @@ import { OWNER_GUILD_IDS } from "../../config";
 
 import { isOwner } from "../../util/util";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
+import { CmdInstallerArgs } from "../../util/types";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
@@ -15,23 +15,25 @@ import upload_standard_cmd from "./owner_upload";
 import delete_cmd from "./owner_delete";
 import import_cmd from "./owner_import";
 
-InteractionRegistry.addCommand(new SlashCommand({
-    name: "owner",
-    description: "A set of owner commands.",
-    commands: [
-        blacklist_cmd,
-        upload_standard_cmd,
-        delete_cmd,
-        import_cmd,
-        reboot_cmd,
-    ],
-    permissions: SlashCommandPermissions.HIDDEN,
-    // this way, owner commands are only available in specific guilds
-    exclusive_guild_ids: OWNER_GUILD_IDS,
-    async middleware(interaction) {
-        if (isOwner(interaction.user.id)) return true;
+export function install({ registry }: CmdInstallerArgs): void {
+    registry.addCommand(new SlashCommand({
+        name: "owner",
+        description: "A set of owner commands.",
+        commands: [
+            blacklist_cmd,
+            upload_standard_cmd,
+            delete_cmd,
+            import_cmd,
+            reboot_cmd,
+        ],
+        permissions: SlashCommandPermissions.HIDDEN,
+        // this way, owner commands are only available in specific guilds
+        exclusive_guild_ids: OWNER_GUILD_IDS,
+        async middleware(interaction) {
+            if (isOwner(interaction.user.id)) return true;
 
-        await interaction.reply(replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error));
-        return false;
-    },
-}));
+            await interaction.reply(replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error));
+            return false;
+        },
+    }));
+}

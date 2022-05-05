@@ -6,6 +6,7 @@ export interface KeyValue<V> {
 
 export interface CmdInstallerArgs {
     client: Discord.Client<true>;
+    registry: import("../core/InteractionRegistry").default;
 }
 
 export type CmdInstallerFileFunc = (opts: CmdInstallerArgs) => (Promise<void> | void);

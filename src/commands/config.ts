@@ -1,6 +1,6 @@
 import { BOT_NAME } from "../config";
 
-import InteractionRegistry from "../core/InteractionRegistry";
+import { CmdInstallerArgs } from "../util/types";
 import { EmbedType, replyEmbed } from "../util/builders/embed";
 import { SlashCommand } from "../modules/commands/SlashCommand";
 import { SlashSubCommand } from "../modules/commands/SlashSubCommand";
@@ -49,17 +49,19 @@ const show_admin_role_cmd = new SlashSubCommand({
     },
 });
 
-InteractionRegistry.addCommand(new SlashCommand({
-    name: "config",
-    description: `Configure ${BOT_NAME} for your server.`,
-    commands: [
-        set_admin_role_cmd,
-        show_admin_role_cmd,
-    ],
-    permissions: SlashCommandPermissions.ADMIN,
-    // called every time the bot starts
-    async onGuildCreate(guild) {
-        // generate config
-        await GuildConfigManager.findOrGenConfig(guild);
-    },
-}));
+export function install({ registry }: CmdInstallerArgs): void {
+    registry.addCommand(new SlashCommand({
+        name: "config",
+        description: `Configure ${BOT_NAME} for your server.`,
+        commands: [
+            set_admin_role_cmd,
+            show_admin_role_cmd,
+        ],
+        permissions: SlashCommandPermissions.ADMIN,
+        // called every time the bot starts
+        async onGuildCreate(guild) {
+            // generate config
+            await GuildConfigManager.findOrGenConfig(guild);
+        },
+    }));
+}
