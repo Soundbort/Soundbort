@@ -4,6 +4,8 @@ import * as Discord from "discord.js";
 import { SAMPLE_TYPES } from "../const";
 import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";
 
+import { formatEllipsis } from "../util/string";
+
 import { CmdInstallerArgs } from "../util/types";
 import { CustomSample } from "../core/soundboard/CustomSample";
 import { SlashCommand } from "../modules/commands/SlashCommand";
@@ -12,16 +14,6 @@ import { createEmbed, replyEmbed } from "../util/builders/embed";
 
 import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema";
 import InteractionRepliesManager from "../core/data-managers/InteractionRepliesManager";
-
-// label text max 80 characters
-
-const formatEllipsis = (base: string, insert: string, length: number) => {
-    const leftover_length = length - base.length + 1;
-    if (insert.length > leftover_length) {
-        insert = insert.slice(0, Math.max(0, leftover_length - 3)) + "...";
-    }
-    return base.replace("%", insert);
-};
 
 // 66 lines for this? maybe we can reduce the amount of code later and make it more readable as well
 
@@ -117,7 +109,7 @@ export function install({ client, registry }: CmdInstallerArgs): void {
 
             const user = interaction.user;
             const user_vote_link = vote_base_link + "&userId=" + user.id;
-            const user_label = formatEllipsis(`Get slots for %#${user.discriminator}`, user.username, 80);
+            const user_label = formatEllipsis(`Get slots for %#${user.discriminator}`, user.username, 80); // label text max 80 characters
             const buttons: Discord.MessageButton[] = [
                 new Discord.MessageButton()
                     .setLabel(user_label)
@@ -129,7 +121,7 @@ export function install({ client, registry }: CmdInstallerArgs): void {
             if (interaction.guild) {
                 const guild = interaction.guild;
                 const guild_vote_link = vote_base_link + "&guildId=" + guild.id;
-                const guild_label = formatEllipsis("Get slots for Server '%'", guild.name, 80);
+                const guild_label = formatEllipsis("Get slots for Server '%'", guild.name, 80); // label text max 80 characters
                 buttons.push(
                     new Discord.MessageButton()
                         .setLabel(guild_label)
