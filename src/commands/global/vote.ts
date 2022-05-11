@@ -1,19 +1,19 @@
 import { userMention } from "@discordjs/builders";
 import * as Discord from "discord.js";
 
-import { SAMPLE_TYPES } from "../const";
-import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../config";
+import { SAMPLE_TYPES } from "../../const";
+import { BOT_NAME, TOP_GG_WEBHOOK_TOKEN } from "../../config";
 
-import { formatEllipsis } from "../util/string";
+import { formatEllipsis } from "../../util/string";
 
-import { CmdInstallerArgs } from "../util/types";
-import { CustomSample } from "../core/soundboard/CustomSample";
-import { SlashCommand } from "../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
-import { createEmbed, replyEmbed } from "../util/builders/embed";
+import { CmdInstallerArgs } from "../../util/types";
+import { CustomSample } from "../../core/soundboard/CustomSample";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
+import { createEmbed, replyEmbed } from "../../util/builders/embed";
 
-import { SingleSoundboardSlot } from "../modules/database/schemas/SoundboardSlotsSchema";
-import InteractionRepliesManager from "../core/data-managers/InteractionRepliesManager";
+import { SingleSoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema";
+import InteractionRepliesManager from "../../core/data-managers/InteractionRepliesManager";
 
 // 66 lines for this? maybe we can reduce the amount of code later and make it more readable as well
 

@@ -3,20 +3,20 @@ import color from "color";
 import os from "node:os";
 import { time } from "@discordjs/builders";
 
-import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../const";
-import { BOT_NAME, VERSION } from "../config";
+import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../../const";
+import { BOT_NAME, VERSION } from "../../config";
 
-import StatsCollectorManager from "../core/data-managers/StatsCollectorManager";
+import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager";
 
-import { CmdInstallerArgs } from "../util/types";
-import { SlashCommand } from "../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
-import { EmbedType, createEmbed, replyEmbedEphemeral } from "../util/builders/embed";
-import { createStringOption } from "../modules/commands/options/string";
-import { createChoice } from "../modules/commands/choice";
+import { CmdInstallerArgs } from "../../util/types";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
+import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
+import { createStringOption } from "../../modules/commands/options/string";
+import { createChoice } from "../../modules/commands/choice";
 
-import { ChartOptionsData } from "../modules/canvas/line-graph";
-import canvas from "../modules/canvas/index";
+import { ChartOptionsData } from "../../modules/canvas/line-graph";
+import canvas from "../../modules/canvas/index";
 
 enum TimeWindowChoices {
     Day = "24 hours",

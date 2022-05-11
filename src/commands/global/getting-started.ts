@@ -1,9 +1,9 @@
-import { BOT_NAME, VERSION } from "../config";
+import { BOT_NAME, VERSION } from "../../config";
 
-import { CmdInstallerArgs } from "../util/types";
-import { createEmbed } from "../util/builders/embed";
-import { SlashCommand } from "../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
+import { CmdInstallerArgs } from "../../util/types";
+import { createEmbed } from "../../util/builders/embed";
+import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 
 export function install({ client, registry }: CmdInstallerArgs): void {
     const invite_link = `https://discord.com/api/oauth2/authorize?client_id=${client.user.id}&permissions=2150943744&scope=bot%20applications.commands&redirect_uri=https%3A%2F%2Fsoundbort-guide.loneless.art%2F`;
