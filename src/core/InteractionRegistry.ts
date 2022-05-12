@@ -4,7 +4,7 @@ import qs from "query-string";
 import Logger from "../log";
 import { BUTTON_TYPES } from "../const";
 
-import DiscordPermissions2VUtils from "../util/discord-patch/DiscordPermissionsV2Utils";
+import DiscordPermissionsV2Utils from "../util/discord-patch/DiscordPermissionsV2Utils";
 import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
 import { SlashCommand } from "../modules/commands/SlashCommand";
 
@@ -25,7 +25,7 @@ export default class InteractionRegistry {
         this.commands.set(command.data.name, command);
     }
 
-    private async deployToGuild(perms_utils: DiscordPermissions2VUtils, guild: Discord.Guild, guild_commands: Discord.Collection<string, SlashCommand>) {
+    private async deployToGuild(perms_utils: DiscordPermissionsV2Utils, guild: Discord.Guild, guild_commands: Discord.Collection<string, SlashCommand>) {
         const guild_commands_data = guild_commands
             // filter out owner commands in guilds that don't need them
             .filter(command => command.exclusive_guild_ids.includes(guild.id))
@@ -41,7 +41,7 @@ export default class InteractionRegistry {
     }
 
     public async deployCommands(client: Discord.Client<true>): Promise<void> {
-        const perms_utils = DiscordPermissions2VUtils.client(client);
+        const perms_utils = DiscordPermissionsV2Utils.client(client);
 
         log.info("Deploying Commands...");
 
