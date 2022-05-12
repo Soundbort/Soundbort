@@ -228,7 +228,9 @@ export function install({ registry }: CmdInstallerArgs): void {
         const id = decoded.id as string;
 
         const sample = await CustomSample.findById(id);
-        if (!sample) return;
+        if (!sample) {
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
+        }
 
         const userId = interaction.user.id;
         if (!sample.isInUsers(userId)) {
@@ -255,7 +257,9 @@ export function install({ registry }: CmdInstallerArgs): void {
         }
 
         const sample = await CustomSample.findById(id);
-        if (!sample) return;
+        if (!sample) {
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
+        }
 
         if (!sample.isInGuilds(guildId)) {
             return replyEmbedEphemeral("You don't have this sample in your server soundboard.", EmbedType.Info);

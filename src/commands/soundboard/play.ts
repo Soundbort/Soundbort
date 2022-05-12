@@ -51,7 +51,9 @@ export function install({ registry }: CmdInstallerArgs): void {
         const id = decoded.id as string;
 
         const sample = await CustomSample.findById(id);
-        if (!sample) return;
+        if (!sample) {
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
+        }
 
         return await play(interaction, sample);
     });
@@ -62,7 +64,9 @@ export function install({ registry }: CmdInstallerArgs): void {
         const name = decoded.n as string;
 
         const sample = await StandardSample.findByName(name);
-        if (!sample) return;
+        if (!sample) {
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
+        }
 
         return await play(interaction, sample);
     });
