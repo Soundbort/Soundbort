@@ -7,14 +7,15 @@ import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
 import { SAMPLE_TYPES } from "../../../const";
 import Logger from "../../../log";
+import { isOwner } from "../../../util/util";
 import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
+
+import AdminPermissions from "../../permissions/AdminPermissions";
 
 import SampleID from "../SampleID";
 import { CustomSample } from "../CustomSample";
 import { StandardSample } from "../StandardSample";
-import { isOwner } from "../../../util/util";
 import { EmbedType, replyEmbed } from "../../../util/builders/embed";
-import GuildConfigManager from "../../data-managers/GuildConfigManager";
 
 const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<FfprobeData>;
 
@@ -73,7 +74,7 @@ async function generateId(retries: number = 5) {
     }
 }
 
-async function _upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
+async function _upload(admin: AdminPermissions, interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     await interaction.deferReply();
 
     const failed = (desc: string) => interaction.editReply(replyEmbed(desc, EmbedType.Error));
@@ -87,7 +88,7 @@ async function _upload(interaction: Discord.CommandInteraction<"cached">, name: 
     const guildId = interaction.guildId;
     const guild = interaction.guild;
 
-    if (scope === SAMPLE_TYPES.SERVER && !await GuildConfigManager.isModerator(guild, userId)) {
+    if (scope === SAMPLE_TYPES.SERVER && !await admin.isAdmin(guild, userId)) {
         return await failed(UploadErrors.NotModerator);
     }
 
@@ -281,9 +282,9 @@ async function _upload(interaction: Discord.CommandInteraction<"cached">, name: 
     await interaction.editReply(await sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
 }
 
-export async function upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
+export async function upload(admin: AdminPermissions, interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     try {
-        await _upload(interaction, name, scope);
+        await _upload(admin, interaction, name, scope);
     } catch (error) {
         log.debug(error);
         await interaction.editReply(replyEmbed(UploadErrors.General, EmbedType.Error));

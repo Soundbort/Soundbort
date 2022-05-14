@@ -4,7 +4,7 @@ import qs from "query-string";
 import Logger from "../log";
 import { BUTTON_TYPES } from "../const";
 
-import DiscordPermissionsV2Utils from "../util/discord-patch/DiscordPermissionsV2Utils";
+import DiscordPermissionsV2Utils, { PatchedAPIApplicationCommand } from "../util/discord-patch/DiscordPermissionsV2Utils";
 import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
 import { SlashCommand } from "../modules/commands/SlashCommand";
 
@@ -19,6 +19,9 @@ export default class InteractionRegistry {
     public commands = new Discord.Collection<string, SlashCommand>();
     public buttons: { filter: ButtonFilter; func: ButtonHandler }[] = [];
 
+    public global_api_commands = new Map<string, PatchedAPIApplicationCommand>();
+    public guild_api_commands = new Map<Discord.Snowflake, Map<string, PatchedAPIApplicationCommand>>();
+
     public addCommand(command: SlashCommand): void {
         if (this.commands.has(command.data.name)) throw new Error("Command name already exists");
 
@@ -31,10 +34,17 @@ export default class InteractionRegistry {
             .filter(command => command.exclusive_guild_ids.includes(guild.id))
             .map(command => command.data);
 
-        await perms_utils.setApplicationGuildCommands(guild.id, guild_commands_data);
+        const guild_app_commands = await perms_utils.setApplicationGuildCommands(guild.id, guild_commands_data);
 
-        for (const [, command] of guild_commands) {
-            if (typeof command.onGuildCreate === "function") {
+        for (const app_command of guild_app_commands) {
+            let api_commands = this.guild_api_commands.get(guild.id);
+            if (!api_commands) {
+                this.guild_api_commands.set(guild.id, api_commands = new Map());
+            }
+            api_commands.set(app_command.name, app_command);
+
+            const command = guild_commands.get(app_command.name);
+            if (command && typeof command.onGuildCreate === "function") {
                 await command.onGuildCreate(guild);
             }
         }
@@ -50,7 +60,10 @@ export default class InteractionRegistry {
         const global_commands = this.commands.filter(command => command.exclusive_guild_ids.length === 0);
         const global_commands_data = global_commands.map(command => command.data);
 
-        await perms_utils.setApplicationCommands(global_commands_data);
+        const global_app_commands = await perms_utils.setApplicationCommands(global_commands_data);
+        for (const app_command of global_app_commands) {
+            this.global_api_commands.set(app_command.name, app_command);
+        }
 
         // ///////// DEPLOY EXCLUSIVE GUILD COMMANDS /////////
 
@@ -73,6 +86,10 @@ export default class InteractionRegistry {
         }));
 
         log.info("All Commands deployed.");
+    }
+
+    public getAPICommand(guild_id: Discord.Snowflake, command_name: string) {
+        return this.guild_api_commands.get(guild_id)?.get(command_name) ?? this.global_api_commands.get(command_name);
     }
 
     public addButton(filter: ButtonFilter, func: ButtonHandler): void {

@@ -10,7 +10,6 @@ import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/
 import { DialogOptionsButton, createDialog } from "../../util/builders/dialog";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
-import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 import SampleID from "../../core/soundboard/SampleID";
 import { search } from "../../core/soundboard/methods/searchMany";
 
@@ -56,7 +55,7 @@ async function dialogSameName(interaction: Discord.CommandInteraction, userSampl
     });
 }
 
-export function install({ registry }: CmdInstallerArgs): void {
+export function install({ registry, admin }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({
         name: "delete",
         description: "Remove a sample from one of your soundboards.",
@@ -66,7 +65,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 description: "A sample name or sample identifier (sXXXXXX)",
                 required: true,
                 async autocomplete(value, interaction) {
-                    return await search(value, interaction.user.id, interaction.guild, true);
+                    return await search(admin, value, interaction.user.id, interaction.guild, true);
                 },
             }),
         ],
@@ -87,7 +86,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
             }
 
-            const is_admin = await GuildConfigManager.isModerator(guild, userId);
+            const is_admin = await admin.isAdmin(guild, userId);
 
             let sample: CustomSample | undefined;
 
@@ -193,7 +192,7 @@ export function install({ registry }: CmdInstallerArgs): void {
 
         const hasInUser = sample.isInUsers(interaction.user.id);
         const hasInGuild = interaction.inCachedGuild()
-            && await GuildConfigManager.isModerator(interaction.guild, interaction.user.id)
+            && await admin.isAdmin(interaction.guild, interaction.member.id)
             && sample.isInGuilds(interaction.guildId);
 
         if (!hasInUser && !hasInGuild) {
@@ -249,10 +248,10 @@ export function install({ registry }: CmdInstallerArgs): void {
 
         const id = decoded.id as string;
 
-        const userId = interaction.user.id;
         const guildId = interaction.guildId;
 
-        if (!await GuildConfigManager.isModerator(interaction.guild, userId)) {
+        const admin_permissions = await admin.isAdmin(interaction.guild, interaction.member.id);
+        if (!admin_permissions) {
             return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
         }
 

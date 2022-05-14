@@ -44,7 +44,7 @@ async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.
     }
 }
 
-export function install({ registry }: CmdInstallerArgs): void {
+export function install({ registry, admin }: CmdInstallerArgs): void {
     registry.addButton({ t: BUTTON_TYPES.PLAY_CUSTOM }, async (interaction, decoded) => {
         if (!interaction.inCachedGuild()) return;
 
@@ -79,9 +79,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 name: "sample",
                 description: "A sample name or sample identifier (sXXXXXX)",
                 required: true,
-                autocomplete(value, interaction) {
-                    return search(value, interaction.user.id, interaction.guild);
-                },
+                autocomplete: (value, interaction) => search(admin, value, interaction.user.id, interaction.guild),
             }),
         ],
         permissions: SlashCommandPermissions.EVERYONE,

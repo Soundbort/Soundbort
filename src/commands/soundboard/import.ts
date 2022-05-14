@@ -10,7 +10,6 @@ import { createChoice } from "../../modules/commands/choice";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
-import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 import { UploadErrors } from "../../core/soundboard/methods/upload";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
@@ -33,37 +32,36 @@ async function importUser(interaction: Discord.ButtonInteraction | Discord.Comma
     return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
 }
 
-async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
-    if (!interaction.inCachedGuild()) {
-        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
+export function install({ registry, admin }: CmdInstallerArgs): void {
+    async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
+        if (!interaction.inCachedGuild()) {
+            return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
+        }
+
+        const guildId = interaction.guildId;
+        const guild = interaction.guild;
+        const user = interaction.user;
+
+        if (!await admin.isAdmin(guild, user.id)) {
+            return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
+        }
+
+        // is soundboard full?
+        const sample_count = await CustomSample.countGuildSamples(guildId);
+        const slot_count = await CustomSample.countSlots(guild.id);
+        if (sample_count >= slot_count) {
+            return replyEmbedEphemeral(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")), EmbedType.Error);
+        }
+
+        if (await CustomSample.findSampleGuild(guildId, sample.name)) {
+            return replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error);
+        }
+
+        await CustomSample.import(guild, sample);
+
+        return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
     }
 
-    const guildId = interaction.guildId;
-    const guild = interaction.guild;
-    const user = interaction.user;
-
-    if (!await GuildConfigManager.isModerator(guild, user.id)) {
-        return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
-    }
-
-    // is soundboard full?
-    const sample_count = await CustomSample.countGuildSamples(guildId);
-
-    const slot_count = await CustomSample.countSlots(guild.id);
-    if (sample_count >= slot_count) {
-        return replyEmbedEphemeral(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")), EmbedType.Error);
-    }
-
-    if (await CustomSample.findSampleGuild(guildId, sample.name)) {
-        return replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error);
-    }
-
-    await CustomSample.import(guild, sample);
-
-    return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
-}
-
-export function install({ registry }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({
         name: "import",
         description: "Import a sample from another user or server to your or your server's soundboard.",

@@ -1,33 +1,13 @@
-import * as Discord from "discord.js";
-
 import { CmdInstallerArgs } from "../../util/types";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 import { search } from "../../core/soundboard/methods/searchMany";
 import { findOne } from "../../core/soundboard/methods/findOne";
-import { StandardSample } from "../../core/soundboard/StandardSample";
 
-async function canShowDelete(sample: CustomSample | StandardSample, userId: string, guild: Discord.Guild | null) {
-    if (sample instanceof CustomSample) {
-        // has sample in user soundboard?
-        if (sample.isInUsers(userId)) return true;
-        // ok then not, but has sample in server soundboard?
-        else if (
-            guild
-            && sample.isInGuilds(guild.id)
-            // is a moderator? can remove sample?
-            && await GuildConfigManager.isModerator(guild, userId)
-        ) return true;
-    }
-    return false;
-}
-
-export function install({ registry }: CmdInstallerArgs): void {
+export function install({ registry, admin }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({
         name: "info",
         description: "Display information about a sample.",
@@ -36,9 +16,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 name: "sample",
                 description: "A sample name or sample identifier (sXXXXXX)",
                 required: true,
-                async autocomplete(value, interaction) {
-                    return await search(value, interaction.user.id, interaction.guild);
-                },
+                autocomplete: (value, interaction) => search(admin, value, interaction.user.id, interaction.guild),
             }),
         ],
         permissions: SlashCommandPermissions.EVERYONE,
@@ -50,7 +28,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 return replyEmbedEphemeral(`Couldn't find sample with name or id ${name}`, EmbedType.Error);
             }
 
-            const show_delete = await canShowDelete(sample, interaction.user.id, interaction.guild);
+            const show_delete = await admin.canDeleteSample(sample, interaction.user.id, interaction.guild);
 
             return await sample.toEmbed({ show_timestamps: true, show_delete: !!show_delete });
         },

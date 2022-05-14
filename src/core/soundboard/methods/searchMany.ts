@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 
-import GuildConfigManager from "../../data-managers/GuildConfigManager";
+import AdminPermissions from "../../permissions/AdminPermissions";
 import { CustomSample } from "../CustomSample";
 import { StandardSample } from "../StandardSample";
 import { STANDARD_SAMPLE_PREFIX } from "./findOne";
@@ -28,7 +28,7 @@ export async function searchStandard(name: string) {
     return choices;
 }
 
-export async function search(name: string, userId: Discord.Snowflake, guild?: Discord.Guild | null, only_deletable: boolean = false) {
+export async function search(admin: AdminPermissions, name: string, userId: Discord.Snowflake, guild?: Discord.Guild | null, only_deletable: boolean = false) {
     if (!guild) {
         const [
             standard_samples, custom_samples,
@@ -53,7 +53,7 @@ export async function search(name: string, userId: Discord.Snowflake, guild?: Di
 
     let do_list_guild_samples = true;
 
-    if (only_deletable && !await GuildConfigManager.isModerator(guild, userId)) {
+    if (only_deletable && !await admin.isAdmin(guild, userId)) {
         do_list_guild_samples = false;
     }
 

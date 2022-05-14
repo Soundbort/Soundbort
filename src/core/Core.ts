@@ -11,8 +11,9 @@ import timer from "../util/timer";
 import { walk } from "../util/files";
 import { CmdInstallerFile } from "../util/types";
 
-import StatsCollectorManager from "./data-managers/StatsCollectorManager";
 import WebhookListener from "./WebhookListener";
+import AdminPermissions from "./permissions/AdminPermissions";
+import StatsCollectorManager from "./data-managers/StatsCollectorManager";
 import DataDeletionManager from "./data-managers/DataDeletionManager";
 import GuildConfigManager from "./data-managers/GuildConfigManager";
 import InteractionRepliesManager from "./data-managers/InteractionRepliesManager";
@@ -70,13 +71,19 @@ export default class Core {
         const files = await walk(commands_path)
             .then(files => files.filter(file => /\.(ts|js)$/.test(file)));
 
+        const installer_args = {
+            client: this.client,
+            registry,
+            admin: new AdminPermissions(this.client, registry),
+        };
+
         await Promise.all(files.map(async file => {
             const start = timer();
             const relative_path = path.relative(path.join(__dirname, ".."), file);
 
             try {
                 const install = await import(file) as CmdInstallerFile;
-                await install.install?.({ client: this.client, registry });
+                await install.install?.(installer_args);
             } catch (error) {
                 log.error("failed       : %s", relative_path);
                 throw error;

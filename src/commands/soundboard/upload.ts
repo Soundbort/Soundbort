@@ -9,7 +9,7 @@ import { replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
 
-export function install({ registry }: CmdInstallerArgs): void {
+export function install({ registry, admin }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({
         name: "upload",
         description: "Add a sound sample to your soundboard. Upload the audio file first, then call this command.",
@@ -37,7 +37,7 @@ export function install({ registry }: CmdInstallerArgs): void {
             const name = interaction.options.getString("name", true).trim();
             const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
 
-            await upload(interaction, name, scope);
+            await upload(admin, interaction, name, scope);
         },
     }));
 }
