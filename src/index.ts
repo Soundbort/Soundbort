@@ -82,7 +82,7 @@ process.on("uncaughtException", error => {
 });
 
 process.on("unhandledRejection", (reason, promise) => {
-    log.error("Unhandled rejection at ", { promise });
+    log.error("Unhandled rejection at ", { reason, promise });
     exit(1);
 });
 
