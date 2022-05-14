@@ -5,7 +5,7 @@ import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createChoice } from "../../modules/commands/choice";
 import { createStringOption } from "../../modules/commands/options/string";
-import { replyEmbedEphemeral } from "../../util/builders/embed";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
 
@@ -31,13 +31,20 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
         permissions: SlashCommandPermissions.EVERYONE,
         async func(interaction) {
             if (!interaction.inCachedGuild()) {
-                return replyEmbedEphemeral(UploadErrors.NotInGuild);
+                return replyEmbedEphemeral(UploadErrors.NotInGuild, EmbedType.Error);
             }
 
             const name = interaction.options.getString("name", true).trim();
             const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
 
-            await upload(admin, interaction, name, scope);
+            const guild = interaction.guild;
+            const userId = interaction.user.id;
+
+            if (scope === SAMPLE_TYPES.SERVER && !await admin.isAdmin(guild, userId)) {
+                return replyEmbedEphemeral(UploadErrors.NotModerator, EmbedType.Error);
+            }
+
+            await upload(interaction, name, scope);
         },
     }));
 }

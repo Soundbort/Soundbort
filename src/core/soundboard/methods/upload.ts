@@ -7,10 +7,7 @@ import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
 import { SAMPLE_TYPES } from "../../../const";
 import Logger from "../../../log";
-import { isOwner } from "../../../util/util";
 import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
-
-import AdminPermissions from "../../permissions/AdminPermissions";
 
 import SampleID from "../SampleID";
 import { CustomSample } from "../CustomSample";
@@ -28,7 +25,6 @@ export const MAX_DURATION = 30 * 1000;
 export const UploadErrors = {
     OutOfSpace: "Disk space is running out. Please inform the developer.",
     NotInGuild: "You can't upload samples to a server when you're not calling this command from a server.",
-    NotOwner: "Only bot developers can add standard samples.",
     NotModerator: "You can't upload a sample to this server, because you don't have the permissions.",
     TooManySamples: "You have filled all your sample slots ({MAX_SAMPLES}). Try deleting some or type `/vote` to get more slots before you can add more.",
     NoChannel: "Weirdly enough this channel was not cached.",
@@ -74,7 +70,7 @@ async function generateId(retries: number = 5) {
     }
 }
 
-async function _upload(admin: AdminPermissions, interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
+async function _upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     await interaction.deferReply();
 
     const failed = (desc: string) => interaction.editReply(replyEmbed(desc, EmbedType.Error));
@@ -86,15 +82,6 @@ async function _upload(admin: AdminPermissions, interaction: Discord.CommandInte
 
     const userId = interaction.user.id;
     const guildId = interaction.guildId;
-    const guild = interaction.guild;
-
-    if (scope === SAMPLE_TYPES.SERVER && !await admin.isAdmin(guild, userId)) {
-        return await failed(UploadErrors.NotModerator);
-    }
-
-    if (scope === SAMPLE_TYPES.STANDARD && !isOwner(userId)) {
-        return await failed(UploadErrors.NotOwner);
-    }
 
     // is soundboard full?
     if (scope === SAMPLE_TYPES.STANDARD) {
@@ -282,9 +269,9 @@ async function _upload(admin: AdminPermissions, interaction: Discord.CommandInte
     await interaction.editReply(await sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
 }
 
-export async function upload(admin: AdminPermissions, interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
+export async function upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
     try {
-        await _upload(admin, interaction, name, scope);
+        await _upload(interaction, name, scope);
     } catch (error) {
         log.debug(error);
         await interaction.editReply(replyEmbed(UploadErrors.General, EmbedType.Error));
