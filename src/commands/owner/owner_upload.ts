@@ -25,10 +25,21 @@ export default new SlashSubCommandGroup({
                 if (!interaction.inCachedGuild()) {
                     return replyEmbedEphemeral(UploadErrors.NotInGuild, EmbedType.Error);
                 }
+                // weird error. Probably caching with DM channels
+                // channelId tho is not null
+                if (!interaction.channel) {
+                    return replyEmbedEphemeral(UploadErrors.NoChannel, EmbedType.Error);
+                }
 
                 const name = interaction.options.getString("name", true).trim();
 
-                await upload(interaction, name, SAMPLE_TYPES.STANDARD);
+                await interaction.deferReply();
+
+                const { guild, channel, user } = interaction;
+
+                for await (const status of upload(guild, channel, user, name, SAMPLE_TYPES.STANDARD)) {
+                    await interaction.editReply(status);
+                }
             },
         }),
     ],

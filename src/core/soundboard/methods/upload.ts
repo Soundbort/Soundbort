@@ -70,212 +70,217 @@ async function generateId(retries: number = 5) {
     }
 }
 
-async function _upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
-    await interaction.deferReply();
-
-    const failed = (desc: string) => interaction.editReply(replyEmbed(desc, EmbedType.Error));
-    const status = (desc: string) => interaction.editReply(replyEmbed(desc, EmbedType.Basic, "🔄"));
-
-    if (!await isEnoughDiskSpace()) {
-        return await failed(UploadErrors.OutOfSpace);
-    }
-
-    const userId = interaction.user.id;
-    const guildId = interaction.guildId;
-
-    // is soundboard full?
-    if (scope === SAMPLE_TYPES.STANDARD) {
-        const sample_count = await StandardSample.countSamples();
-        if (sample_count >= StandardSample.MAX_SLOTS) {
-            return await failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", StandardSample.MAX_SLOTS.toLocaleString("en")));
-        }
-    } else {
-        let sample_count: number;
-        switch (scope) {
-            case SAMPLE_TYPES.USER: sample_count = await CustomSample.countUserSamples(userId); break;
-            case SAMPLE_TYPES.SERVER: sample_count = await CustomSample.countGuildSamples(guildId); break;
-        }
-
-        const slot_count = await CustomSample.countSlots(scope === SAMPLE_TYPES.USER ? userId : guildId);
-        if (sample_count >= slot_count) {
-            return await failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")));
-        }
-    }
-
-    // weird error. Probably caching with DM channels
-    // channelId tho is not null
-    const channel = interaction.channel;
-    if (!channel) {
-        return await failed(UploadErrors.NoChannel);
-    }
-
-    // /////////// ATTACHMENT CHECKS ///////////
-
-    await status("Checking data...");
-
-    const messages = await channel.messages.fetch({ limit: 10 });
-
-    const message = messages
-        .sort((a, b) => b.createdTimestamp - a.createdTimestamp)
-        .find(msg => msg.attachments.size > 0);
-
-    // Does message with attachment exist?
-    if (!message) {
-        return await failed(UploadErrors.FileMissing);
-    }
-
-    const attachment = message.attachments.first() as Discord.MessageAttachment;
-
-    if (attachment.contentType && attachment.contentType.split("/")[0] !== "audio") {
-        return await failed(UploadErrors.UnsupportedType);
-    }
-
-    const extname = attachment.name ? path.extname(attachment.name) : undefined;
-
-    if (attachment.size > 1000 * 1000 * MAX_SIZE) {
-        return await failed(UploadErrors.TooLarge);
-    }
-
-    // /////////// NAME CHECKS ///////////
-
-    name = name.trim();
-
-    if (!name || name === "") {
-        return await failed(UploadErrors.NameMissing);
-    }
-
-    if (name.length > MAX_LEN_NAME) {
-        return await failed(UploadErrors.NameOutOfRange);
-    }
-
-    if (!/^[\w ,.-]*$/.test(name)) {
-        return await failed(UploadErrors.InvalidName);
-    }
-
-    let name_exists = false;
-    switch (scope) {
-        case SAMPLE_TYPES.USER: name_exists = !!await CustomSample.findSampleUser(userId, name); break;
-        case SAMPLE_TYPES.SERVER: name_exists = !!await CustomSample.findSampleGuild(guildId, name); break;
-        case SAMPLE_TYPES.STANDARD: name_exists = !!await StandardSample.findByName(name); break;
-    }
-    if (name_exists) {
-        return await failed(UploadErrors.NameExists);
-    }
-
-    // /////////// DOWNLOADING FILE ///////////
-
-    await status("Downloading file...");
-
-    const temp_raw_file = temp.path({
-        prefix: "sample_download_",
-        suffix: extname,
-    });
-
-    try {
-        await downloadFile(attachment.url, temp_raw_file);
-    } catch {
-        return await failed(UploadErrors.DownloadFailed);
-    }
-
-    // /////////// CHECKING FILE ///////////
-
-    await status("Checking file data...");
-
-    try {
-        const data = await ffprobe(temp_raw_file);
-
-        if (!data.streams.some(stream => stream.codec_type === "audio" && stream.channels)) {
-            return await failed(UploadErrors.NoStreams);
-        }
-
-        const duration = data.format.duration;
-        // if duration undefined and duration === 0
-        if (!duration) {
-            return await failed(UploadErrors.NoDuration);
-        }
-
-        if (duration * 1000 > MAX_DURATION) {
-            return await failed(UploadErrors.TooLong);
-        }
-    } catch (error) {
-        log.debug(error);
-        return await failed(UploadErrors.FfProbeError);
-    }
-
-    // /////////// CONVERTING FILE ///////////
-
-    await status("Converting and optimizing sound file...");
-
-    const temp_conversion_file = temp.path({
-        prefix: "sample_conversion_",
-        suffix: CustomSample.EXT,
-    });
-
-    try {
-        await convertAudio(temp_raw_file, temp_conversion_file);
-    } catch (error) {
-        log.debug(error);
-        return await failed(UploadErrors.ConversionError);
-    }
-
-    let sample_file: string;
-    let new_id: string | undefined;
-
-    if (scope !== SAMPLE_TYPES.STANDARD) {
-        new_id = await generateId();
-
-        if (!new_id) {
-            return await failed(UploadErrors.IdGeneration);
-        }
-
-        sample_file = CustomSample.generateFilePath(new_id);
-
-        await CustomSample.ensureDir();
-    } else {
-        sample_file = StandardSample.generateFilePath(name);
-
-        await StandardSample.ensureDir();
-    }
-
-    await fs.move(temp_conversion_file, sample_file);
-
-    // /////////// FINISHING UP ///////////
-
-    await status("Saving to database and finishing up...");
-
-    let sample: CustomSample | StandardSample;
-
-    if (scope !== SAMPLE_TYPES.STANDARD) {
-        sample = await CustomSample.create({
-            scope: scope,
-            id: new_id!,
-            name: name,
-            creatorId: scope === SAMPLE_TYPES.USER ? userId : guildId,
-            userIds: scope === SAMPLE_TYPES.USER ? [userId] : [],
-            guildIds: scope === SAMPLE_TYPES.SERVER ? [guildId] : [],
-            plays: 0,
-            created_at: new Date(),
-            modified_at: new Date(),
-        });
-    } else {
-        sample = await StandardSample.create({
-            name: name,
-            plays: 0,
-            created_at: new Date(),
-            modified_at: new Date(),
-        });
-    }
-
-    await interaction.editReply(await sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success }));
+async function failed(desc: string) {
+    await temp.cleanup();
+    return replyEmbed(desc, EmbedType.Error);
+}
+function status(desc: string) {
+    return replyEmbed(desc, EmbedType.Basic, "🔄");
 }
 
-export async function upload(interaction: Discord.CommandInteraction<"cached">, name: string, scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD): Promise<any> {
+/**
+ * Upload a sample. Permission checks are NOT done.
+ *
+ * @param guild The guild the sample is uploaded to
+ * @param channel The channel the command is invoked from (for getting attachment)
+ * @param user The user the sample is uploaded to
+ * @param name The name of the sample
+ * @param scope The type of soundboard the sample is uploaded to
+ * @returns A generator that yields {@link Discord.InteractionReplyOptions} for
+ *          every step and error during upload.
+ */
+export async function* upload(
+    guild: Discord.Guild,
+    channel: Discord.GuildTextBasedChannel,
+    user: Discord.User,
+    name: string,
+    scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD,
+): AsyncGenerator<Discord.InteractionReplyOptions, void, void> {
     try {
-        await _upload(interaction, name, scope);
+        if (!await isEnoughDiskSpace()) {
+            return yield failed(UploadErrors.OutOfSpace);
+        }
+
+        // is soundboard full?
+        if (scope === SAMPLE_TYPES.STANDARD) {
+            const sample_count = await StandardSample.countSamples();
+            if (sample_count >= StandardSample.MAX_SLOTS) {
+                return yield failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", StandardSample.MAX_SLOTS.toLocaleString("en")));
+            }
+        } else {
+            let sample_count: number;
+            switch (scope) {
+                case SAMPLE_TYPES.USER: sample_count = await CustomSample.countUserSamples(user.id); break;
+                case SAMPLE_TYPES.SERVER: sample_count = await CustomSample.countGuildSamples(guild.id); break;
+            }
+
+            const slot_count = await CustomSample.countSlots(scope === SAMPLE_TYPES.USER ? user.id : guild.id);
+            if (sample_count >= slot_count) {
+                return yield failed(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")));
+            }
+        }
+
+        // /////////// ATTACHMENT CHECKS ///////////
+
+        yield status("Checking data...");
+
+        const messages = await channel.messages.fetch({ limit: 10 });
+
+        const message = messages
+            .sort((a, b) => b.createdTimestamp - a.createdTimestamp)
+            .find(msg => msg.attachments.size > 0);
+
+        // Does message with attachment exist?
+        if (!message) {
+            return yield failed(UploadErrors.FileMissing);
+        }
+
+        const attachment = message.attachments.first() as Discord.MessageAttachment;
+
+        if (attachment.contentType && attachment.contentType.split("/")[0] !== "audio") {
+            return yield failed(UploadErrors.UnsupportedType);
+        }
+
+        const extname = attachment.name ? path.extname(attachment.name) : undefined;
+
+        if (attachment.size > 1000 * 1000 * MAX_SIZE) {
+            return yield failed(UploadErrors.TooLarge);
+        }
+
+        // /////////// NAME CHECKS ///////////
+
+        name = name.trim();
+
+        if (!name || name === "") {
+            return yield failed(UploadErrors.NameMissing);
+        }
+
+        if (name.length > MAX_LEN_NAME) {
+            return yield failed(UploadErrors.NameOutOfRange);
+        }
+
+        if (!/^[\w ,.-]*$/.test(name)) {
+            return yield failed(UploadErrors.InvalidName);
+        }
+
+        let name_exists = false;
+        switch (scope) {
+            case SAMPLE_TYPES.USER: name_exists = !!await CustomSample.findSampleUser(user.id, name); break;
+            case SAMPLE_TYPES.SERVER: name_exists = !!await CustomSample.findSampleGuild(guild.id, name); break;
+            case SAMPLE_TYPES.STANDARD: name_exists = !!await StandardSample.findByName(name); break;
+        }
+        if (name_exists) {
+            return yield failed(UploadErrors.NameExists);
+        }
+
+        // /////////// DOWNLOADING FILE ///////////
+
+        yield status("Downloading file...");
+
+        const temp_raw_file = temp.path({
+            prefix: "sample_download_",
+            suffix: extname,
+        });
+
+        try {
+            await downloadFile(attachment.url, temp_raw_file);
+        } catch {
+            return yield failed(UploadErrors.DownloadFailed);
+        }
+
+        // /////////// CHECKING FILE ///////////
+
+        yield status("Checking file data...");
+
+        try {
+            const data = await ffprobe(temp_raw_file);
+
+            if (!data.streams.some(stream => stream.codec_type === "audio" && stream.channels)) {
+                return yield failed(UploadErrors.NoStreams);
+            }
+
+            const duration = data.format.duration;
+            // if duration undefined and duration === 0
+            if (!duration) {
+                return yield failed(UploadErrors.NoDuration);
+            }
+
+            if (duration * 1000 > MAX_DURATION) {
+                return yield failed(UploadErrors.TooLong);
+            }
+        } catch (error) {
+            log.debug(error);
+            return yield failed(UploadErrors.FfProbeError);
+        }
+
+        // /////////// CONVERTING FILE ///////////
+
+        yield status("Converting and optimizing sound file...");
+
+        const temp_conversion_file = temp.path({
+            prefix: "sample_conversion_",
+            suffix: CustomSample.EXT,
+        });
+
+        try {
+            await convertAudio(temp_raw_file, temp_conversion_file);
+        } catch (error) {
+            log.debug(error);
+            return yield failed(UploadErrors.ConversionError);
+        }
+
+        let sample_file: string;
+        let new_id: string | undefined;
+
+        if (scope !== SAMPLE_TYPES.STANDARD) {
+            new_id = await generateId();
+
+            if (!new_id) {
+                return yield failed(UploadErrors.IdGeneration);
+            }
+
+            sample_file = CustomSample.generateFilePath(new_id);
+
+            await CustomSample.ensureDir();
+        } else {
+            sample_file = StandardSample.generateFilePath(name);
+
+            await StandardSample.ensureDir();
+        }
+
+        await fs.move(temp_conversion_file, sample_file);
+        await temp.cleanup();
+
+        // /////////// FINISHING UP ///////////
+
+        yield status("Saving to database and finishing up...");
+
+        let sample: CustomSample | StandardSample;
+
+        if (scope !== SAMPLE_TYPES.STANDARD) {
+            sample = await CustomSample.create({
+                scope: scope,
+                id: new_id!,
+                name: name,
+                creatorId: scope === SAMPLE_TYPES.USER ? user.id : guild.id,
+                userIds: scope === SAMPLE_TYPES.USER ? [user.id] : [],
+                guildIds: scope === SAMPLE_TYPES.SERVER ? [guild.id] : [],
+                plays: 0,
+                created_at: new Date(),
+                modified_at: new Date(),
+            });
+        } else {
+            sample = await StandardSample.create({
+                name: name,
+                plays: 0,
+                created_at: new Date(),
+                modified_at: new Date(),
+            });
+        }
+
+        yield sample.toEmbed({ show_timestamps: false, description: "Successfully added!", type: EmbedType.Success });
     } catch (error) {
         log.debug(error);
-        await interaction.editReply(replyEmbed(UploadErrors.General, EmbedType.Error));
-    } finally {
-        await temp.cleanup();
+        yield failed(UploadErrors.General);
     }
 }

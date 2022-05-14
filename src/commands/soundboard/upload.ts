@@ -5,7 +5,7 @@ import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createChoice } from "../../modules/commands/choice";
 import { createStringOption } from "../../modules/commands/options/string";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { replyEmbedEphemeral, replyEmbed, EmbedType } from "../../util/builders/embed";
 
 import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
 
@@ -33,18 +33,26 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
             if (!interaction.inCachedGuild()) {
                 return replyEmbedEphemeral(UploadErrors.NotInGuild, EmbedType.Error);
             }
+            // weird error. Probably caching with DM channels
+            // channelId tho is not null
+            if (!interaction.channel) {
+                return replyEmbedEphemeral(UploadErrors.NoChannel, EmbedType.Error);
+            }
 
             const name = interaction.options.getString("name", true).trim();
             const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
 
-            const guild = interaction.guild;
-            const userId = interaction.user.id;
+            await interaction.deferReply();
 
-            if (scope === SAMPLE_TYPES.SERVER && !await admin.isAdmin(guild, userId)) {
-                return replyEmbedEphemeral(UploadErrors.NotModerator, EmbedType.Error);
+            const { guild, channel, user } = interaction;
+
+            if (scope === SAMPLE_TYPES.SERVER && !await admin.isAdmin(guild, user.id)) {
+                return replyEmbed(UploadErrors.NotModerator, EmbedType.Error);
             }
 
-            await upload(interaction, name, scope);
+            for await (const status of upload(guild, channel, user, name, scope)) {
+                await interaction.editReply(status);
+            }
         },
     }));
 }
