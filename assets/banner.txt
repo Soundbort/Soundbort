@@ -8,4 +8,4 @@ ________________________________________________________________________________
           `8888Y'  `Y88P'  ~Y8888P' VP   V8P Y8888D' Y8888P'  `Y88P'  88   YD    YP    
 
   :: Soundbort v%s %s :: Discord.js v%s ::
-  :: Made by Loneless :: https://github.com/lonelesscodes/soundbort ::
+  :: Made by Loneless :: https://github.com/soundbort/soundbort ::
