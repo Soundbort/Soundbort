@@ -3,6 +3,8 @@ import qs from "query-string";
 
 import Logger from "../log";
 import { BUTTON_TYPES } from "../const";
+import { doNothing } from "../util/util";
+import { removeDupes } from "../util/array";
 
 import DiscordPermissionsV2Utils, { PatchedAPIApplicationCommand } from "../util/discord-patch/DiscordPermissionsV2Utils";
 import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
@@ -50,12 +52,23 @@ export default class InteractionRegistry {
         }
     }
 
+    private async clearGuilds(perms_utils: DiscordPermissionsV2Utils, guilds: Discord.Guild[]) {
+        for (const guild of guilds) {
+            try {
+                await perms_utils.setApplicationGuildCommands(guild.id, []);
+            } catch (error) {
+                log.error("Deploying to guild %s failed.", guild.id, error);
+            }
+        }
+        log.info("Orphan Guild Commands cleared.");
+    }
+
     public async deployCommands(client: Discord.Client<true>): Promise<void> {
         const perms_utils = DiscordPermissionsV2Utils.client(client);
 
-        log.info("Deploying Commands...");
-
         // ///////// DEPLOY COMMANDS /////////
+
+        log.info("Deploying Global Commands...");
 
         const global_commands = this.commands.filter(command => command.exclusive_guild_ids.length === 0);
         const global_commands_data = global_commands.map(command => command.data);
@@ -67,6 +80,8 @@ export default class InteractionRegistry {
 
         // ///////// DEPLOY EXCLUSIVE GUILD COMMANDS /////////
 
+        log.info("Deploying Exclusive Guild Commands...");
+
         const guild_commands = this.commands.filter(command => command.exclusive_guild_ids.length > 0);
 
         client.on("guildCreate", async guild => {
@@ -77,13 +92,27 @@ export default class InteractionRegistry {
             }
         });
 
-        await Promise.all([...client.guilds.cache.values()].map(async guild => {
+        log.info("Clearing Orphan Guild Commands...");
+
+        // merge all exclusive guild ids together, to have an array of all guilds
+        // that need to be deployed to.
+        // this allows us to deploy to these guilds first thing in the morning
+        // and then asynchronously remove orphan commands from all other guilds later
+        const guild_ids = removeDupes(guild_commands.reduce((c, a) => [...c, ...a.exclusive_guild_ids], [] as string[]));
+        const guilds = guild_ids.map(guild_id => client.guilds.cache.get(guild_id)).filter(Boolean) as Discord.Guild[];
+
+        for (const guild of guilds) {
             try {
                 await this.deployToGuild(perms_utils, guild, guild_commands);
             } catch (error) {
                 log.error("Deploying to guild %s failed.", guild.id, error);
             }
-        }));
+        }
+
+        // asynchronously remove orphan guild commands from all guilds that
+        // do not have exclusive commands anymore
+        const clearable_guilds = [...client.guilds.cache.values()].filter(guild => !guild_ids.includes(guild.id));
+        this.clearGuilds(perms_utils, clearable_guilds).catch(doNothing);
 
         log.info("All Commands deployed.");
     }
