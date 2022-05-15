@@ -85,11 +85,11 @@ export default class Core {
                 const install = await import(file) as CmdInstallerFile;
                 await install.install?.(installer_args);
             } catch (error) {
-                log.error("failed       : %s", relative_path);
+                log.error("failed   : %s", relative_path);
                 throw error;
             }
 
-            log.debug("installed    : %s %s ms", relative_path, timer.diffMs(start).toFixed(3));
+            log.debug("installed: %s %s ms", relative_path, timer.diffMs(start).toFixed(3));
         }));
 
         const install_time = timer.diff(install_start) / timer.NS_PER_SEC;
