@@ -10,7 +10,7 @@ import StatsCollectorManager from "../data-managers/StatsCollectorManager";
 
 const log = Logger.child({ label: "Core => onInteractionCreate" });
 
-export default function onInteractionCreate() {
+export default function onInteractionCreate(registry: InteractionRegistry) {
     return async (interaction: Discord.Interaction): Promise<void> => {
         if (await BlacklistManager.isBlacklisted(interaction.user.id)) {
             if (!interaction.isCommand() && !interaction.isButton()) return;
@@ -20,7 +20,7 @@ export default function onInteractionCreate() {
 
         if (interaction.isCommand()) {
             try {
-                const command = InteractionRegistry.commands.get(interaction.commandName);
+                const command = registry.commands.get(interaction.commandName);
                 if (!command) return await interaction.reply(replyEmbedEphemeral("This command doesn't exist anymore or some other thing screwed up.", EmbedType.Error));
 
                 log.debug("Command '%s' by %s in %s (%s)", command.data.name, interaction.user.id, interaction.channelId, interaction.channel?.type);
@@ -45,7 +45,7 @@ export default function onInteractionCreate() {
 
         if (interaction.isAutocomplete()) {
             try {
-                const command = InteractionRegistry.commands.get(interaction.commandName);
+                const command = registry.commands.get(interaction.commandName);
                 if (!command) return;
 
                 await command.autocomplete(interaction);
@@ -69,7 +69,7 @@ export default function onInteractionCreate() {
                 decoded.n = customId.slice("sample.predef.".length);
             }
 
-            for (const button_handler of InteractionRegistry.buttons) {
+            for (const button_handler of registry.buttons) {
                 try {
                     if (!InteractionRegistry.checkButtonFilter(decoded, button_handler.filter)) continue;
 

@@ -1,7 +1,9 @@
 import * as Discord from "discord.js";
 
 import InteractionRegistry from "../../core/InteractionRegistry";
+import { CmdInstallerArgs } from "../../util/types";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 import { createChoice } from "../../modules/commands/choice";
 import { SimpleFuncReturn } from "../../modules/commands/AbstractSharedCommand";
@@ -139,27 +141,30 @@ async function scopeUser(interaction: Discord.CommandInteraction): Promise<Simpl
     );
 }
 
-InteractionRegistry.addCommand(new SlashCommand({
-    name: "list",
-    description: "Generate a list of all accessable samples with clickable buttons to trigger them.",
-    options: [
-        createStringOption({
-            name: "from",
-            description: "What soundboards to output.",
-            choices: [
-                createChoice("Output all soundboards (standard, server and user soundboards).", "all"),
-                createChoice("Output standard soundboard only.", SAMPLE_TYPES.STANDARD),
-                createChoice("Output this server's soundboard only.", SAMPLE_TYPES.SERVER),
-                createChoice("Output your own soundboard only.", SAMPLE_TYPES.USER),
-            ],
-        }),
-    ],
-    func(interaction) {
-        const scope = interaction.options.getString("from") as ("all" | SAMPLE_TYPES.STANDARD | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.USER | null) || "all";
+export function install({ registry }: CmdInstallerArgs): void {
+    registry.addCommand(new SlashCommand({
+        name: "list",
+        description: "Generate a list of all accessable samples with clickable buttons to trigger them.",
+        options: [
+            createStringOption({
+                name: "from",
+                description: "What soundboards to output.",
+                choices: [
+                    createChoice("Output all soundboards (standard, server and user soundboards).", "all"),
+                    createChoice("Output standard soundboard only.", SAMPLE_TYPES.STANDARD),
+                    createChoice("Output this server's soundboard only.", SAMPLE_TYPES.SERVER),
+                    createChoice("Output your own soundboard only.", SAMPLE_TYPES.USER),
+                ],
+            }),
+        ],
+        permissions: SlashCommandPermissions.EVERYONE,
+        func(interaction) {
+            const scope = interaction.options.getString("from") as ("all" | SAMPLE_TYPES.STANDARD | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.USER | null) || "all";
 
-        if (scope === SAMPLE_TYPES.STANDARD) return scopeStandard(interaction);
-        if (scope === SAMPLE_TYPES.SERVER) return scopeServer(interaction);
-        if (scope === SAMPLE_TYPES.USER) return scopeUser(interaction);
-        return scopeAll(interaction);
-    },
-}));
+            if (scope === SAMPLE_TYPES.STANDARD) return scopeStandard(interaction);
+            if (scope === SAMPLE_TYPES.SERVER) return scopeServer(interaction);
+            if (scope === SAMPLE_TYPES.USER) return scopeUser(interaction);
+            return scopeAll(interaction);
+        },
+    }));
+}

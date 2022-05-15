@@ -3,7 +3,7 @@ import { SAMPLE_TYPES } from "../../const";
 import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup";
 import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
 import { createStringOption } from "../../modules/commands/options/string";
-import { replyEmbedEphemeral } from "../../util/builders/embed";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { upload, UploadErrors } from "../../core/soundboard/methods/upload";
 
@@ -23,12 +23,23 @@ export default new SlashSubCommandGroup({
             ],
             async func(interaction) {
                 if (!interaction.inCachedGuild()) {
-                    return replyEmbedEphemeral(UploadErrors.NotInGuild);
+                    return replyEmbedEphemeral(UploadErrors.NotInGuild, EmbedType.Error);
+                }
+                // weird error. Probably caching with DM channels
+                // channelId tho is not null
+                if (!interaction.channel) {
+                    return replyEmbedEphemeral(UploadErrors.NoChannel, EmbedType.Error);
                 }
 
                 const name = interaction.options.getString("name", true).trim();
 
-                await upload(interaction, name, SAMPLE_TYPES.STANDARD);
+                await interaction.deferReply();
+
+                const { guild, channel, user } = interaction;
+
+                for await (const status of upload(guild, channel, user, name, SAMPLE_TYPES.STANDARD)) {
+                    await interaction.editReply(status);
+                }
             },
         }),
     ],

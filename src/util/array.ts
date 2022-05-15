@@ -13,3 +13,7 @@ export function findFirstIndex<T>(arr: T[], finder: (item: T) => boolean): numbe
     }
     return arr.length;
 }
+
+export function removeDupes<T>(arr: T[]): T[] {
+    return [...new Set(arr)];
+}

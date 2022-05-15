@@ -1,17 +1,9 @@
 import "./util/banner-printer";
 
 import * as Discord from "discord.js";
-import { APIAttachment, APIChatInputApplicationCommandInteractionData } from "discord-api-types/v10";
 
 // Patch Discord.js to be able to get attachment options
-import "./util/discord-patch.js";
-declare module "discord.js" {
-    interface CommandInteraction {
-        readonly _data: APIChatInputApplicationCommandInteractionData & {
-            attachments?: Record<Discord.Snowflake, APIAttachment>;
-        };
-    }
-}
+import "./util/discord-patch/InteractionCreateAction";
 
 import Logger from "./log";
 import { DISCORD_TOKEN } from "./config";
@@ -38,14 +30,19 @@ const client = new Discord.Client({
         }],
     },
 
+    // Do NOT cache anything the bot does not need to access frequently!
+    // Drastically decreased memory usage
     makeCache: Discord.Options.cacheWithLimits({
-        ApplicationCommandManager: 0,
+        // cache application commands to be able fetch command id (and permissions? soon?)
+        ApplicationCommandManager: Discord.Options.defaultMakeCacheSettings.ApplicationCommandManager,
         BaseGuildEmojiManager: 0,
+        GuildEmojiManager: 0,
         GuildBanManager: 0,
         GuildInviteManager: 0,
         // keep default, because of autocomplete checks for isModerator => lot of calls in short time, therefore enable cache
-        // GuildMemberManager: 0,
+        GuildMemberManager: Discord.Options.defaultMakeCacheSettings.GuildMemberManager,
         GuildStickerManager: 0,
+        GuildScheduledEventManager: 0,
         MessageManager: 0,
         PresenceManager: 0,
         ReactionManager: 0,
@@ -54,7 +51,7 @@ const client = new Discord.Client({
         ThreadManager: 0,
         ThreadMemberManager: 0,
         // keep user cache default, because guild member cache depends on it
-        // UserManager: 0,
+        UserManager: Discord.Options.defaultMakeCacheSettings.UserManager,
         VoiceStateManager: Number.POSITIVE_INFINITY,
     }),
 });

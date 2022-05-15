@@ -1,10 +1,11 @@
-import { OWNER_GUILD_IDS, OWNER_IDS } from "../../config";
+import { OWNER_GUILD_IDS } from "../../config";
+
 import { isOwner } from "../../util/util";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
+import { CmdInstallerArgs } from "../../util/types";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { createUserPermission } from "../../modules/commands/permission";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 
 // import commands. We can do this, because they don't register any commands by themselves,
 // so if they're already imported by the Core it doesn't matter
@@ -14,31 +15,25 @@ import upload_standard_cmd from "./owner_upload";
 import delete_cmd from "./owner_delete";
 import import_cmd from "./owner_import";
 
-InteractionRegistry.addCommand(new SlashCommand({
-    name: "owner",
-    description: "A set of owner commands.",
-    commands: [
-        blacklist_cmd,
-        upload_standard_cmd,
-        delete_cmd,
-        import_cmd,
-        reboot_cmd,
-    ],
-    target: {
-        global: false,
-        guildHidden: true,
+export function install({ registry }: CmdInstallerArgs): void {
+    registry.addCommand(new SlashCommand({
+        name: "owner",
+        description: "A set of owner commands.",
+        commands: [
+            blacklist_cmd,
+            upload_standard_cmd,
+            delete_cmd,
+            import_cmd,
+            reboot_cmd,
+        ],
+        permissions: SlashCommandPermissions.HIDDEN,
         // this way, owner commands are only available in specific guilds
-        // (since they are greyed out instead of hidden if users dont have the permissions to use them)
-        guild_ids: OWNER_GUILD_IDS,
-    },
-    async middleware(interaction) {
-        if (isOwner(interaction.user.id)) return true;
+        exclusive_guild_ids: OWNER_GUILD_IDS,
+        async middleware(interaction) {
+            if (isOwner(interaction.user.id)) return true;
 
-        await interaction.reply(replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error));
-        return false;
-    },
-    async onGuildCreate(app_command) {
-        const permissions = OWNER_IDS.map(id => createUserPermission(id, true));
-        await app_command.permissions.set({ permissions });
-    },
-}));
+            await interaction.reply(replyEmbedEphemeral("You need to be a bot developer for that.", EmbedType.Error));
+            return false;
+        },
+    }));
+}

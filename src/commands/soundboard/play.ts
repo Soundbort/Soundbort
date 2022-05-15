@@ -3,9 +3,10 @@ import * as Discord from "discord.js";
 import { BUTTON_TYPES } from "../../const";
 import Logger from "../../log";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
+import { CmdInstallerArgs } from "../../util/types";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 
 import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
@@ -43,53 +44,58 @@ async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.
     }
 }
 
-InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_CUSTOM }, async (interaction, decoded) => {
-    if (!interaction.inCachedGuild()) return;
+export function install({ registry, admin }: CmdInstallerArgs): void {
+    registry.addButton({ t: BUTTON_TYPES.PLAY_CUSTOM }, async (interaction, decoded) => {
+        if (!interaction.inCachedGuild()) return;
 
-    const id = decoded.id as string;
+        const id = decoded.id as string;
 
-    const sample = await CustomSample.findById(id);
-    if (!sample) return;
-
-    return await play(interaction, sample);
-});
-
-InteractionRegistry.addButton({ t: BUTTON_TYPES.PLAY_STANDA }, async (interaction, decoded) => {
-    if (!interaction.inCachedGuild()) return;
-
-    const name = decoded.n as string;
-
-    const sample = await StandardSample.findByName(name);
-    if (!sample) return;
-
-    return await play(interaction, sample);
-});
-
-InteractionRegistry.addCommand(new SlashCommand({
-    name: "play",
-    description: "Joins the voice channel if needed and plays the sound sample.",
-    options: [
-        createStringOption({
-            name: "sample",
-            description: "A sample name or sample identifier (sXXXXXX)",
-            required: true,
-            autocomplete(value, interaction) {
-                return search(value, interaction.user.id, interaction.guild);
-            },
-        }),
-    ],
-    async func(interaction) {
-        if (!interaction.inCachedGuild()) {
-            return replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error);
-        }
-
-        const name = interaction.options.getString("sample", true).trim();
-
-        const sample = await findOne(name, interaction.user.id, interaction.guildId);
+        const sample = await CustomSample.findById(id);
         if (!sample) {
-            return replyEmbedEphemeral(`Couldn't find sample with name or id '${name}'`, EmbedType.Error);
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
         }
 
         return await play(interaction, sample);
-    },
-}));
+    });
+
+    registry.addButton({ t: BUTTON_TYPES.PLAY_STANDA }, async (interaction, decoded) => {
+        if (!interaction.inCachedGuild()) return;
+
+        const name = decoded.n as string;
+
+        const sample = await StandardSample.findByName(name);
+        if (!sample) {
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
+        }
+
+        return await play(interaction, sample);
+    });
+
+    registry.addCommand(new SlashCommand({
+        name: "play",
+        description: "Joins the voice channel if needed and plays the sound sample.",
+        options: [
+            createStringOption({
+                name: "sample",
+                description: "A sample name or sample identifier (sXXXXXX)",
+                required: true,
+                autocomplete: (value, interaction) => search(admin, value, interaction.user.id, interaction.guild),
+            }),
+        ],
+        permissions: SlashCommandPermissions.EVERYONE,
+        async func(interaction) {
+            if (!interaction.inCachedGuild()) {
+                return replyEmbedEphemeral("Can only play sound clips in servers", EmbedType.Error);
+            }
+
+            const name = interaction.options.getString("sample", true).trim();
+
+            const sample = await findOne(name, interaction.user.id, interaction.guildId);
+            if (!sample) {
+                return replyEmbedEphemeral(`Couldn't find sample with name or id '${name}'`, EmbedType.Error);
+            }
+
+            return await play(interaction, sample);
+        },
+    }));
+}

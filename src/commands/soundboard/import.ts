@@ -2,14 +2,14 @@ import * as Discord from "discord.js";
 
 import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
+import { CmdInstallerArgs } from "../../util/types";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
 import { createChoice } from "../../modules/commands/choice";
 import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 
 import { CustomSample } from "../../core/soundboard/CustomSample";
-import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 import { UploadErrors } from "../../core/soundboard/methods/upload";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
@@ -32,86 +32,92 @@ async function importUser(interaction: Discord.ButtonInteraction | Discord.Comma
     return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
 }
 
-async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
-    if (!interaction.inCachedGuild()) {
-        return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
+export function install({ registry, admin }: CmdInstallerArgs): void {
+    async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
+        if (!interaction.inCachedGuild()) {
+            return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
+        }
+
+        const guildId = interaction.guildId;
+        const guild = interaction.guild;
+        const user = interaction.user;
+
+        if (!await admin.isAdmin(guild, user.id)) {
+            return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
+        }
+
+        // is soundboard full?
+        const sample_count = await CustomSample.countGuildSamples(guildId);
+        const slot_count = await CustomSample.countSlots(guild.id);
+        if (sample_count >= slot_count) {
+            return replyEmbedEphemeral(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")), EmbedType.Error);
+        }
+
+        if (await CustomSample.findSampleGuild(guildId, sample.name)) {
+            return replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error);
+        }
+
+        await CustomSample.import(guild, sample);
+
+        return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
     }
 
-    const guildId = interaction.guildId;
-    const guild = interaction.guild;
-    const user = interaction.user;
+    registry.addCommand(new SlashCommand({
+        name: "import",
+        description: "Import a sample from another user or server to your or your server's soundboard.",
+        options: [
+            createStringOption({
+                name: "sample_id",
+                description: "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.",
+                required: true,
+            }),
+            createStringOption({
+                name: "to",
+                description: "Choose the soundboard to import the sound to. Defaults to your personal soundboard.",
+                choices: [
+                    createChoice("Import into your personal soundboard.", SAMPLE_TYPES.USER),
+                    createChoice("Import into server soundboard for every member to use.", SAMPLE_TYPES.SERVER),
+                ],
+            }),
+        ],
+        permissions: SlashCommandPermissions.EVERYONE,
+        async func(interaction) {
+            const id = interaction.options.getString("sample_id", true).trim();
+            const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
 
-    if (!await GuildConfigManager.isModerator(guild, user.id)) {
-        return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
-    }
+            const sample = await CustomSample.findById(id);
+            if (!sample) {
+                return replyEmbedEphemeral(`Couldn't find sample with id ${id}`, EmbedType.Error);
+            }
 
-    // is soundboard full?
-    const sample_count = await CustomSample.countGuildSamples(guildId);
+            if (!sample.importable) {
+                return replyEmbedEphemeral("This sample is marked as not importable.", EmbedType.Error);
+            }
 
-    const slot_count = await CustomSample.countSlots(guild.id);
-    if (sample_count >= slot_count) {
-        return replyEmbedEphemeral(UploadErrors.TooManySamples.replace("{MAX_SAMPLES}", slot_count.toLocaleString("en")), EmbedType.Error);
-    }
+            if (scope === SAMPLE_TYPES.USER) return await importUser(interaction, sample);
+            return await importServer(interaction, sample);
+        },
+    }));
 
-    if (await CustomSample.findSampleGuild(guildId, sample.name)) {
-        return replyEmbedEphemeral("You already have a sample with this name in your soundboard.", EmbedType.Error);
-    }
-
-    await CustomSample.import(guild, sample);
-
-    return await sample.toEmbed({ description: `Successfully imported sample "${sample.name}."`, type: EmbedType.Success });
-}
-
-InteractionRegistry.addCommand(new SlashCommand({
-    name: "import",
-    description: "Import a sample from another user or server to your or your server's soundboard.",
-    options: [
-        createStringOption({
-            name: "sample_id",
-            description: "A sample identifier (sXXXXXX). Get the ID of a sample from typing `/info <name>`.",
-            required: true,
-        }),
-        createStringOption({
-            name: "to",
-            description: "Choose the soundboard to import the sound to. Defaults to your personal soundboard.",
-            choices: [
-                createChoice("Import into your personal soundboard.", SAMPLE_TYPES.USER),
-                createChoice("Import into server soundboard for every member to use.", SAMPLE_TYPES.SERVER),
-            ],
-        }),
-    ],
-    async func(interaction) {
-        const id = interaction.options.getString("sample_id", true).trim();
-        const scope = interaction.options.getString("to", false) as (SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | null) || SAMPLE_TYPES.USER;
+    registry.addButton({ t: BUTTON_TYPES.IMPORT_USER }, async (interaction, decoded) => {
+        const id = decoded.id as string;
 
         const sample = await CustomSample.findById(id);
         if (!sample) {
-            return replyEmbedEphemeral(`Couldn't find sample with id ${id}`, EmbedType.Error);
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
         }
 
-        if (!sample.importable) {
-            return replyEmbedEphemeral("This sample is marked as not importable.", EmbedType.Error);
+        return await importUser(interaction, sample);
+    });
+
+    registry.addButton({ t: BUTTON_TYPES.IMPORT_SERVER }, async (interaction, decoded) => {
+        const id = decoded.id as string;
+
+        const sample = await CustomSample.findById(id);
+        if (!sample) {
+            return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
         }
 
-        if (scope === SAMPLE_TYPES.USER) return await importUser(interaction, sample);
         return await importServer(interaction, sample);
-    },
-}));
-
-InteractionRegistry.addButton({ t: BUTTON_TYPES.IMPORT_USER }, async (interaction, decoded) => {
-    const id = decoded.id as string;
-
-    const sample = await CustomSample.findById(id);
-    if (!sample) return;
-
-    return await importUser(interaction, sample);
-});
-
-InteractionRegistry.addButton({ t: BUTTON_TYPES.IMPORT_SERVER }, async (interaction, decoded) => {
-    const id = decoded.id as string;
-
-    const sample = await CustomSample.findById(id);
-    if (!sample) return;
-
-    return await importServer(interaction, sample);
-});
+    });
+}

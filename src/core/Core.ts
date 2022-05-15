@@ -1,3 +1,4 @@
+import path from "node:path";
 import * as Discord from "discord.js";
 import { AutoPoster as topGGStatsPoster } from "topgg-autoposter";
 import { CronJob } from "cron";
@@ -6,8 +7,13 @@ import Logger from "../log";
 import { SAMPLE_TYPES } from "../const";
 import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config";
 
-import StatsCollectorManager from "./data-managers/StatsCollectorManager";
+import timer from "../util/timer";
+import { walk } from "../util/files";
+import { CmdInstallerFile } from "../util/types";
+
 import WebhookListener from "./WebhookListener";
+import AdminPermissions from "./permissions/AdminPermissions";
+import StatsCollectorManager from "./data-managers/StatsCollectorManager";
 import DataDeletionManager from "./data-managers/DataDeletionManager";
 import GuildConfigManager from "./data-managers/GuildConfigManager";
 import InteractionRepliesManager from "./data-managers/InteractionRepliesManager";
@@ -16,7 +22,7 @@ import onVoiceStateUpdate from "./events/onVoiceStateUpdate";
 import onGuildCreate from "./events/onGuildCreate";
 import onGuildDelete from "./events/onGuildDelete";
 
-import * as InteractionLoader from "./InteractionLoader";
+import InteractionRegistry from "./InteractionRegistry";
 
 import { CustomSample } from "./soundboard/CustomSample";
 
@@ -54,18 +60,56 @@ export default class Core {
     public async setup(): Promise<this> {
         log.info("Client ready. Running preparations...");
 
-        // /////////// Install Commands ////////////
+        // ////////// INSTALL COMMANDS ///////////
 
-        await InteractionLoader.installCommands(this.client);
+        log.info("Installing Commands...");
 
-        // /////////// Deploy commands non-blocking ////////////
+        const install_start = timer();
+        const registry = new InteractionRegistry();
 
-        InteractionLoader.deployCommands(this.client)
-            .catch(error => log.error("Deploying commands failed.", error));
+        const commands_path = path.join(__dirname, "..", "commands");
+        const files = await walk(commands_path)
+            .then(files => files.filter(file => /\.(ts|js)$/.test(file)));
 
-        // ///////////////////
+        const installer_args = {
+            client: this.client,
+            registry,
+            admin: new AdminPermissions(this.client, registry),
+        };
 
-        this.attachListeners();
+        await Promise.all(files.map(async file => {
+            const start = timer();
+            const relative_path = path.relative(path.join(__dirname, ".."), file);
+
+            try {
+                const install = await import(file) as CmdInstallerFile;
+                await install.install?.(installer_args);
+            } catch (error) {
+                log.error("failed   : %s", relative_path);
+                throw error;
+            }
+
+            log.debug("installed: %s %s ms", relative_path, timer.diffMs(start).toFixed(3));
+        }));
+
+        const install_time = timer.diff(install_start) / timer.NS_PER_SEC;
+
+        log.info(`Commands installed. files:${files.length} commands:${registry.commands.size} install_time:${install_time.toFixed(3)}s`);
+
+        // ////////// DEPLOY COMMANDS ///////////
+
+        await registry.deployCommands(this.client);
+
+        // ///////// ATTACH LISTENERS //////////
+
+        this.client.on("interactionCreate", onInteractionCreate(registry));
+
+        // handle leaving voice channels when users go somewhere else
+        this.client.on("voiceStateUpdate", onVoiceStateUpdate());
+
+        this.client.on("guildCreate", onGuildCreate());
+
+        this.client.on("guildDelete", onGuildDelete());
 
         this.compareGuildsAndEmit().catch(error => log.error("Failed comparing guilds", error));
 
@@ -77,24 +121,17 @@ export default class Core {
         StatsCollectorManager.listen();
         if (TOP_GG_WEBHOOK_TOKEN) WebhookListener.listen();
 
+        // Make sure a status is always set. When reconnecting
+        // it is sometimes reset
         this.setStatus();
         this.client.on("shardReady", () => this.setStatus());
         this.client.on("shardResume", () => this.setStatus());
 
+        // ///////////////////
+
         log.info(`Ready. Logged in as ${this.client.user.tag}`);
 
         return this;
-    }
-
-    private attachListeners(): void {
-        this.client.on("interactionCreate", onInteractionCreate());
-
-        // handle leaving voice channels when users go somewhere else
-        this.client.on("voiceStateUpdate", onVoiceStateUpdate());
-
-        this.client.on("guildCreate", onGuildCreate());
-
-        this.client.on("guildDelete", onGuildDelete());
     }
 
     private setStatus(): void {
