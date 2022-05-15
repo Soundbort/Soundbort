@@ -43,7 +43,7 @@ function generateSampleMessage(
     iconUrl: string | null,
     slots?: number,
     joinNotice: boolean = true,
-): Discord.InteractionReplyOptions {
+): Pick<Discord.InteractionReplyOptions, "embeds" | "components"> {
     const rows = generateSampleButtons(samples);
 
     const embed = createEmbed().setAuthor({
@@ -69,7 +69,7 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
     const guild_slots = interaction.guildId ? await CustomSample.countSlots(interaction.guildId) : 0;
     const user_slots = await CustomSample.countSlots(interaction.user.id);
 
-    const reply = (opts: Discord.InteractionReplyOptions) => {
+    const reply = (opts: Discord.InteractionReplyOptions & Discord.MessageOptions) => {
         return interaction.replied ? interaction.channel?.send(opts) : interaction.reply(opts);
     };
 
