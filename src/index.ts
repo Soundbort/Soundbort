@@ -2,9 +2,6 @@ import "./util/banner-printer";
 
 import * as Discord from "discord.js";
 
-// Patch Discord.js to be able to get attachment options
-import "./util/discord-patch/InteractionCreateAction";
-
 import Logger from "./log";
 import { DISCORD_TOKEN } from "./config";
 import { exit, onExit } from "./util/exit";
