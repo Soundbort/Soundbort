@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.8.0](https://github.com/LonelessCodes/SoundBort/compare/v0.7.1...v0.8.0) (2022-05-16)
+
+
+### Features
+
+* add attachment option for /upload command(s) ([#31](https://github.com/LonelessCodes/SoundBort/issues/31)) ([276a74b](https://github.com/LonelessCodes/SoundBort/commit/276a74b3fb977d6ba06870ed36952b0e2d69aaa6))
+* change permission model to Permissions V2 (merges [#30](https://github.com/LonelessCodes/SoundBort/issues/30)) ([101b229](https://github.com/LonelessCodes/SoundBort/commit/101b229a2f4c666d278bfdf5e5e55276c4ac5bba))
+* retry deploying commands to guilds that couldn't be deployed to ([ba35d79](https://github.com/LonelessCodes/SoundBort/commit/ba35d7953c386093cd40b6ad7f81520244cba203))
+
+
+### Bug Fixes
+
+* fixed /owner upload type-checking ([8502947](https://github.com/LonelessCodes/SoundBort/commit/850294769285978922c919d0f51f355658a52198))
+* fixed error when there are more than 25 choices for auto-completion ([7c548f3](https://github.com/LonelessCodes/SoundBort/commit/7c548f374565663db379a31e49bbb1035da34059))
+* fixed typo in InteractionLoader.ts ([7ff0fba](https://github.com/LonelessCodes/SoundBort/commit/7ff0fba87ff83dc3433f2d36eeed91bc8be93b64))
+* fixed uncaught error when destroying VoiceConnection when not able to join voice channel ([926ec51](https://github.com/LonelessCodes/SoundBort/commit/926ec512ed7e24a0d7591e143adff8fcd5787667))
+* fixed visualize audio log formatting ([cc5e93a](https://github.com/LonelessCodes/SoundBort/commit/cc5e93a78d6b853f3775855b82e821bc1b01c8f7))
+* fixed wrongly formatted audio bitrate during upload ([10faa37](https://github.com/LonelessCodes/SoundBort/commit/10faa37fcc48f648cb5ee008735a45370f444acf))
+* more or less fixed logging of circular json ([2bd2b56](https://github.com/LonelessCodes/SoundBort/commit/2bd2b56fbc0c47622b7b9590e1de5a8d3c202011))
+* patch discord.js to expose raw interaction data on interaction object ([31bd9bf](https://github.com/LonelessCodes/SoundBort/commit/31bd9bfbcff8b7d5722f373a649a256239f6f136))
+* replace github url in banner ([a20db4a](https://github.com/LonelessCodes/SoundBort/commit/a20db4a7553714804ebeb7e3b0e402773d6402d3))
+
+
+### Changes
+
+* delete "playing sample" message after a few seconds ([5fd8eeb](https://github.com/LonelessCodes/SoundBort/commit/5fd8eebbaa47114231d965a1422c89e40fd4f764))
+* increase max file size to 8 MB ([e7a32a7](https://github.com/LonelessCodes/SoundBort/commit/e7a32a7a99a20cb5cfa08be587e42d4e5c0595e4))
+* use ffmpeg to create sample waveform ([44e5358](https://github.com/LonelessCodes/SoundBort/commit/44e53587e86bfe7021c6d4256916d5b653013362))
+
 ### [0.7.1](https://github.com/LonelessCodes/SoundBort/compare/v0.7.0...v0.7.1) (2022-03-02)
 
 
