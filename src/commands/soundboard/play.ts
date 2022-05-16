@@ -3,8 +3,10 @@ import * as Discord from "discord.js";
 import { BUTTON_TYPES } from "../../const";
 import Logger from "../../log";
 
+import { doNothing } from "../../util/util";
+import { timeout } from "../../util/promises";
 import { CmdInstallerArgs } from "../../util/types";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 import { createStringOption } from "../../modules/commands/options/string";
@@ -37,7 +39,9 @@ async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.
 
         StatsCollectorManager.incPlayedSamples(1);
 
-        return replyEmbedEphemeral(`🔊 Playing ${sample.name}`);
+        await interaction.reply(replyEmbed(`🔊 Playing ${sample.name}`));
+        await timeout(1500);
+        await interaction.deleteReply().catch(doNothing);
     } catch (error) {
         log.error("Error while playing", error);
         return replyEmbedEphemeral("Some error happened and caused some whoopsies", EmbedType.Error);
