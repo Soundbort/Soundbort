@@ -1,9 +1,12 @@
 import * as Discord from "discord.js";
 
+import Logger from "../../log";
 import DiscordPermissionsV2Utils from "../../util/discord-patch/DiscordPermissionsV2Utils";
 import InteractionRegistry from "../InteractionRegistry";
 import { CustomSample } from "../soundboard/CustomSample";
 import { StandardSample } from "../soundboard/StandardSample";
+
+const log = Logger.child({ label: "AdminPermissions" });
 
 export default class AdminPermissions {
     public client: Discord.Client<true>;
@@ -19,6 +22,7 @@ export default class AdminPermissions {
     public async isAdmin(guild: Discord.Guild, userId: Discord.Snowflake): Promise<boolean> {
         const config_api_command = this.registry.getAPICommand(guild.id, "config");
         if (!config_api_command) {
+            log.error("Command couldn't be found in registry", { guildId: guild.id, commandName: "config" });
             return false;
         }
 
