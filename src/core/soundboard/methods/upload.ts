@@ -32,7 +32,7 @@ export async function getLastAttachment(channel: Discord.GuildTextBasedChannel) 
 }
 
 export const MAX_LEN_NAME = 30;
-export const MAX_SIZE = 4;
+export const MAX_SIZE = 8;
 export const MAX_DURATION = 30 * 1000;
 
 export const UploadErrors = {
