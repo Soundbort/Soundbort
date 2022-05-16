@@ -18,6 +18,19 @@ const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<FfprobeDa
 
 const log = Logger.child({ label: "Sample => Uploader" });
 
+/**
+ * Fetch the last attachment from the chat.
+ */
+export async function getLastAttachment(channel: Discord.GuildTextBasedChannel) {
+    const messages = await channel.messages.fetch({ limit: 10 });
+
+    const message = messages
+        .sort((a, b) => b.createdTimestamp - a.createdTimestamp)
+        .find(msg => msg.attachments.size > 0);
+
+    return message?.attachments.first();
+}
+
 export const MAX_LEN_NAME = 30;
 export const MAX_SIZE = 4;
 export const MAX_DURATION = 30 * 1000;
@@ -28,14 +41,14 @@ export const UploadErrors = {
     NotModerator: "You can't upload a sample to this server, because you don't have the permissions.",
     TooManySamples: "You have filled all your sample slots ({MAX_SAMPLES}). Try deleting some or type `/vote` to get more slots before you can add more.",
     NoChannel: "Weirdly enough this channel was not cached.",
-    FileMissing: "Upload an audio file first, then call this command.",
-    UnsupportedType: "The file is not an audio file. Please upload an audio file and then call this command.",
+    FileMissing: "Upload an audio file with the command with the 'audio-file' option, or upload it to the chat and then call this command.",
+    UnsupportedType: "The file is not an audio file. Please upload an audio file (mp3, ogg, wav etc...).",
     TooLarge: `The file is too big! Please keep it below ${MAX_SIZE} MB and ${MAX_DURATION / 1000} seconds. Even WAV can do that.`,
     NameMissing: "The name cannot be empty.",
     NameOutOfRange: `The name can't be longer than ${MAX_LEN_NAME} characters.`,
     InvalidName: "Please only use common characters A-Z, 0-9, .,_- in sound sample names ;c;",
     NameExists: "You already have a sound clip with that name in this soundboard.",
-    DownloadFailed: "Failed downloading the file from Discord's servers. Try it again later or contant the developer if this continues.",
+    DownloadFailed: "Failed downloading the file from Discord's servers. Try it again later or contact the developer if this continues.",
     NoStreams: "Couldn't read any valid streams from the file. Try another.",
     NoDuration: "Couldn't parse any duration from the audio file. Try another.",
     FfProbeError: "Checking file integrity failed. Try another.",
@@ -90,8 +103,8 @@ function status(desc: string) {
  *          every step and error during upload.
  */
 export async function* upload(
+    attachment: Discord.MessageAttachment,
     guild: Discord.Guild,
-    channel: Discord.GuildTextBasedChannel,
     user: Discord.User,
     name: string,
     scope: SAMPLE_TYPES.USER | SAMPLE_TYPES.SERVER | SAMPLE_TYPES.STANDARD,
@@ -123,19 +136,6 @@ export async function* upload(
         // /////////// ATTACHMENT CHECKS ///////////
 
         yield status("Checking data...");
-
-        const messages = await channel.messages.fetch({ limit: 10 });
-
-        const message = messages
-            .sort((a, b) => b.createdTimestamp - a.createdTimestamp)
-            .find(msg => msg.attachments.size > 0);
-
-        // Does message with attachment exist?
-        if (!message) {
-            return yield failed(UploadErrors.FileMissing);
-        }
-
-        const attachment = message.attachments.first() as Discord.MessageAttachment;
 
         if (attachment.contentType && attachment.contentType.split("/")[0] !== "audio") {
             return yield failed(UploadErrors.UnsupportedType);
