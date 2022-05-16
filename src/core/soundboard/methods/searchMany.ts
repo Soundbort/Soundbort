@@ -1,6 +1,8 @@
 import * as Discord from "discord.js";
 
 import AdminPermissions from "../../permissions/AdminPermissions";
+
+import { ApplicationCommandOptionChoice } from "../../../modules/commands/choice";
 import { CustomSample } from "../CustomSample";
 import { StandardSample } from "../StandardSample";
 import { STANDARD_SAMPLE_PREFIX } from "./findOne";
@@ -18,7 +20,7 @@ function compareName(a: { name: string }, b: { name: string }) {
 export async function searchStandard(name: string) {
     const standard_samples = await StandardSample.fuzzySearch(name);
 
-    const choices: Discord.ApplicationCommandOptionChoice[] = standard_samples
+    const choices: ApplicationCommandOptionChoice<string>[] = standard_samples
         .map(sample => ({
             name: sample.name,
             value: sample.name,
@@ -37,7 +39,7 @@ export async function search(admin: AdminPermissions, name: string, userId: Disc
             CustomSample.fuzzySearch(name, { userId }),
         ]);
 
-        const choices: Discord.ApplicationCommandOptionChoice[] = [
+        const choices: ApplicationCommandOptionChoice<string>[] = [
             ...standard_samples.map(sample => ({
                 name: `${sample.name} (standard)`,
                 value: STANDARD_SAMPLE_PREFIX + sample.name,
@@ -64,7 +66,7 @@ export async function search(admin: AdminPermissions, name: string, userId: Disc
         CustomSample.fuzzySearch(name, { userId, guildId: do_list_guild_samples ? guild.id : undefined }),
     ]);
 
-    const choices: Discord.ApplicationCommandOptionChoice[] = [
+    const choices: ApplicationCommandOptionChoice<string>[] = [
         ...standard_samples.map(sample => ({
             name: `${sample.name} (standard)`,
             value: STANDARD_SAMPLE_PREFIX + sample.name,

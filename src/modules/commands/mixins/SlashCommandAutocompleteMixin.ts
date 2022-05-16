@@ -3,6 +3,7 @@ import * as Discord from "discord.js";
 
 import Logger from "../../../log";
 import nanoTimer from "../../../util/timer";
+import { ApplicationCommandOptionChoice } from "../choice";
 import { CommandOptionData } from "../options";
 
 const log = Logger.child({ label: "SlashCommandAutocomplete" });
@@ -19,7 +20,7 @@ export abstract class SlashCommandAutocompleteMixin {
         const option = this.options.get(focused.name);
         if (!option || !option.autocomplete) return;
 
-        let choices: Discord.ApplicationCommandOptionChoice[];
+        let choices: ApplicationCommandOptionChoice[];
 
         try {
             // The differentiation is just for Typescript

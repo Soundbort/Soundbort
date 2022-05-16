@@ -2,7 +2,7 @@ import * as Discord from "discord.js";
 
 export type ChoiceTypes = string | number;
 
-export interface ApplicationCommandOptionChoice<T extends ChoiceTypes> extends Discord.ApplicationCommandOptionChoice {
+export interface ApplicationCommandOptionChoice<T extends ChoiceTypes = ChoiceTypes> extends Discord.ApplicationCommandOptionChoiceData {
     name: string;
     value: T;
 }

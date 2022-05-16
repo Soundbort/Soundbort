@@ -2,9 +2,9 @@ import { APIApplicationCommandBasicOption, APIApplicationCommandOptionChoice, Ap
 import * as Discord from "discord.js";
 import { Merge } from "type-fest";
 
-import { ChoiceTypes } from "../choice";
+import { ApplicationCommandOptionChoice, ChoiceTypes } from "../choice";
 
-export type CommandOptionAutocompleteFunc<T = any> = (value: T, interaction: Discord.AutocompleteInteraction) => Discord.Awaitable<Discord.ApplicationCommandOptionChoice[]>;
+export type CommandOptionAutocompleteFunc<T = any> = (value: T, interaction: Discord.AutocompleteInteraction) => Discord.Awaitable<ApplicationCommandOptionChoice[]>;
 
 export type WithAutocompleteOrChoice<Base, ChoiceType extends ChoiceTypes> =
     | Merge<Base, { autocomplete?: CommandOptionAutocompleteFunc<ChoiceType>; choices?: undefined }>
