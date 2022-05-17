@@ -13,6 +13,8 @@ import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 
+import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
+
 function generateSampleButtons(samples: CustomSample[] | StandardSample[]): Discord.MessageActionRow[] {
     const rows: Discord.MessageActionRow[] = [];
     let i = 0;
@@ -66,9 +68,6 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
     const guild_samples = interaction.guildId ? await CustomSample.getGuildSamples(interaction.guildId) : [];
     const user_samples = await CustomSample.getUserSamples(interaction.user.id);
 
-    const guild_slots = interaction.guildId ? await CustomSample.countSlots(interaction.guildId) : 0;
-    const user_slots = await CustomSample.countSlots(interaction.user.id);
-
     const reply = (opts: Discord.InteractionReplyOptions & Discord.MessageOptions) => {
         return interaction.replied ? interaction.channel?.send(opts) : interaction.reply(opts);
     };
@@ -85,12 +84,20 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
     }
 
     if (guild_samples.length > 0 && interaction.guild) {
+        const guild_slots = interaction.guildId ? await CustomSample.countSlots(interaction.guildId) : 0;
+
         await reply(generateSampleMessage(
             guild_samples, `${interaction.guild.name}'s Server Samples`, interaction.guild.iconURL({ dynamic: true, size: 32 }), guild_slots, false,
         ));
     }
 
-    if (user_samples.length > 0) {
+    if (
+        user_samples.length > 0
+        // If it's not allowed to play foreign samples in the server, don't display user samples
+        && (!interaction.inGuild() || await GuildConfigManager.hasAllowForeignSamples(interaction.guildId))
+    ) {
+        const user_slots = await CustomSample.countSlots(interaction.user.id);
+
         await reply(generateSampleMessage(
             user_samples, `${interaction.user.username}'s Samples`, interaction.user.avatarURL({ dynamic: true, size: 32 }), user_slots, false,
         ));
@@ -129,6 +136,10 @@ async function scopeServer(interaction: Discord.CommandInteraction): Promise<Sim
 }
 
 async function scopeUser(interaction: Discord.CommandInteraction): Promise<SimpleFuncReturn> {
+    if (interaction.inGuild() && !await GuildConfigManager.hasAllowForeignSamples(interaction.guildId)) {
+        return replyEmbedEphemeral("Playing samples that aren't from this server's soundboard is not allowed in this server.", EmbedType.Info);
+    }
+
     const samples = await CustomSample.getUserSamples(interaction.user.id);
     const slots = await CustomSample.countSlots(interaction.user.id);
 

@@ -188,35 +188,47 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
     // FIND SAMPLES
 
-    static async fuzzySearch(name: string, { userId, guildId }: { userId: string, guildId?: string }): Promise<CustomSample[]> {
-        let query: Filter<SoundboardCustomSampleSchema>;
+    static async fuzzySearch(sample_name: string, { userId, guildId }: { userId?: string, guildId?: string }): Promise<CustomSample[]> {
+        if (!guildId && !userId) {
+            return [];
+        }
 
-        if (name === "") {
-            if (!guildId) {
+        if (sample_name === "") {
+            if (!guildId && userId) {
                 return await CustomSample.getUserSamples(userId);
             }
+            if (guildId && !userId) {
+                return await CustomSample.getGuildSamples(guildId);
+            }
 
+            const docs = await models.custom_sample.findMany({
+                $or: [
+                    { userIds: userId },
+                    { guildIds: guildId },
+                ],
+            });
+
+            return docs.map(doc => new CustomSample(doc));
+        }
+
+        let query: Filter<SoundboardCustomSampleSchema>;
+
+        const name = {
+            $regex: escapeStringRegexp(sample_name),
+            $options: "i",
+        };
+
+        if (!guildId && userId) {
+            query = { userIds: userId, name };
+        } else if (guildId && !userId) {
+            query = { guildIds: guildId, name };
+        } else {
             query = {
                 $or: [
                     { userIds: userId },
                     { guildIds: guildId },
                 ],
-            };
-        } else {
-            const name_query = {
-                $regex: escapeStringRegexp(name),
-                $options: "i",
-            };
-
-            query = guildId ? {
-                $or: [
-                    { userIds: userId },
-                    { guildIds: guildId },
-                ],
-                name: name_query,
-            } : {
-                userId,
-                name: name_query,
+                name,
             };
         }
 

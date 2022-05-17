@@ -1,6 +1,7 @@
 import * as Discord from "discord.js";
 
 import AdminPermissions from "../../permissions/AdminPermissions";
+import GuildConfigManager from "../../data-managers/GuildConfigManager";
 
 import { ApplicationCommandOptionChoice } from "../../../modules/commands/choice";
 import { CustomSample } from "../CustomSample";
@@ -52,19 +53,28 @@ async function searchNonGuild(name: string, userId: Discord.Snowflake, only_dele
     return choices;
 }
 
-async function searchGuild(admin: AdminPermissions, name: string, userId: Discord.Snowflake, guild: Discord.Guild, only_deletable: boolean) {
+async function searchGuild(admin: AdminPermissions, name: string, userId: Discord.Snowflake, guild: Discord.Guild, only_deletable: boolean, only_playable: boolean) {
     let do_list_guild_samples = true;
+    let do_only_list_guild_samples = false;
 
     if (only_deletable && !await admin.isAdmin(guild, userId)) {
         do_list_guild_samples = false;
     }
+    if (only_playable && !await GuildConfigManager.hasAllowForeignSamples(guild.id)) {
+        do_only_list_guild_samples = true;
+    }
+
+    if (!do_list_guild_samples && do_only_list_guild_samples) {
+        return [];
+    }
 
     const [
-        standard_samples, custom_samples,
+        standard_samples,
+        custom_samples,
     ] = await Promise.all([
-        !only_deletable ? StandardSample.fuzzySearch(name) : [],
+        !only_deletable ? StandardSample.fuzzySearch(name) : [] as StandardSample[],
         CustomSample.fuzzySearch(name, {
-            userId: userId,
+            userId: !do_only_list_guild_samples ? userId : undefined,
             guildId: do_list_guild_samples ? guild.id : undefined,
         }),
     ]);
@@ -89,9 +99,12 @@ interface SearchOptions {
     userId: Discord.Snowflake;
     guild?: Discord.Guild | null;
     only_deletable?: boolean;
+    only_playable?: boolean;
 }
 
-export async function search({ admin, name, userId, guild, only_deletable = false }: SearchOptions) {
-    if (!guild) return await searchNonGuild(name, userId, only_deletable);
-    return await searchGuild(admin, name, userId, guild, only_deletable);
+export async function search({ admin, name, userId, guild, only_deletable = false, only_playable = false }: SearchOptions) {
+    if (!guild) {
+        return await searchNonGuild(name, userId, only_deletable);
+    }
+    return await searchGuild(admin, name, userId, guild, only_deletable, only_playable);
 }

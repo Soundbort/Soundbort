@@ -7,21 +7,37 @@ import { GuildConfigSchema } from "../../modules/database/schemas/GuildConfigSch
 
 interface GuildConfigManagerEvents {
     change(guildId: Discord.Snowflake, config: GuildConfigSchema): void;
+    allowForeignSamplesChange(guildId: Discord.Snowflake, disallowForeignSamples: boolean): void;
 }
 
 class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
-    static DEFAULTS = {};
+    static DEFAULTS: Omit<GuildConfigSchema, "guildId"> = {
+        allowForeignSamples: true,
+    };
 
     public async removeConfig(guildId: Discord.Snowflake): Promise<void> {
         await models.guild_config.deleteOne({ guildId });
     }
 
-    public async setConfig(guildId: Discord.Snowflake, config: GuildConfigSchema): Promise<void> {
-        await models.guild_config.replaceOne({ guildId }, config, { upsert: true });
+    private async setConfig(guildId: Discord.Snowflake, config: GuildConfigSchema): Promise<void> {
+        await models.guild_config.replaceOne(
+            { guildId },
+            config,
+            { upsert: true },
+        );
     }
 
-    public async updateConfig(guildId: Discord.Snowflake, partial_config: MatchKeysAndValues<GuildConfigSchema>): Promise<void> {
-        await models.guild_config.updateOne({ guildId }, { $set: partial_config });
+    private async updateConfig(guildId: Discord.Snowflake, partial_config: MatchKeysAndValues<GuildConfigSchema>): Promise<void> {
+        const $setOnInsert: Record<string, any> = { ...GuildConfigManager.DEFAULTS };
+        for (const key in partial_config) {
+            delete $setOnInsert[key];
+        }
+
+        await models.guild_config.updateOne(
+            { guildId },
+            { $set: partial_config, $setOnInsert },
+            { upsert: true },
+        );
     }
 
     /**
@@ -36,15 +52,23 @@ class GuildConfigManager extends TypedEmitter<GuildConfigManagerEvents> {
             return config;
         }
 
-        return doc;
+        return {
+            guildId: doc.guildId,
+            allowForeignSamples: doc.allowForeignSamples ?? GuildConfigManager.DEFAULTS.allowForeignSamples,
+        };
     }
 
-    // public async setValue(guildId: Discord.Snowflake, value: any): Promise<void> {
-    //     await this.updateConfig(guildId, { value });
-    //
-    //     this.emit("change", guildId, await this.findOrGenConfig(guildId));
-    //     this.emit("valueChange", guildId, value);
-    // }
+    public async setAllowForeignSamples(guildId: Discord.Snowflake, allowForeignSamples: boolean): Promise<void> {
+        await this.updateConfig(guildId, { allowForeignSamples });
+
+        this.emit("change", guildId, await this.findOrGenConfig(guildId));
+        this.emit("allowForeignSamplesChange", guildId, allowForeignSamples);
+    }
+
+    public async hasAllowForeignSamples(guildId: Discord.Snowflake): Promise<boolean> {
+        const config = await this.findOrGenConfig(guildId);
+        return config.allowForeignSamples;
+    }
 }
 
 export default new GuildConfigManager();

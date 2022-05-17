@@ -2,7 +2,7 @@ import * as database from "./index";
 import DatabaseCache from "./DatabaseCache";
 import databaseProxy from "./databaseProxy";
 import { BlacklistUserSchema } from "./schemas/BlacklistUserSchema";
-import { GuildConfigSchema } from "./schemas/GuildConfigSchema";
+import { ActualGuildConfigSchema } from "./schemas/GuildConfigSchema";
 import { InteractionRepliesSchema } from "./schemas/InteractionRepliesSchema";
 import { SoundboardCustomSampleSchema } from "./schemas/SoundboardCustomSampleSchema";
 import { SoundboardStandardSampleSchema } from "./schemas/SoundboardStandardSampleSchema";
@@ -33,7 +33,7 @@ export const standard_sample = new DatabaseCache<SoundboardStandardSampleSchema>
 
 export const sample_slots = databaseProxy<SoundboardSlotSchema>(DbCollection.SampleSlots);
 
-export const guild_config = new DatabaseCache<GuildConfigSchema>(DbCollection.GuildConfig, { indexName: "guildId" });
+export const guild_config = new DatabaseCache<ActualGuildConfigSchema>(DbCollection.GuildConfig, { indexName: "guildId" });
 
 export const stats = databaseProxy<StatsSchema>(DbCollection.Stats);
 

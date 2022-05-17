@@ -17,12 +17,19 @@ import { CustomSample } from "../../core/soundboard/CustomSample";
 import { StandardSample } from "../../core/soundboard/StandardSample";
 import { search } from "../../core/soundboard/methods/searchMany";
 import { findOne } from "../../core/soundboard/methods/findOne";
+import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 
 const log = Logger.child({ label: "Command => play" });
 
 async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.ButtonInteraction<"cached">, sample: CustomSample | StandardSample) {
     try {
-        const member = await interaction.guild.members.fetch(interaction.user.id);
+        const guild = interaction.guild;
+
+        if (sample instanceof CustomSample && !sample.isInGuilds(guild.id) && !await GuildConfigManager.hasAllowForeignSamples(guild.id)) {
+            return replyEmbedEphemeral("Playing samples that aren't from this server's soundboard is not allowed in this server.", EmbedType.Info);
+        }
+
+        const member = await guild.members.fetch(interaction.user.id);
 
         const subscription = await AudioManager.join(member);
         if (subscription === JoinFailureTypes.FailedNotInVoiceChannel) {
@@ -31,7 +38,7 @@ async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.
         if (subscription === JoinFailureTypes.FailedTryAgain) {
             return replyEmbedEphemeral("Connecting to the voice channel failed. Try again later.", EmbedType.Error);
         }
-        if (AudioManager.has(interaction.guildId) && interaction.guild.me?.voice.channelId && member.voice.channelId !== interaction.guild.me.voice.channelId) {
+        if (AudioManager.has(guild.id) && guild.me?.voice.channelId && member.voice.channelId !== guild.me.voice.channelId) {
             return replyEmbedEphemeral("You need to be in the same voice channel as the bot!", EmbedType.Info);
         }
 
@@ -86,6 +93,7 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
                     name,
                     userId: interaction.user.id,
                     guild: interaction.guild,
+                    only_playable: true,
                 }),
             }),
         ],
