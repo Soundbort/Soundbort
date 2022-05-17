@@ -222,13 +222,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         const docs = await models.custom_sample.findMany(query);
 
-        const samples: CustomSample[] = [];
-
-        for (const doc of docs) {
-            samples.push(new CustomSample(doc));
-        }
-
-        return samples;
+        return docs.map(doc => new CustomSample(doc));
     }
 
     static async findById(id: string): Promise<CustomSample | undefined> {

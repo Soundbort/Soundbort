@@ -16,7 +16,12 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
                 name: "sample",
                 description: "A sample name or sample identifier (sXXXXXX)",
                 required: true,
-                autocomplete: (value, interaction) => search(admin, value, interaction.user.id, interaction.guild),
+                autocomplete: (name, interaction) => search({
+                    admin,
+                    name,
+                    userId: interaction.user.id,
+                    guild: interaction.guild,
+                }),
             }),
         ],
         permissions: SlashCommandPermissions.EVERYONE,

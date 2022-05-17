@@ -30,29 +30,29 @@ export async function searchStandard(name: string) {
     return choices;
 }
 
-export async function search(admin: AdminPermissions, name: string, userId: Discord.Snowflake, guild?: Discord.Guild | null, only_deletable: boolean = false) {
-    if (!guild) {
-        const [
-            standard_samples, custom_samples,
-        ] = await Promise.all([
-            !only_deletable ? StandardSample.fuzzySearch(name) : [],
-            CustomSample.fuzzySearch(name, { userId }),
-        ]);
+async function searchNonGuild(name: string, userId: Discord.Snowflake, only_deletable: boolean) {
+    const [
+        standard_samples, custom_samples,
+    ] = await Promise.all([
+        !only_deletable ? StandardSample.fuzzySearch(name) : [],
+        CustomSample.fuzzySearch(name, { userId }),
+    ]);
 
-        const choices: ApplicationCommandOptionChoice<string>[] = [
-            ...standard_samples.map(sample => ({
-                name: `${sample.name} (standard)`,
-                value: STANDARD_SAMPLE_PREFIX + sample.name,
-            })),
-            ...custom_samples.map(sample => ({
-                name: `${sample.name} (user)`,
-                value: sample.id,
-            })),
-        ].sort(compareName);
+    const choices: ApplicationCommandOptionChoice<string>[] = [
+        ...standard_samples.map(sample => ({
+            name: `${sample.name} (standard)`,
+            value: STANDARD_SAMPLE_PREFIX + sample.name,
+        })),
+        ...custom_samples.map(sample => ({
+            name: `${sample.name} (user)`,
+            value: sample.id,
+        })),
+    ].sort(compareName);
 
-        return choices;
-    }
+    return choices;
+}
 
+async function searchGuild(admin: AdminPermissions, name: string, userId: Discord.Snowflake, guild: Discord.Guild, only_deletable: boolean) {
     let do_list_guild_samples = true;
 
     if (only_deletable && !await admin.isAdmin(guild, userId)) {
@@ -63,7 +63,10 @@ export async function search(admin: AdminPermissions, name: string, userId: Disc
         standard_samples, custom_samples,
     ] = await Promise.all([
         !only_deletable ? StandardSample.fuzzySearch(name) : [],
-        CustomSample.fuzzySearch(name, { userId, guildId: do_list_guild_samples ? guild.id : undefined }),
+        CustomSample.fuzzySearch(name, {
+            userId: userId,
+            guildId: do_list_guild_samples ? guild.id : undefined,
+        }),
     ]);
 
     const choices: ApplicationCommandOptionChoice<string>[] = [
@@ -78,4 +81,17 @@ export async function search(admin: AdminPermissions, name: string, userId: Disc
     ].sort(compareName);
 
     return choices;
+}
+
+interface SearchOptions {
+    admin: AdminPermissions;
+    name: string;
+    userId: Discord.Snowflake;
+    guild?: Discord.Guild | null;
+    only_deletable?: boolean;
+}
+
+export async function search({ admin, name, userId, guild, only_deletable = false }: SearchOptions) {
+    if (!guild) return await searchNonGuild(name, userId, only_deletable);
+    return await searchGuild(admin, name, userId, guild, only_deletable);
 }

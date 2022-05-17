@@ -101,7 +101,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
 
     registry.addButton({ t: BUTTON_TYPES.IMPORT_USER }, async (interaction, decoded) => {
         const id = decoded.id as string;
-
         const sample = await CustomSample.findById(id);
         if (!sample) {
             return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
@@ -112,7 +111,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
 
     registry.addButton({ t: BUTTON_TYPES.IMPORT_SERVER }, async (interaction, decoded) => {
         const id = decoded.id as string;
-
         const sample = await CustomSample.findById(id);
         if (!sample) {
             return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);

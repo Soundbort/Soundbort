@@ -64,9 +64,13 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
                 name: "sample",
                 description: "A sample name or sample identifier (sXXXXXX)",
                 required: true,
-                async autocomplete(value, interaction) {
-                    return await search(admin, value, interaction.user.id, interaction.guild, true);
-                },
+                autocomplete: (name, interaction) => search({
+                    admin,
+                    name,
+                    userId: interaction.user.id,
+                    guild: interaction.guild,
+                    only_deletable: true,
+                }),
             }),
         ],
         permissions: SlashCommandPermissions.EVERYONE,
@@ -184,7 +188,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
 
     registry.addButton({ t: BUTTON_TYPES.DELETE_ASK }, async (interaction, decoded) => {
         const id = decoded.id as string;
-
         const sample = await CustomSample.findById(id);
         if (!sample) {
             return replyEmbedEphemeral("This sample doesn't exist anymore", EmbedType.Info);
@@ -225,7 +228,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
 
     registry.addButton({ t: BUTTON_TYPES.DELETE_USER }, async (interaction, decoded) => {
         const id = decoded.id as string;
-
         const sample = await CustomSample.findById(id);
         if (!sample) {
             return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
@@ -246,19 +248,18 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
             return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
         }
 
-        const id = decoded.id as string;
-
-        const guildId = interaction.guildId;
-
         const admin_permissions = await admin.isAdmin(interaction.guild, interaction.member.id);
         if (!admin_permissions) {
             return replyEmbedEphemeral("You're not a moderator of this server, you can't remove server samples.", EmbedType.Error);
         }
 
+        const id = decoded.id as string;
         const sample = await CustomSample.findById(id);
         if (!sample) {
             return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
         }
+
+        const guildId = interaction.guildId;
 
         if (!sample.isInGuilds(guildId)) {
             return replyEmbedEphemeral("You don't have this sample in your server soundboard.", EmbedType.Info);
@@ -271,7 +272,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
 
     registry.addButton({ t: BUTTON_TYPES.DELETE_ABORT }, async (interaction, decoded) => {
         const id = decoded.id as (string | null);
-
         const sample = id && await CustomSample.findById(id);
         if (!sample) {
             return replyEmbed("Aborted deletion of sample.", EmbedType.Info);

@@ -53,7 +53,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
         if (!interaction.inCachedGuild()) return;
 
         const id = decoded.id as string;
-
         const sample = await CustomSample.findById(id);
         if (!sample) {
             return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
@@ -66,7 +65,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
         if (!interaction.inCachedGuild()) return;
 
         const name = decoded.n as string;
-
         const sample = await StandardSample.findByName(name);
         if (!sample) {
             return replyEmbedEphemeral("That sample doesn't exist anymore.", EmbedType.Error);
@@ -83,7 +81,12 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
                 name: "sample",
                 description: "A sample name or sample identifier (sXXXXXX)",
                 required: true,
-                autocomplete: (value, interaction) => search(admin, value, interaction.user.id, interaction.guild),
+                autocomplete: (name, interaction) => search({
+                    admin,
+                    name,
+                    userId: interaction.user.id,
+                    guild: interaction.guild,
+                }),
             }),
         ],
         permissions: SlashCommandPermissions.EVERYONE,
@@ -93,7 +96,6 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
             }
 
             const name = interaction.options.getString("sample", true).trim();
-
             const sample = await findOne(name, interaction.user.id, interaction.guildId);
             if (!sample) {
                 return replyEmbedEphemeral(`Couldn't find sample with name or id '${name}'`, EmbedType.Error);
