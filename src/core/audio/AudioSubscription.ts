@@ -21,8 +21,7 @@ export class AudioSubscription {
         this._onDestroyed = onDestroyed;
 
         this.voice_connection.on("error", error => { log.warn(error); });
-        // .on<"stateChange">("stateChange") is a workaround for issue https://github.com/discordjs/discord.js/issues/7594
-        this.voice_connection.on<"stateChange">("stateChange", async (oldState: Voice.VoiceConnectionState, newState: Voice.VoiceConnectionState) => {
+        this.voice_connection.on("stateChange", async (oldState: Voice.VoiceConnectionState, newState: Voice.VoiceConnectionState) => {
             if (newState.status === Voice.VoiceConnectionStatus.Disconnected) {
                 if (newState.reason === Voice.VoiceConnectionDisconnectReason.WebSocketClose && newState.closeCode === 4014) {
                     /*
@@ -77,8 +76,7 @@ export class AudioSubscription {
             }
         });
 
-        // .on<"stateChange">("stateChange") is a workaround for issue https://github.com/discordjs/discord.js/issues/7594
-        this.audio_player.on<"stateChange">("stateChange", (oldState: Voice.AudioPlayerState, newState: Voice.AudioPlayerState) => {
+        this.audio_player.on("stateChange", (oldState: Voice.AudioPlayerState, newState: Voice.AudioPlayerState) => {
             if (oldState.status === Voice.AudioPlayerStatus.Idle && newState.status === Voice.AudioPlayerStatus.Playing) {
                 log.debug("Playing audio output on audio player");
             } else if (newState.status === Voice.AudioPlayerStatus.Idle) {
