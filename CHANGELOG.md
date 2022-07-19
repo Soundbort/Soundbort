@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.2](https://github.com/LonelessCodes/SoundBort/compare/v0.8.1...v0.8.2) (2022-07-19)
+
+
+### Bug Fixes
+
+* fixed accidential dev dependency ([6005a68](https://github.com/LonelessCodes/SoundBort/commit/6005a687634fd1b56ee662ece2d2bd8e425c79a9))
+
 ### [0.8.1](https://github.com/LonelessCodes/SoundBort/compare/v0.8.0...v0.8.1) (2022-07-19)
 
 
