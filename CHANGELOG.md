@@ -1,5 +1,17 @@
 # Changelog
 
+### [0.8.1](https://github.com/LonelessCodes/SoundBort/compare/v0.8.0...v0.8.1) (2022-07-19)
+
+
+### Features
+
+* setting to disallow foreign samples ([7625e8c](https://github.com/LonelessCodes/SoundBort/commit/7625e8cc81e8daf61892c5108d2e0f6958d96ccf))
+
+
+### Changes
+
+* add support server invite link to /getting-started ([56df0e2](https://github.com/LonelessCodes/SoundBort/commit/56df0e2f0ab10aad4cbe431841619ec41343ae63))
+
 ## [0.8.0](https://github.com/LonelessCodes/SoundBort/compare/v0.7.1...v0.8.0) (2022-05-16)
 
 
