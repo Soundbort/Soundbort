@@ -25,9 +25,9 @@ export abstract class SlashCommandAutocompleteMixin {
         try {
             // The differentiation is just for Typescript
             if (option.type === ApplicationCommandOptionType.Number || option.type === ApplicationCommandOptionType.Integer) {
-                choices = await option.autocomplete(focused.value as number, interaction);
+                choices = await option.autocomplete(focused.value as unknown as number, interaction);
             } else {
-                choices = await option.autocomplete(focused.value as string, interaction);
+                choices = await option.autocomplete(focused.value as unknown as string, interaction);
             }
 
             // Do not return more than the top 25 choices
