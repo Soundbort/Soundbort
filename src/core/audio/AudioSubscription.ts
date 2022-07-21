@@ -35,8 +35,10 @@ export class AudioSubscription {
                         await Voice.entersState(this.voice_connection, Voice.VoiceConnectionStatus.Connecting, 5000);
                         // Probably moved voice channel
                     } catch {
-                        this.voice_connection.destroy(); // destroy event will bubble up to execute this.stop()
                         // Probably removed from voice channel
+                        if (this.voice_connection.state.status !== Voice.VoiceConnectionStatus.Destroyed) {
+                            this.voice_connection.destroy(); // destroy event will bubble up to execute this.stop()
+                        }
                     }
                 } else if (this.voice_connection.rejoinAttempts < 5) {
                     /*
