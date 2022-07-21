@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.3](https://github.com/LonelessCodes/SoundBort/compare/v0.8.2...v0.8.3) (2022-07-21)
+
+
+### Bug Fixes
+
+* fixed destroying voice connection when it's already been destroyed ([38a506c](https://github.com/LonelessCodes/SoundBort/commit/38a506c06375f04a21c8b505db8371d013612c11))
+
 ### [0.8.2](https://github.com/LonelessCodes/SoundBort/compare/v0.8.1...v0.8.2) (2022-07-19)
 
 
