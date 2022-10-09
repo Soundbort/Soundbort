@@ -59,18 +59,18 @@
     "@types/express": "^4.17.13",
     "@types/fluent-ffmpeg": "^2.1.20",
     "@types/fs-extra": "^9.0.13",
-    "@types/node": "^16.11.26",
+    "@types/node": "^16.11.64",
     "@types/node-fetch": "^2.6.2",
     "@types/temp": "^0.9.1",
-    "@typescript-eslint/eslint-plugin": "^5.30.6",
-    "@typescript-eslint/parser": "^5.30.6",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
     "eslint": "^8.20.0",
     "eslint-plugin-unicorn": "^42.0.0",
     "rimraf": "^3.0.2",
     "standard-version": "^9.5.0",
     "ts-node": "^10.9.1",
     "type-fest": "^2.16.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.8.4"
   },
   "engines": {
     "node": ">= 16.14.0"
