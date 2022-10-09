@@ -31,6 +31,8 @@
         "unicorn/prefer-object-from-entries": "off",
         "unicorn/no-null": "off",
         "unicorn/prefer-module": "off",
+        "unicorn/prefer-top-level-await": "off",
+        "unicorn/switch-case-braces": ["error", "avoid"],
         // ESLINT
         "getter-return": "error",
         "no-compare-neg-zero": "error",

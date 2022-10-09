@@ -174,7 +174,7 @@ export default class DiscordPermissionsV2Utils {
             // Instead first channels are evaluated, then users, then roles (reverse engineered)
             for (const perm of permissions.permissions) {
                 switch (perm.type as PatchedAPIApplicationCommandPermission["type"]) {
-                    case 1: { // Role
+                    case 1: // Role
                         if (perm.id === permissions.guild_id) {
                             everyone_role = perm.permission;
                         } else if (perm.permission) {
@@ -183,15 +183,12 @@ export default class DiscordPermissionsV2Utils {
                             disallowed_roles.push(perm.id);
                         }
                         break;
-                    }
-                    case 2: { // User
+                    case 2: // User
                         user_perms.set(perm.id, perm.permission);
                         break;
-                    }
-                    case 3: { // Channel
+                    case 3: // Channel
                         channel_perms.set(perm.id, perm.permission);
                         break;
-                    }
                 }
             }
 
