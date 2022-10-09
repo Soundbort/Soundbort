@@ -84,15 +84,36 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
     async toEmbed({ show_timestamps = true, show_import = true, show_delete = true, description, type }: ToEmbedOptions): Promise<Discord.InteractionReplyOptions> {
         const embed = createEmbed(description, type);
 
-        embed.addField("Name", this.name, true);
-        embed.addField("ID", this.id, true);
+        embed.addFields({
+            name: "Name",
+            value: this.name,
+            inline: true,
+        }, {
+            name: "ID",
+            value: this.id,
+            inline: true,
+        });
 
         if (show_timestamps) {
-            embed.addField("Play Count", this.plays.toLocaleString("en"));
-
-            embed.addField("Uploaded", moment(this.created_at).fromNow(), true);
-            embed.addField("Modified", moment(this.modified_at).fromNow(), true);
-            if (this.last_played_at) embed.addField("Last Played", moment(this.last_played_at).fromNow(), true);
+            embed.addFields({
+                name: "Play Count",
+                value: this.plays.toLocaleString("en"),
+            }, {
+                name: "Uploaded",
+                value: moment(this.created_at).fromNow(),
+                inline: true,
+            }, {
+                name: "Modified",
+                value: moment(this.modified_at).fromNow(),
+                inline: true,
+            });
+            if (this.last_played_at) {
+                embed.addFields({
+                    name: "Last Played",
+                    value: moment(this.last_played_at).fromNow(),
+                    inline: true,
+                });
+            }
         }
 
         // Waveform
