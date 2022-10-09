@@ -103,16 +103,35 @@ export function install({ registry }: CmdInstallerArgs): void {
                     name: BOT_NAME,
                     iconURL: (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined,
                 })
-                .addField("Bot Version", VERSION, true)
-                .addField("Node.js Version", process.version.slice(1), true)
-                .addField("Discord.js Version", Discord.version, true)
-
-                .addField("Uptime", time(new Date(Date.now() - Math.round(process.uptime() * 1000)), "R"), true)
-
-                .addField("Memory Usage", `${(aggregation.memory_usage * 100).toFixed(0)} %`, true)
-                .addField("CPU Load Average", aggregation.cpu_load_avg.map(v => `${(v * 100).toFixed(0)} %`).join(" / "), true)
-                .addField("CPU Cores", os.cpus().length.toLocaleString("en"), true)
-
+                .addFields({
+                    name: "Bot Version",
+                    value: VERSION,
+                    inline: true,
+                }, {
+                    name: "Node.js Version",
+                    value: process.version.slice(1),
+                    inline: true,
+                }, {
+                    name: "Discord.js Version",
+                    value: Discord.version,
+                    inline: true,
+                }, {
+                    name: "Uptime",
+                    value: time(new Date(Date.now() - Math.round(process.uptime() * 1000)), "R"),
+                    inline: true,
+                }, {
+                    name: "Memory Usage",
+                    value: `${(aggregation.memory_usage * 100).toFixed(0)} %`,
+                    inline: true,
+                }, {
+                    name: "CPU Load Average",
+                    value: aggregation.cpu_load_avg.map(v => `${(v * 100).toFixed(0)} %`).join(" / "),
+                    inline: true,
+                }, {
+                    name: "CPU Cores",
+                    value: os.cpus().length.toLocaleString("en"),
+                    inline: true,
+                })
                 .setFooter({
                     text: `${BOT_NAME} v${VERSION}`,
                 })
@@ -136,8 +155,15 @@ export function install({ registry }: CmdInstallerArgs): void {
 
             embeds.push(createEmbed(undefined, EmbedType.Basic)
                 .setTitle("Total Servers")
-                .addField("Total Servers", interaction.client.guilds.cache.size.toLocaleString("en"), true)
-                .addField("Total Large Servers", interaction.client.guilds.cache.filter(g => g.large).size.toLocaleString("en"), true)
+                .addFields({
+                    name: "Total Servers",
+                    value: interaction.client.guilds.cache.size.toLocaleString("en"),
+                    inline: true,
+                }, {
+                    name: "Total Large Servers",
+                    value: interaction.client.guilds.cache.filter(g => g.large).size.toLocaleString("en"),
+                    inline: true,
+                })
                 .setImage("attachment://guild.png"));
 
             // VOICE CONNECTIONS
@@ -159,8 +185,15 @@ export function install({ registry }: CmdInstallerArgs): void {
             const top_voice_connections = Math.max(...stats.map(doc => doc.voice_connections));
             embeds.push(createEmbed(undefined, EmbedType.Warning)
                 .setTitle("Connected Voice Channels")
-                .addField("Active", aggregation.voice_connections.toLocaleString("en"), true)
-                .addField(`Top ${time_window_name}`, top_voice_connections.toLocaleString("en"), true)
+                .addFields({
+                    name: "Active",
+                    value: aggregation.voice_connections.toLocaleString("en"),
+                    inline: true,
+                }, {
+                    name: `Top ${time_window_name}`,
+                    value: top_voice_connections.toLocaleString("en"),
+                    inline: true,
+                })
                 .setImage("attachment://voice_connections.png"));
 
             // INTERACTIONS
@@ -205,10 +238,23 @@ export function install({ registry }: CmdInstallerArgs): void {
             embeds.push(createEmbed(undefined, EmbedType.Error)
                 .setTitle(`Interactions in the last ${time_window_name}`)
                 .setImage("attachment://samples_played.png")
-                .addField("Commands used", commands_used || "none", true)
-                .addField("Buttons used", buttons_used || "none", true)
-                .addField("Samples played", aggregation.played_samples.toLocaleString("en") + " played", true)
-                .addField("Total User/Server Samples", aggregation.custom_samples.toLocaleString("en"), true));
+                .addFields({
+                    name: "Commands used",
+                    value: commands_used || "none",
+                    inline: true,
+                }, {
+                    name: "Buttons used",
+                    value: buttons_used || "none",
+                    inline: true,
+                }, {
+                    name: "Samples played",
+                    value: aggregation.played_samples.toLocaleString("en") + " played",
+                    inline: true,
+                }, {
+                    name: "Total User/Server Samples",
+                    value: aggregation.custom_samples.toLocaleString("en"),
+                    inline: true,
+                }));
 
             // PING
 
@@ -231,8 +277,15 @@ export function install({ registry }: CmdInstallerArgs): void {
 
             embeds.push(createEmbed(undefined, EmbedType.Success)
                 .setTitle("Ping")
-                .addField("Last ping", interaction.client.ws.ping.toLocaleString("en") + " ms", true)
-                .addField(`Average ping last ${time_window_name}`, Math.round(aggregation.ping).toLocaleString("en") + " ms", true)
+                .addFields({
+                    name: "Last ping",
+                    value: interaction.client.ws.ping.toLocaleString("en") + " ms",
+                    inline: true,
+                }, {
+                    name: `Average ping last ${time_window_name}`,
+                    value: Math.round(aggregation.ping).toLocaleString("en") + " ms",
+                    inline: true,
+                })
                 .setImage("attachment://ping.png"));
 
             return { embeds, files };

@@ -64,14 +64,32 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
     async toEmbed({ show_timestamps = true, description, type }: ToEmbedOptions): Promise<Discord.InteractionReplyOptions> {
         const embed = createEmbed(description, type);
 
-        embed.addField("Name", this.name, true);
+        embed.addFields({
+            name: "Name",
+            value: this.name,
+            inline: true,
+        });
 
         if (show_timestamps) {
-            embed.addField("Play Count", this.plays.toLocaleString("en"));
-
-            embed.addField("Uploaded", moment(this.created_at).fromNow(), true);
-            embed.addField("Modified", moment(this.modified_at).fromNow(), true);
-            if (this.last_played_at) embed.addField("Last Played", moment(this.last_played_at).fromNow(), true);
+            embed.addFields({
+                name: "Play Count",
+                value: this.plays.toLocaleString("en"),
+            }, {
+                name: "Uploaded",
+                value: moment(this.created_at).fromNow(),
+                inline: true,
+            }, {
+                name: "Modified",
+                value: moment(this.modified_at).fromNow(),
+                inline: true,
+            });
+            if (this.last_played_at) {
+                embed.addFields({
+                    name: "Last Played",
+                    value: moment(this.last_played_at).fromNow(),
+                    inline: true,
+                });
+            }
         }
 
         // Waveform
