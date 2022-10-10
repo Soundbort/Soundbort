@@ -1,4 +1,3 @@
-import { userMention } from "@discordjs/builders";
 import * as Discord from "discord.js";
 
 import { SAMPLE_TYPES } from "../../const";
@@ -39,9 +38,9 @@ async function sendMessageReply(client: Discord.Client<true>, slot: SingleSoundb
 
     let text: string;
     if (slot.slotType === SAMPLE_TYPES.SERVER) {
-        text = `${userMention(slot.fromUserId)} gave this server ${slot_text}.`;
+        text = `${Discord.userMention(slot.fromUserId)} gave this server ${slot_text}.`;
     } else {
-        text = `${userMention(slot.fromUserId)} gave ${userMention(slot.ownerId)} ${slot_text}.`;
+        text = `${Discord.userMention(slot.fromUserId)} gave ${Discord.userMention(slot.ownerId)} ${slot_text}.`;
     }
     text += ` Now it has ${new_slots} slots.`;
 
@@ -62,7 +61,7 @@ async function sendDM(client: Discord.Client<true>, slot: SingleSoundboardSlot, 
     if (slot.ownerId === slot.fromUserId) {
         text = (slot.count === 1 ? "One new slot has" : "Two new slots have") + " been added to your personal soundboard.";
     } else {
-        text = `${userMention(slot.fromUserId)} added ` + (slot.count === 1 ? "one new slot" : "two new slots") + " to your personal soundboard.";
+        text = `${Discord.userMention(slot.fromUserId)} added ` + (slot.count === 1 ? "one new slot" : "two new slots") + " to your personal soundboard.";
     }
     text += ` Now you have ${new_slots} slots.`;
 

@@ -6,7 +6,6 @@
 
 import { Merge } from "type-fest";
 import * as Discord from "discord.js";
-import { REST } from "@discordjs/rest";
 import { APIApplicationCommand, APIApplicationCommandPermission, APIGuildApplicationCommandPermissions, ApplicationCommandPermissionType, Routes } from "discord-api-types/v10";
 
 import Logger from "../../log";
@@ -37,7 +36,7 @@ export default class DiscordPermissionsV2Utils {
     static instances = new WeakMap<Discord.Client, DiscordPermissionsV2Utils>();
 
     public client: Discord.Client<true>;
-    public rest: REST = new REST({ version: "10" });
+    public rest: Discord.REST = new Discord.REST({ version: "10" });
 
     constructor(client: Discord.Client<true>) {
         this.client = client;

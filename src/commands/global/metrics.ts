@@ -1,7 +1,6 @@
 import * as Discord from "discord.js";
 import color from "color";
 import os from "node:os";
-import { time } from "@discordjs/builders";
 
 import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../../const";
 import { BOT_NAME, VERSION } from "../../config";
@@ -98,7 +97,7 @@ export function install({ registry }: CmdInstallerArgs): void {
 
             files.push(new Discord.MessageAttachment(cpu_buffer, "cpu_load_avg.png"));
 
-            embeds.push(createEmbed(`**Last updated**: ${time(aggregation._id, "R")}`)
+            embeds.push(createEmbed(`**Last updated**: ${Discord.time(aggregation._id, Discord.TimestampStyles.RelativeTime)}`)
                 .setAuthor({
                     name: BOT_NAME,
                     iconURL: (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined,
@@ -117,7 +116,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                     inline: true,
                 }, {
                     name: "Uptime",
-                    value: time(new Date(Date.now() - Math.round(process.uptime() * 1000)), "R"),
+                    value: Discord.time(new Date(Date.now() - Math.round(process.uptime() * 1000)), Discord.TimestampStyles.RelativeTime),
                     inline: true,
                 }, {
                     name: "Memory Usage",
