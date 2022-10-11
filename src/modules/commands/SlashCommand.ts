@@ -32,14 +32,8 @@ export interface SlashSingleCommandOptions extends SlashBaseCommandOptions {
 
 export type SlashCommandOptions = SlashGroupCommandOptions | SlashSingleCommandOptions;
 
-// patch for permissions v2
-export type RESTPostAPIChatInputApplicationCommand = Omit<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody, "default_permission"> & {
-    default_member_permissions?: string;
-    dm_permission?: boolean;
-};
-
 export class SlashCommand extends SlashCommandAutocompleteMixin {
-    readonly data: Readonly<RESTPostAPIChatInputApplicationCommand>;
+    readonly data: Readonly<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody>;
 
     readonly exclusive_guild_ids: Discord.Snowflake[];
     readonly permissions: SlashCommandPermissions;

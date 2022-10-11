@@ -6,7 +6,6 @@ import { BUTTON_TYPES } from "../const";
 import { doNothing } from "../util/util";
 import { removeDupes } from "../util/array";
 
-import DiscordPermissionsV2Utils from "../util/discord-patch/DiscordPermissionsV2Utils";
 import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
 import { SlashCommand } from "../modules/commands/SlashCommand";
 
@@ -21,8 +20,8 @@ export default class InteractionRegistry {
     public commands = new Discord.Collection<string, SlashCommand>();
     public buttons: { filter: ButtonFilter; func: ButtonHandler }[] = [];
 
-    public global_api_commands = new Map<string, Discord.APIApplicationCommand>();
-    public guild_api_commands = new Map<Discord.Snowflake, Map<string, Discord.APIApplicationCommand>>();
+    public global_app_commands = new Map<string, Discord.ApplicationCommand>();
+    public guild_app_commands = new Map<Discord.Snowflake, Map<string, Discord.ApplicationCommand>>();
 
     public addCommand(command: SlashCommand): void {
         if (this.commands.has(command.data.name)) throw new Error("Command name already exists");
@@ -30,20 +29,20 @@ export default class InteractionRegistry {
         this.commands.set(command.data.name, command);
     }
 
-    private async deployToGuild(perms_utils: DiscordPermissionsV2Utils, guild: Discord.Guild, guild_commands: Discord.Collection<string, SlashCommand>) {
+    private async deployToGuild(guild: Discord.Guild, guild_commands: Discord.Collection<string, SlashCommand>) {
         const guild_commands_data = guild_commands
             // filter out owner commands in guilds that don't need them
             .filter(command => command.exclusive_guild_ids.includes(guild.id))
             .map(command => command.data);
 
-        const guild_app_commands = await perms_utils.setApplicationGuildCommands(guild.id, guild_commands_data);
+        const guild_app_commands = await guild.commands.set(guild_commands_data);
 
-        for (const app_command of guild_app_commands) {
-            let api_commands = this.guild_api_commands.get(guild.id);
-            if (!api_commands) {
-                this.guild_api_commands.set(guild.id, api_commands = new Map());
+        for (const [, app_command] of guild_app_commands) {
+            let app_commands = this.guild_app_commands.get(guild.id);
+            if (!app_commands) {
+                this.guild_app_commands.set(guild.id, app_commands = new Map());
             }
-            api_commands.set(app_command.name, app_command);
+            app_commands.set(app_command.name, app_command);
 
             const command = guild_commands.get(app_command.name);
             if (command && typeof command.onGuildCreate === "function") {
@@ -52,10 +51,10 @@ export default class InteractionRegistry {
         }
     }
 
-    private async clearGuilds(perms_utils: DiscordPermissionsV2Utils, guilds: Discord.Guild[]) {
+    private async clearGuilds(guilds: Discord.Guild[]) {
         for (const guild of guilds) {
             try {
-                await perms_utils.setApplicationGuildCommands(guild.id, []);
+                await guild.commands.set([]);
             } catch (error) {
                 log.error("Deploying to guild %s failed.", guild.id, error);
             }
@@ -64,8 +63,6 @@ export default class InteractionRegistry {
     }
 
     public async deployCommands(client: Discord.Client<true>): Promise<void> {
-        const perms_utils = DiscordPermissionsV2Utils.client(client);
-
         // ///////// DEPLOY COMMANDS /////////
 
         log.info("Deploying Global Commands...");
@@ -73,9 +70,9 @@ export default class InteractionRegistry {
         const global_commands = this.commands.filter(command => command.exclusive_guild_ids.length === 0);
         const global_commands_data = global_commands.map(command => command.data);
 
-        const global_app_commands = await perms_utils.setApplicationCommands(global_commands_data);
-        for (const app_command of global_app_commands) {
-            this.global_api_commands.set(app_command.name, app_command);
+        const global_app_commands = await client.application.commands.set(global_commands_data);
+        for (const [, app_command] of global_app_commands) {
+            this.global_app_commands.set(app_command.name, app_command);
         }
 
         // ///////// DEPLOY EXCLUSIVE GUILD COMMANDS /////////
@@ -86,7 +83,7 @@ export default class InteractionRegistry {
 
         client.on("guildCreate", async guild => {
             try {
-                await this.deployToGuild(perms_utils, guild, guild_commands);
+                await this.deployToGuild(guild, guild_commands);
             } catch (error) {
                 log.error("Deploying to guild %s failed.", guild.id, error);
             }
@@ -103,7 +100,7 @@ export default class InteractionRegistry {
 
         for (const guild of guilds) {
             try {
-                await this.deployToGuild(perms_utils, guild, guild_commands);
+                await this.deployToGuild(guild, guild_commands);
             } catch (error) {
                 log.error("Deploying to guild %s failed.", guild.id, error);
             }
@@ -112,13 +109,13 @@ export default class InteractionRegistry {
         // asynchronously remove orphan guild commands from all guilds that
         // do not have exclusive commands anymore
         const clearable_guilds = [...client.guilds.cache.values()].filter(guild => !guild_ids.includes(guild.id));
-        this.clearGuilds(perms_utils, clearable_guilds).catch(doNothing);
+        this.clearGuilds(clearable_guilds).catch(doNothing);
 
         log.info("All Commands deployed.");
     }
 
-    public getAPICommand(guild_id: Discord.Snowflake, command_name: string) {
-        return this.guild_api_commands.get(guild_id)?.get(command_name) ?? this.global_api_commands.get(command_name);
+    public getApplicationCommand(guild_id: Discord.Snowflake, command_name: string) {
+        return this.guild_app_commands.get(guild_id)?.get(command_name) ?? this.global_app_commands.get(command_name);
     }
 
     public addButton(filter: ButtonFilter, func: ButtonHandler): void {
