@@ -7,6 +7,8 @@ import { createEmbed } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 
+// TODO: format "/command" with Discord.chatInputApplicationCommandMention()
+
 const gettingStartedDescription = (clientId: Discord.Snowflake) => `
 __**So you've chosen ${BOT_NAME}. What now?**__
 

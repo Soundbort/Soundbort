@@ -15,6 +15,8 @@ import { StandardSample } from "../../core/soundboard/StandardSample";
 
 import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 
+// TODO: format "/command" with Discord.chatInputApplicationCommandMention()
+
 function generateSampleButtons(samples: CustomSample[] | StandardSample[]): Discord.ActionRowBuilder<Discord.ButtonBuilder>[] {
     const rows: Discord.ActionRowBuilder<Discord.ButtonBuilder>[] = [];
     let i = 0;
