@@ -1,4 +1,3 @@
-import { APIApplicationCommandBasicOption, APIApplicationCommandOptionChoice, ApplicationCommandOptionType } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 import { Merge } from "type-fest";
 
@@ -8,10 +7,10 @@ export type CommandOptionAutocompleteFunc<T = any> = (value: T, interaction: Dis
 
 export type WithAutocompleteOrChoice<Base, ChoiceType extends ChoiceTypes> =
     | Merge<Base, { autocomplete?: CommandOptionAutocompleteFunc<ChoiceType>; choices?: undefined }>
-    | Merge<Base, { autocomplete?: undefined; choices: APIApplicationCommandOptionChoice<ChoiceType>[]; }>;
+    | Merge<Base, { autocomplete?: undefined; choices: Discord.APIApplicationCommandOptionChoice<ChoiceType>[]; }>;
 
 export interface HasTypeField {
-    type: ApplicationCommandOptionType;
+    type: Discord.ApplicationCommandOptionType;
 }
 
 export interface BaseOptionData<Data extends HasTypeField> {
@@ -24,6 +23,6 @@ export type WithAutocompleteOrChoicesOptionData<Data extends HasTypeField, Choic
         autocomplete?: CommandOptionAutocompleteFunc<ChoiceType>;
     }>;
 
-export function createBaseOptionData<Data extends APIApplicationCommandBasicOption>(data: Data): BaseOptionData<Data> {
+export function createBaseOptionData<Data extends Discord.APIApplicationCommandBasicOption>(data: Data): BaseOptionData<Data> {
     return { type: data.type, data };
 }

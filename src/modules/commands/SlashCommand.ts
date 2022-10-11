@@ -1,4 +1,3 @@
-import { ApplicationCommandType, RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 
 import { SharedCommandOptions, MiddlewareFunc, SimpleFunc } from "./AbstractSharedCommand";
@@ -34,7 +33,7 @@ export interface SlashSingleCommandOptions extends SlashBaseCommandOptions {
 export type SlashCommandOptions = SlashGroupCommandOptions | SlashSingleCommandOptions;
 
 // patch for permissions v2
-export type RESTPostAPIChatInputApplicationCommand = Omit<RESTPostAPIChatInputApplicationCommandsJSONBody, "default_permission"> & {
+export type RESTPostAPIChatInputApplicationCommand = Omit<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody, "default_permission"> & {
     default_member_permissions?: string;
     dm_permission?: boolean;
 };
@@ -66,7 +65,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         this.onGuildCreate = options.onGuildCreate;
 
         this.data = {
-            type: ApplicationCommandType.ChatInput,
+            type: Discord.ApplicationCommandType.ChatInput,
 
             name: options.name,
             name_localizations: options.name_localizations,

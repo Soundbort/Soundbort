@@ -1,4 +1,3 @@
-import { APIApplicationCommandSubcommandOption, ApplicationCommandOptionType } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 
 import { SharedCommandOptions, SimpleFunc } from "./AbstractSharedCommand";
@@ -11,7 +10,7 @@ export interface SlashSubCommandOptions extends SharedCommandOptions {
 }
 
 export class SlashSubCommand extends SlashCommandAutocompleteMixin {
-    readonly data: APIApplicationCommandSubcommandOption;
+    readonly data: Discord.APIApplicationCommandSubcommandOption;
 
     readonly func: SimpleFunc;
     readonly options: Map<string, CommandOptionData> = new Map();
@@ -22,7 +21,7 @@ export class SlashSubCommand extends SlashCommandAutocompleteMixin {
         this.func = options.func;
 
         this.data = {
-            type: ApplicationCommandOptionType.Subcommand,
+            type: Discord.ApplicationCommandOptionType.Subcommand,
 
             name: options.name,
             name_localizations: options.name_localizations,

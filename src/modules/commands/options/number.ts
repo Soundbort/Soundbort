@@ -1,13 +1,13 @@
-import { APIApplicationCommandNumberOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import * as Discord from "discord.js";
 import { WithAutocompleteOrChoice, WithAutocompleteOrChoicesOptionData } from "./_shared";
 
 export function createNumberOption(
-    opts: WithAutocompleteOrChoice<Omit<APIApplicationCommandNumberOption, "type">, number>,
-): WithAutocompleteOrChoicesOptionData<APIApplicationCommandNumberOption, number> {
+    opts: WithAutocompleteOrChoice<Omit<Discord.APIApplicationCommandNumberOption, "type">, number>,
+): WithAutocompleteOrChoicesOptionData<Discord.APIApplicationCommandNumberOption, number> {
     return {
-        type: ApplicationCommandOptionType.Number,
+        type: Discord.ApplicationCommandOptionType.Number,
         data: {
-            type: ApplicationCommandOptionType.Number,
+            type: Discord.ApplicationCommandOptionType.Number,
             ...opts,
             autocomplete: !!opts.autocomplete,
         },

@@ -1,4 +1,3 @@
-import { APIApplicationCommandSubcommandGroupOption, ApplicationCommandOptionType } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 
 import { SharedCommandOptions, MiddlewareFunc } from "./AbstractSharedCommand";
@@ -10,7 +9,7 @@ export interface SlashSubCommandGroupOptions extends SharedCommandOptions {
 }
 
 export class SlashSubCommandGroup {
-    readonly data: APIApplicationCommandSubcommandGroupOption;
+    readonly data: Discord.APIApplicationCommandSubcommandGroupOption;
 
     readonly middleware?: MiddlewareFunc;
     readonly commands: Map<string, SlashSubCommand> = new Map();
@@ -19,7 +18,7 @@ export class SlashSubCommandGroup {
         this.middleware = options.middleware;
 
         this.data = {
-            type: ApplicationCommandOptionType.SubcommandGroup,
+            type: Discord.ApplicationCommandOptionType.SubcommandGroup,
 
             name: options.name,
             name_localizations: options.name_localizations,

@@ -6,18 +6,17 @@
 
 import { Merge } from "type-fest";
 import * as Discord from "discord.js";
-import { APIApplicationCommand, APIApplicationCommandPermission, APIGuildApplicationCommandPermissions, ApplicationCommandPermissionType, Routes } from "discord-api-types/v10";
 
 import Logger from "../../log";
 import { RESTPostAPIChatInputApplicationCommand } from "../../modules/commands/SlashCommand";
 
-export type PatchedAPIApplicationCommand = APIApplicationCommand & {
+export type PatchedAPIApplicationCommand = Discord.APIApplicationCommand & {
     default_member_permissions: string | null;
     dm_permission?: boolean;
 };
 
-export type PatchedAPIApplicationCommandPermission = Merge<APIApplicationCommandPermission, {
-    type: ApplicationCommandPermissionType | 3;
+export type PatchedAPIApplicationCommandPermission = Merge<Discord.APIApplicationCommandPermission, {
+    type: Discord.ApplicationCommandPermissionType | 3;
 }>;
 
 export interface TestCommandPermissionsReturn {
@@ -45,27 +44,27 @@ export default class DiscordPermissionsV2Utils {
 
     public async setApplicationCommands(commands_data: RESTPostAPIChatInputApplicationCommand[]) {
         return await this.rest.put(
-            Routes.applicationCommands(this.client.application.id),
+            Discord.Routes.applicationCommands(this.client.application.id),
             { body: commands_data },
         ) as Promise<PatchedAPIApplicationCommand[]>;
     }
 
     public async getApplicationCommands() {
         return this.rest.get(
-            Routes.applicationCommands(this.client.application.id),
+            Discord.Routes.applicationCommands(this.client.application.id),
         ) as Promise<PatchedAPIApplicationCommand[]>;
     }
 
     public async setApplicationGuildCommands(guild_id: Discord.Snowflake, commands_data: RESTPostAPIChatInputApplicationCommand[]) {
         return await this.rest.put(
-            Routes.applicationGuildCommands(this.client.application.id, guild_id),
+            Discord.Routes.applicationGuildCommands(this.client.application.id, guild_id),
             { body: commands_data },
         ) as Promise<PatchedAPIApplicationCommand[]>;
     }
 
     public async getApplicationGuildCommands(guild_id: Discord.Snowflake) {
         return this.rest.get(
-            Routes.applicationGuildCommands(this.client.application.id, guild_id),
+            Discord.Routes.applicationGuildCommands(this.client.application.id, guild_id),
         ) as Promise<PatchedAPIApplicationCommand[]>;
     }
 
@@ -78,10 +77,10 @@ export default class DiscordPermissionsV2Utils {
         return [...guild_commands, ...global_commands].find(cmd => cmd.name === command_name);
     }
 
-    public async fetchCommandPermissionsById(command: PatchedAPIApplicationCommand, guild_id: Discord.Snowflake): Promise<APIGuildApplicationCommandPermissions | undefined> {
+    public async fetchCommandPermissionsById(command: PatchedAPIApplicationCommand, guild_id: Discord.Snowflake): Promise<Discord.APIGuildApplicationCommandPermissions | undefined> {
         const command_permissions = await this.rest.get(
-            Routes.guildApplicationCommandsPermissions(this.client.application.id, guild_id),
-        ) as APIGuildApplicationCommandPermissions[];
+            Discord.Routes.guildApplicationCommandsPermissions(this.client.application.id, guild_id),
+        ) as Discord.APIGuildApplicationCommandPermissions[];
 
         // Constants
         // https://discord.com/developers/docs/interactions/application-commands#application-command-permissions-object-application-command-permissions-constants
@@ -137,7 +136,7 @@ export default class DiscordPermissionsV2Utils {
         return everyone;
     }
 
-    public testCommandPermissions(command: PatchedAPIApplicationCommand, permissions: APIGuildApplicationCommandPermissions | undefined, channel_id: Discord.Snowflake | null, member: Discord.GuildMember): TestCommandPermissionsReturn {
+    public testCommandPermissions(command: PatchedAPIApplicationCommand, permissions: Discord.APIGuildApplicationCommandPermissions | undefined, channel_id: Discord.Snowflake | null, member: Discord.GuildMember): TestCommandPermissionsReturn {
         log.debug("Testing permissions", {
             command_id: command.id,
             guild_id: member.guild.id,
