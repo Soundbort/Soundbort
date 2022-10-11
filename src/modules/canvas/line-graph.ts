@@ -1,4 +1,4 @@
-import Canvas from "canvas";
+import { createCanvas, GlobalFonts, SKRSContext2D } from "@napi-rs/canvas";
 import path from "node:path";
 import color from "color";
 import moment from "moment";
@@ -7,8 +7,8 @@ import { lastItem } from "../../util/array";
 import { ASSETS_DIR } from "../../config";
 import { COLOR } from "../../const";
 
-Canvas.registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Regular.ttf"), { family: "Roboto", weight: "normal" });
-Canvas.registerFont(path.join(ASSETS_DIR, "fonts", "Roboto-Bold.ttf"), { family: "Roboto", weight: "bold" });
+GlobalFonts.registerFromPath(path.join(ASSETS_DIR, "fonts", "Roboto-Regular.ttf"), "Roboto Regular");
+GlobalFonts.registerFromPath(path.join(ASSETS_DIR, "fonts", "Roboto-Bold.ttf"), "Roboto Bold");
 
 const WHITE_COLOR = color(COLOR.CHART_BG, "rgb").string();
 const LEGEND_TEXT_COLOR = color(COLOR.CHART_FG, "rgb").mix(color(COLOR.CHART_BG, "rgb"), 0.4).string();
@@ -18,7 +18,8 @@ const SCALE = 2;
 const BORDER_RADIUS = 12;
 const GRAPH_PADDING = 16;
 const LEGEND_PADDING = 8;
-const FONT = "Roboto";
+const FONT = "'Roboto Regular'";
+const FONT_BOLD = "'Roboto Bold'";
 const FONT_SIZE = 10;
 const TITLE_FONT_SIZE = 14;
 const LABEL_X_HEIGHT = FONT_SIZE + LEGEND_PADDING;
@@ -63,14 +64,14 @@ interface ChartOptionsIntern extends ChartOptions {
     increment_y: number;
 }
 
-function strokeLine(ctx: Canvas.CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number): void {
+function strokeLine(ctx: SKRSContext2D, x0: number, y0: number, x1: number, y1: number): void {
     ctx.beginPath();
     ctx.moveTo(x0, y0);
     ctx.lineTo(x1, y1);
     ctx.stroke();
 }
 
-function drawLegendY(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern) {
+function drawLegendY(ctx: SKRSContext2D, opts: ChartOptionsIntern) {
     ctx.save();
 
     ctx.fillStyle = LEGEND_TEXT_COLOR;
@@ -111,7 +112,7 @@ function drawLegendY(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsInt
     return legend_width;
 }
 
-function drawGrid(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern) {
+function drawGrid(ctx: SKRSContext2D, opts: ChartOptionsIntern) {
     ctx.save();
     ctx.strokeStyle = LEGEND_TEXT_COLOR;
     ctx.globalAlpha = 0.5;
@@ -144,7 +145,7 @@ function createTimeWindowTable(x_diff: number): ResolutionXTable {
     ].reverse() as ResolutionXTable;
 }
 
-function drawLegendX(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern) {
+function drawLegendX(ctx: SKRSContext2D, opts: ChartOptionsIntern) {
     ctx.save();
 
     ctx.strokeStyle = LEGEND_TEXT_COLOR;
@@ -232,7 +233,7 @@ function drawLegendX(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsInt
     ctx.restore();
 }
 
-function drawLine(ctx: Canvas.CanvasRenderingContext2D, data: ChartOptionsData, opts: ChartOptionsIntern) {
+function drawLine(ctx: SKRSContext2D, data: ChartOptionsData, opts: ChartOptionsIntern) {
     ctx.save();
     ctx.strokeStyle = data.color;
     ctx.lineJoin = "round";
@@ -284,7 +285,7 @@ function drawLine(ctx: Canvas.CanvasRenderingContext2D, data: ChartOptionsData, 
     ctx.restore();
 }
 
-function drawLineChart(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsIntern): void {
+function drawLineChart(ctx: SKRSContext2D, opts: ChartOptionsIntern): void {
     ctx.lineWidth = 1;
 
     const legend_y_width = drawLegendY(ctx, { ...opts, height: opts.height - LABEL_X_HEIGHT });
@@ -313,11 +314,11 @@ function drawLineChart(ctx: Canvas.CanvasRenderingContext2D, opts: ChartOptionsI
     ctx.restore();
 }
 
-function drawTitle(ctx: Canvas.CanvasRenderingContext2D, title: string): void {
+function drawTitle(ctx: SKRSContext2D, title: string): void {
     ctx.save();
 
     ctx.fillStyle = TEXT_COLOR;
-    ctx.font = `bold ${TITLE_FONT_SIZE}px ${FONT}, sans-serif`;
+    ctx.font = `${TITLE_FONT_SIZE}px ${FONT_BOLD}, sans-serif`;
     ctx.textBaseline = "top";
 
     ctx.fillText(title, 0, 0);
@@ -325,7 +326,7 @@ function drawTitle(ctx: Canvas.CanvasRenderingContext2D, title: string): void {
     ctx.restore();
 }
 
-function drawBG(ctx: Canvas.CanvasRenderingContext2D, { width, height }: { width: number; height: number }): void {
+function drawBG(ctx: SKRSContext2D, { width, height }: { width: number; height: number }): void {
     ctx.save();
 
     ctx.fillStyle = WHITE_COLOR;
@@ -339,7 +340,7 @@ function drawBG(ctx: Canvas.CanvasRenderingContext2D, { width, height }: { width
     ctx.restore();
 }
 
-function drawDataLabels(ctx: Canvas.CanvasRenderingContext2D, data_arr: ChartOptionsData[]): void {
+function drawDataLabels(ctx: SKRSContext2D, data_arr: ChartOptionsData[]): void {
     ctx.save();
 
     ctx.translate(0, (FONT_SIZE / 2));
@@ -396,7 +397,7 @@ function fixInputsXY(data: ChartOptionsData[], xy: ChartOptionsAxies | undefined
     };
 }
 
-export function lineGraph(opts: ChartOptions): Buffer {
+export async function lineGraph(opts: ChartOptions): Promise<Buffer> {
     const x = fixInputsXY(opts.data, opts.x, "x");
     const y = fixInputsXY(opts.data, opts.y, "y");
 
@@ -419,7 +420,7 @@ export function lineGraph(opts: ChartOptions): Buffer {
     const width = 400;
     const height = 170;
 
-    const canvas = Canvas.createCanvas(
+    const canvas = createCanvas(
         Math.round(width * SCALE),
         Math.round((height + title_height + label_height) * SCALE),
     );
@@ -452,7 +453,5 @@ export function lineGraph(opts: ChartOptions): Buffer {
         drawDataLabels(ctx, opts.data);
     }
 
-    // can't call toBuffer() with callback, because it will break
-    // the process in Node 16
-    return canvas.toBuffer("image/png", { compressionLevel: 9 });
+    return await canvas.encode("png");
 }
