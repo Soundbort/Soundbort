@@ -1,7 +1,7 @@
 import * as Voice from "@discordjs/voice";
 
 import Logger from "../../log";
-import { timeout } from "../../util/promises";
+import { timeout } from "../../util/timers";
 
 const log = Logger.child({ label: "Audio => AudioSubscription" });
 

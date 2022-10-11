@@ -4,7 +4,7 @@ import { BUTTON_TYPES } from "../../const";
 import Logger from "../../log";
 
 import { doNothing } from "../../util/util";
-import { timeout } from "../../util/promises";
+import { timeout } from "../../util/timers";
 import { CmdInstallerArgs } from "../../util/types";
 import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
