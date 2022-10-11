@@ -1,4 +1,3 @@
-import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 
 import Logger from "../../../log";
@@ -24,7 +23,7 @@ export abstract class SlashCommandAutocompleteMixin {
 
         try {
             // The differentiation is just for Typescript
-            if (option.type === ApplicationCommandOptionType.Number || option.type === ApplicationCommandOptionType.Integer) {
+            if (option.type === Discord.ApplicationCommandOptionType.Number || option.type === Discord.ApplicationCommandOptionType.Integer) {
                 choices = await option.autocomplete(focused.value as unknown as number, interaction);
             } else {
                 choices = await option.autocomplete(focused.value as unknown as string, interaction);

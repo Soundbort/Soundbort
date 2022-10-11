@@ -103,7 +103,7 @@ function status(desc: string) {
  *          every step and error during upload.
  */
 export async function* upload(
-    attachment: Discord.MessageAttachment,
+    attachment: Discord.Attachment,
     guild: Discord.Guild,
     user: Discord.User,
     name: string,

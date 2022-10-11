@@ -1,13 +1,13 @@
-import { APIApplicationCommandStringOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import * as Discord from "discord.js";
 import { WithAutocompleteOrChoice, WithAutocompleteOrChoicesOptionData } from "./_shared";
 
 export function createStringOption(
-    opts: WithAutocompleteOrChoice<Omit<APIApplicationCommandStringOption, "type">, string>,
-): WithAutocompleteOrChoicesOptionData<APIApplicationCommandStringOption, string> {
+    opts: WithAutocompleteOrChoice<Omit<Discord.APIApplicationCommandStringOption, "type">, string>,
+): WithAutocompleteOrChoicesOptionData<Discord.APIApplicationCommandStringOption, string> {
     return {
-        type: ApplicationCommandOptionType.String,
+        type: Discord.ApplicationCommandOptionType.String,
         data: {
-            type: ApplicationCommandOptionType.String,
+            type: Discord.ApplicationCommandOptionType.String,
             ...opts,
             autocomplete: !!opts.autocomplete,
         },

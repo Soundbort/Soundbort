@@ -1,9 +1,11 @@
-import { APIApplicationCommandChannelOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import * as Discord from "discord.js";
 import { BaseOptionData, createBaseOptionData } from "./_shared";
 
-export function createChannelOption(opts: Omit<APIApplicationCommandChannelOption, "type">): BaseOptionData<APIApplicationCommandChannelOption> {
+export function createChannelOption(
+    opts: Omit<Discord.APIApplicationCommandChannelOption, "type">,
+): BaseOptionData<Discord.APIApplicationCommandChannelOption> {
     return createBaseOptionData({
-        type: ApplicationCommandOptionType.Channel,
+        type: Discord.ApplicationCommandOptionType.Channel,
         ...opts,
     });
 }

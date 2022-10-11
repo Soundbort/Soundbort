@@ -1,4 +1,3 @@
-import { APIApplicationCommandSubcommandGroupOption, ApplicationCommandOptionType } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 
 import { SharedCommandOptions, MiddlewareFunc } from "./AbstractSharedCommand";
@@ -10,7 +9,7 @@ export interface SlashSubCommandGroupOptions extends SharedCommandOptions {
 }
 
 export class SlashSubCommandGroup {
-    readonly data: APIApplicationCommandSubcommandGroupOption;
+    readonly data: Discord.APIApplicationCommandSubcommandGroupOption;
 
     readonly middleware?: MiddlewareFunc;
     readonly commands: Map<string, SlashSubCommand> = new Map();
@@ -19,7 +18,7 @@ export class SlashSubCommandGroup {
         this.middleware = options.middleware;
 
         this.data = {
-            type: ApplicationCommandOptionType.SubcommandGroup,
+            type: Discord.ApplicationCommandOptionType.SubcommandGroup,
 
             name: options.name,
             name_localizations: options.name_localizations,
@@ -36,7 +35,7 @@ export class SlashSubCommandGroup {
         }
     }
 
-    protected _getSubcommand(interaction: Discord.CommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | undefined {
+    protected _getSubcommand(interaction: Discord.ChatInputCommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | undefined {
         const command_name = interaction.options.getSubcommand(true);
         return this.commands.get(command_name);
     }
@@ -48,7 +47,7 @@ export class SlashSubCommandGroup {
         await command.autocomplete(interaction);
     }
 
-    async run(interaction: Discord.CommandInteraction): Promise<void> {
+    async run(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
         if (this.middleware && !await this.middleware(interaction)) return;
 
         const command = this._getSubcommand(interaction);

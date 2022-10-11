@@ -7,6 +7,8 @@ import { createEmbed } from "../../util/builders/embed";
 import { SlashCommand } from "../../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
 
+// TODO: format "/command" with Discord.chatInputApplicationCommandMention()
+
 const gettingStartedDescription = (clientId: Discord.Snowflake) => `
 __**So you've chosen ${BOT_NAME}. What now?**__
 
@@ -35,7 +37,7 @@ export function install({ client, registry }: CmdInstallerArgs): void {
         })
         .setAuthor({
             name: BOT_NAME + " | Getting started",
-            iconURL: client.user.avatarURL({ size: 32, dynamic: true }) || undefined,
+            iconURL: client.user.avatarURL({ size: 32 }) || undefined,
         });
 
     registry.addCommand(new SlashCommand({

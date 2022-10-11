@@ -1,9 +1,11 @@
-import { APIApplicationCommandMentionableOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import * as Discord from "discord.js";
 import { BaseOptionData, createBaseOptionData } from "./_shared";
 
-export function createMentionableOption(opts: Omit<APIApplicationCommandMentionableOption, "type">): BaseOptionData<APIApplicationCommandMentionableOption> {
+export function createMentionableOption(
+    opts: Omit<Discord.APIApplicationCommandMentionableOption, "type">,
+): BaseOptionData<Discord.APIApplicationCommandMentionableOption> {
     return createBaseOptionData({
-        type: ApplicationCommandOptionType.Mentionable,
+        type: Discord.ApplicationCommandOptionType.Mentionable,
         ...opts,
     });
 }

@@ -1,9 +1,11 @@
-import { APIApplicationCommandAttachmentOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import * as Discord from "discord.js";
 import { BaseOptionData, createBaseOptionData } from "./_shared";
 
-export function createAttachmentOption(opts: Omit<APIApplicationCommandAttachmentOption, "type">): BaseOptionData<APIApplicationCommandAttachmentOption> {
+export function createAttachmentOption(
+    opts: Omit<Discord.APIApplicationCommandAttachmentOption, "type">,
+): BaseOptionData<Discord.APIApplicationCommandAttachmentOption> {
     return createBaseOptionData({
-        type: ApplicationCommandOptionType.Attachment,
+        type: Discord.ApplicationCommandOptionType.Attachment,
         ...opts,
     });
 }

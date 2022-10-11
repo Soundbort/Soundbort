@@ -1,35 +1,44 @@
-import DiscordPermissions2VUtils from "../util/discord-patch/DiscordPermissionsV2Utils";
+import { OWNER_GUILD_IDS } from "../config";
+
+import { canUseCommand } from "../util/permissions";
 
 import { CmdInstallerArgs } from "../util/types";
+import timer from "../util/timer";
 
 import { SlashCommand } from "../modules/commands/SlashCommand";
 import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
-import timer from "../util/timer";
-import { OWNER_GUILD_IDS } from "../config";
+import { createStringOption } from "../modules/commands/options/string";
 
-export function install({ registry, client }: CmdInstallerArgs) {
-    const perm_utils = DiscordPermissions2VUtils.client(client);
-
+export function install({ registry }: CmdInstallerArgs) {
     registry.addCommand(new SlashCommand({
         name: "permission-test",
         description: "Test to see permissions of config command.",
         permissions: SlashCommandPermissions.EVERYONE,
         exclusive_guild_ids: OWNER_GUILD_IDS,
+        options: [
+            createStringOption({
+                name: "command_name",
+                description: "Name of the command to test.",
+                required: true,
+            }),
+        ],
         async func(interaction) {
             if (!interaction.inCachedGuild()) {
                 return;
             }
 
+            const command_name = interaction.options.getString("command_name", true);
+
             const start = timer();
 
             const guvana = await interaction.guild.members.fetch({ force: true, user: "145476365112573953" });
 
-            const config_api_command = registry.getAPICommand(interaction.guild.id, "config");
-            if (!config_api_command) {
+            const config_command = registry.getApplicationCommand(interaction.guild.id, command_name);
+            if (!config_command) {
                 throw new Error("The 'config' api command couldnt be found in cache.");
             }
 
-            const admin_permissions = await perm_utils.canUseCommand(config_api_command, interaction.guild, interaction.channelId, guvana.id);
+            const admin_permissions = await canUseCommand(config_command, interaction.guild, interaction.channelId, guvana.id);
 
             return `
     \`\`\`

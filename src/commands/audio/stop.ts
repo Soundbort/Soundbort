@@ -12,7 +12,7 @@ export function install({ registry }: CmdInstallerArgs): void {
         name: "stop",
         description: "Stops all currently playing audio.",
         permissions: SlashCommandPermissions.EVERYONE,
-        func(interaction: Discord.CommandInteraction) {
+        func(interaction: Discord.ChatInputCommandInteraction) {
             if (!interaction.inGuild()) {
                 return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);
             }

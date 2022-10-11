@@ -1,13 +1,13 @@
-import { APIApplicationCommandIntegerOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import * as Discord from "discord.js";
 import { WithAutocompleteOrChoice, WithAutocompleteOrChoicesOptionData } from "./_shared";
 
 export function createIntegerOption(
-    opts: WithAutocompleteOrChoice<Omit<APIApplicationCommandIntegerOption, "type">, number>,
-): WithAutocompleteOrChoicesOptionData<APIApplicationCommandIntegerOption, number> {
+    opts: WithAutocompleteOrChoice<Omit<Discord.APIApplicationCommandIntegerOption, "type">, number>,
+): WithAutocompleteOrChoicesOptionData<Discord.APIApplicationCommandIntegerOption, number> {
     return {
-        type: ApplicationCommandOptionType.Integer,
+        type: Discord.ApplicationCommandOptionType.Integer,
         data: {
-            type: ApplicationCommandOptionType.Integer,
+            type: Discord.ApplicationCommandOptionType.Integer,
             ...opts,
             autocomplete: !!opts.autocomplete,
         },

@@ -1,9 +1,11 @@
-import { APIApplicationCommandBooleanOption, ApplicationCommandOptionType } from "discord-api-types/v10";
+import * as Discord from "discord.js";
 import { BaseOptionData, createBaseOptionData } from "./_shared";
 
-export function createBooleanOption(opts: Omit<APIApplicationCommandBooleanOption, "type">): BaseOptionData<APIApplicationCommandBooleanOption> {
+export function createBooleanOption(
+    opts: Omit<Discord.APIApplicationCommandBooleanOption, "type">,
+): BaseOptionData<Discord.APIApplicationCommandBooleanOption> {
     return createBaseOptionData({
-        type: ApplicationCommandOptionType.Boolean,
+        type: Discord.ApplicationCommandOptionType.Boolean,
         ...opts,
     });
 }

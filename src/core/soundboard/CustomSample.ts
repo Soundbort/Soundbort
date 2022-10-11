@@ -118,11 +118,11 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         // Waveform
 
-        let waveform_attachment: Discord.MessageAttachment | undefined;
+        let waveform_attachment: Discord.AttachmentBuilder | undefined;
 
         try {
             const waveform_buffer = Buffer.from(await canvas.visualizeAudio(this.file));
-            waveform_attachment = new Discord.MessageAttachment(waveform_buffer, "waveform.png");
+            waveform_attachment = new Discord.AttachmentBuilder(waveform_buffer, { name: "waveform.png" });
             embed.setImage("attachment://waveform.png");
         } catch (error) {
             log.error("Error creating waveform for %s", this.id, error);
@@ -130,47 +130,47 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
         // Action buttons:
 
-        const rows = [];
+        const rows: Discord.ActionRowBuilder<Discord.ButtonBuilder>[] = [];
 
         if (this.importable && show_import) {
             const import_buttons = [
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                     .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.IMPORT_USER, id: this.id }))
                     .setLabel("Import to User Board")
                     .setEmoji("📥")
-                    .setStyle("SECONDARY"),
-                new Discord.MessageButton()
+                    .setStyle(Discord.ButtonStyle.Secondary),
+                new Discord.ButtonBuilder()
                     .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.IMPORT_SERVER, id: this.id }))
                     .setLabel("Import to Server Board")
                     .setEmoji("📥")
-                    .setStyle("SECONDARY"),
+                    .setStyle(Discord.ButtonStyle.Secondary),
             ];
 
             rows.push(
-                new Discord.MessageActionRow().addComponents(import_buttons),
+                new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(import_buttons),
             );
         }
 
         const buttons = [
-            new Discord.MessageButton()
+            new Discord.ButtonBuilder()
                 .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_CUSTOM, id: this.id }))
                 .setLabel("Play")
                 .setEmoji("🔉")
-                .setStyle("PRIMARY"),
+                .setStyle(Discord.ButtonStyle.Primary),
         ];
 
         if (this.deletable && show_delete) {
             buttons.push(
-                new Discord.MessageButton()
+                new Discord.ButtonBuilder()
                     .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.DELETE_ASK, id: this.id }))
                     .setLabel("Delete")
                     .setEmoji("🗑️")
-                    .setStyle("DANGER"),
+                    .setStyle(Discord.ButtonStyle.Danger),
             );
         }
 
         rows.unshift(
-            new Discord.MessageActionRow().addComponents(buttons),
+            new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(buttons),
         );
 
         return {

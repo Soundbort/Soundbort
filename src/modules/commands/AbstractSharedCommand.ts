@@ -1,11 +1,10 @@
-import { LocalizationMap } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 
-export type MiddlewareFunc = (interaction: Discord.CommandInteraction) => Discord.Awaitable<boolean>;
+export type MiddlewareFunc = (interaction: Discord.ChatInputCommandInteraction) => Discord.Awaitable<boolean>;
 
 export type SimpleFuncReturn = string | Discord.MessagePayload | Discord.InteractionReplyOptions | undefined | void;
 
-export type SimpleFunc = (interaction: Discord.CommandInteraction) => Discord.Awaitable<SimpleFuncReturn>;
+export type SimpleFunc = (interaction: Discord.ChatInputCommandInteraction) => Discord.Awaitable<SimpleFuncReturn>;
 
 export interface SharedCommandOptions {
     /**
@@ -15,7 +14,7 @@ export interface SharedCommandOptions {
     /**
      * Localization dictionary for the name field. Values follow the same restrictions as name
      */
-    name_localizations?: LocalizationMap | null;
+    name_localizations?: Discord.LocalizationMap | null;
     /**
      * 1-100 character description for `CHAT_INPUT` commands, empty string for `USER` and `MESSAGE` commands
      */
@@ -23,5 +22,5 @@ export interface SharedCommandOptions {
     /**
      * Localization dictionary for the description field. Values follow the same restrictions as description
      */
-    description_localizations?: LocalizationMap | null;
+    description_localizations?: Discord.LocalizationMap | null;
 }

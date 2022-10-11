@@ -1,7 +1,6 @@
 import * as Discord from "discord.js";
 import color from "color";
 import os from "node:os";
-import { time } from "@discordjs/builders";
 
 import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../../const";
 import { BOT_NAME, VERSION } from "../../config";
@@ -45,8 +44,8 @@ export function install({ registry }: CmdInstallerArgs): void {
         async func(interaction) {
             await interaction.deferReply();
 
-            const embeds: Discord.MessageEmbed[] = [];
-            const files: Discord.MessageAttachment[] = [];
+            const embeds: Discord.EmbedBuilder[] = [];
+            const files: Discord.AttachmentBuilder[] = [];
 
             const time_window_name = interaction.options.getString("time_window", false) as (TimeWindowChoices | null) || TimeWindowChoices.Day;
 
@@ -96,12 +95,12 @@ export function install({ registry }: CmdInstallerArgs): void {
                 },
             }));
 
-            files.push(new Discord.MessageAttachment(cpu_buffer, "cpu_load_avg.png"));
+            files.push(new Discord.AttachmentBuilder(cpu_buffer, { name: "cpu_load_avg.png" }));
 
-            embeds.push(createEmbed(`**Last updated**: ${time(aggregation._id, "R")}`)
+            embeds.push(createEmbed(`**Last updated**: ${Discord.time(aggregation._id, Discord.TimestampStyles.RelativeTime)}`)
                 .setAuthor({
                     name: BOT_NAME,
-                    iconURL: (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32, dynamic: true }) || undefined,
+                    iconURL: (interaction.client as Discord.Client<true>).user.avatarURL({ size: 32 }) || undefined,
                 })
                 .addFields({
                     name: "Bot Version",
@@ -117,7 +116,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                     inline: true,
                 }, {
                     name: "Uptime",
-                    value: time(new Date(Date.now() - Math.round(process.uptime() * 1000)), "R"),
+                    value: Discord.time(new Date(Date.now() - Math.round(process.uptime() * 1000)), Discord.TimestampStyles.RelativeTime),
                     inline: true,
                 }, {
                     name: "Memory Usage",
@@ -151,7 +150,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 data: [guild_data],
             }));
 
-            files.push(new Discord.MessageAttachment(guild_buffer, "guild.png"));
+            files.push(new Discord.AttachmentBuilder(guild_buffer, { name: "guild.png" }));
 
             embeds.push(createEmbed(undefined, EmbedType.Basic)
                 .setTitle("Total Servers")
@@ -180,7 +179,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 data: [vc_data],
             }));
 
-            files.push(new Discord.MessageAttachment(vc_buffer, "voice_connections.png"));
+            files.push(new Discord.AttachmentBuilder(vc_buffer, { name: "voice_connections.png" }));
 
             const top_voice_connections = Math.max(...stats.map(doc => doc.voice_connections));
             embeds.push(createEmbed(undefined, EmbedType.Warning)
@@ -220,7 +219,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 data: [commands_data, buttons_data],
             }));
 
-            files.push(new Discord.MessageAttachment(interactions_buffer, "samples_played.png"));
+            files.push(new Discord.AttachmentBuilder(interactions_buffer, { name: "samples_played.png" }));
 
             const commands_used = Object.keys(aggregation.commands)
                 .sort((a, b) => aggregation.commands[b] - aggregation.commands[a])
@@ -273,7 +272,7 @@ export function install({ registry }: CmdInstallerArgs): void {
                 },
             }));
 
-            files.push(new Discord.MessageAttachment(ping_buffer, "ping.png"));
+            files.push(new Discord.AttachmentBuilder(ping_buffer, { name: "ping.png" }));
 
             embeds.push(createEmbed(undefined, EmbedType.Success)
                 .setTitle("Ping")

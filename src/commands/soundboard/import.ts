@@ -12,7 +12,7 @@ import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
 import { CustomSample } from "../../core/soundboard/CustomSample";
 import { UploadErrors } from "../../core/soundboard/methods/upload";
 
-async function importUser(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
+async function importUser(interaction: Discord.ButtonInteraction | Discord.ChatInputCommandInteraction, sample: CustomSample) {
     const user = interaction.user;
 
     // is soundboard full?
@@ -33,7 +33,7 @@ async function importUser(interaction: Discord.ButtonInteraction | Discord.Comma
 }
 
 export function install({ registry, admin }: CmdInstallerArgs): void {
-    async function importServer(interaction: Discord.ButtonInteraction | Discord.CommandInteraction, sample: CustomSample) {
+    async function importServer(interaction: Discord.ButtonInteraction | Discord.ChatInputCommandInteraction, sample: CustomSample) {
         if (!interaction.inCachedGuild()) {
             return replyEmbedEphemeral("You're not in a server.", EmbedType.Error);
         }

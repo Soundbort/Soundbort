@@ -1,4 +1,3 @@
-import { ApplicationCommandType, RESTPostAPIChatInputApplicationCommandsJSONBody } from "discord-api-types/v10";
 import * as Discord from "discord.js";
 
 import { SharedCommandOptions, MiddlewareFunc, SimpleFunc } from "./AbstractSharedCommand";
@@ -33,14 +32,8 @@ export interface SlashSingleCommandOptions extends SlashBaseCommandOptions {
 
 export type SlashCommandOptions = SlashGroupCommandOptions | SlashSingleCommandOptions;
 
-// patch for permissions v2
-export type RESTPostAPIChatInputApplicationCommand = Omit<RESTPostAPIChatInputApplicationCommandsJSONBody, "default_permission"> & {
-    default_member_permissions?: string;
-    dm_permission?: boolean;
-};
-
 export class SlashCommand extends SlashCommandAutocompleteMixin {
-    readonly data: Readonly<RESTPostAPIChatInputApplicationCommand>;
+    readonly data: Readonly<Discord.RESTPostAPIChatInputApplicationCommandsJSONBody>;
 
     readonly exclusive_guild_ids: Discord.Snowflake[];
     readonly permissions: SlashCommandPermissions;
@@ -66,7 +59,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         this.onGuildCreate = options.onGuildCreate;
 
         this.data = {
-            type: ApplicationCommandType.ChatInput,
+            type: Discord.ApplicationCommandType.ChatInput,
 
             name: options.name,
             name_localizations: options.name_localizations,
@@ -100,7 +93,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         }
     }
 
-    protected _getSubcommand(interaction: Discord.CommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | SlashSubCommandGroup | undefined {
+    protected _getSubcommand(interaction: Discord.ChatInputCommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | SlashSubCommandGroup | undefined {
         const command_name = interaction.options.getSubcommandGroup(false) || interaction.options.getSubcommand(true);
         return this.commands.get(command_name);
     }
@@ -117,7 +110,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         await this._autocomplete(interaction);
     }
 
-    private async _runGroupCommand(interaction: Discord.CommandInteraction) {
+    private async _runGroupCommand(interaction: Discord.ChatInputCommandInteraction) {
         if (this.middleware && !await this.middleware(interaction)) return;
 
         const command = this._getSubcommand(interaction);
@@ -125,14 +118,14 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
 
         await command.run(interaction);
     }
-    private async _runSingleCommand(interaction: Discord.CommandInteraction) {
+    private async _runSingleCommand(interaction: Discord.ChatInputCommandInteraction) {
         const result = await this.func?.(interaction); // Optional chaining (?.), the function will only be called if this.func property is not nullish
         if (!result || interaction.replied) return;
 
         await (interaction.deferred ? interaction.editReply(result) : interaction.reply(result));
     }
 
-    async run(interaction: Discord.CommandInteraction): Promise<void> {
+    async run(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
         if (this.is_group_command) {
             await this._runGroupCommand(interaction);
         } else {

@@ -12,7 +12,7 @@ export function install({ registry }: CmdInstallerArgs): void {
         name: "join",
         description: "Join the voice channel you are in.",
         permissions: SlashCommandPermissions.EVERYONE,
-        async func(interaction: Discord.CommandInteraction) {
+        async func(interaction: Discord.ChatInputCommandInteraction) {
             if (!interaction.inCachedGuild()) {
                 return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);
             }
