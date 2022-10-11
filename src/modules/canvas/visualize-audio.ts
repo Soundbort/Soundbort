@@ -2,7 +2,7 @@
  * Waveform algorithm built with guidance from https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/
  */
 
-import Canvas from "canvas";
+import { createCanvas, SKRSContext2D } from "@napi-rs/canvas";
 import ffmpeg from "fluent-ffmpeg";
 import concatStream from "concat-stream";
 
@@ -73,7 +73,7 @@ function normalizeData(filtered_data: Float32Array): Float32Array {
  * @param {number} x  the x coordinate of the beginning of the line segment
  * @param {number} height the desired height of the line segment
  */
-function drawLineSegment(ctx: Canvas.CanvasRenderingContext2D, x: number, height: number) {
+function drawLineSegment(ctx: SKRSContext2D, x: number, height: number) {
     ctx.beginPath();
     ctx.moveTo(x, -height);
     ctx.lineTo(x, height);
@@ -87,8 +87,8 @@ function clamp(val: number, min: number, max: number): number {
 /**
  * Draws the audio file into a canvas element.
  */
-function drawToBuffer(normalized_data: Float32Array): Buffer {
-    const canvas = Canvas.createCanvas(WIDTH, HEIGHT);
+async function drawToBuffer(normalized_data: Float32Array): Promise<Buffer> {
+    const canvas = createCanvas(WIDTH, HEIGHT);
     const ctx = canvas.getContext("2d");
 
     ctx.translate(0, HEIGHT / 2); // set Y = 0 to be in the middle of the canvas
@@ -110,9 +110,7 @@ function drawToBuffer(normalized_data: Float32Array): Buffer {
         drawLineSegment(ctx, x, height);
     }
 
-    // can't call toBuffer() with callback, because it will break
-    // the process in Node 16
-    return canvas.toBuffer("image/png", { compressionLevel: 9 });
+    return canvas.encode("png");
 }
 
 export async function visualizeAudio(ogg_audio_path: string): Promise<Buffer> {

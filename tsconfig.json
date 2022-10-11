@@ -1,5 +1,5 @@
 {
-    "extends": "@tsconfig/node16/tsconfig.json",
+    "extends": "@tsconfig/node18/tsconfig.json",
     "compilerOptions": {
         /* Basic Options */
         "allowJs": true /* Allow javascript files to be compiled. */,

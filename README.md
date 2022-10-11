@@ -55,7 +55,7 @@ Soundbort is a custom soundboard bot for Discord. It offers low latency playback
 
 You need the following prerequisites for testing Soundbort:
 
-* Node.js 16.16.0 (using a version management tool like [nvm](https://github.com/nvm-sh/nvm) is recommended)
+* Node.js 18.10.0 (using a version management tool like [nvm](https://github.com/nvm-sh/nvm) is recommended)
 * build-essentials (apt install build-essential. For dev on Windows use WSL 2 or inform yourself about Node.js package build requirements)
 * ffmpeg (apt install ffmpeg)
 * A MongoDb instance. Either local, or on [cloud.mongodb.com](https://cloud.mongodb.com), which I recommend, because it's easy to setup, doesn't require you to install anything and it has a free plan.
@@ -103,6 +103,6 @@ This software comes WITHOUT ANY WARRANTY. Edit and use at your own risk!
 
 Soundbort is licensed under the [GNU General Public License v3.0](LICENSE)
 
-Copyright (C) 2021 Christian Schäfer / Loneless
+Copyright (C) 2022 Christian Schäfer / Loneless
 
 `Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.`
