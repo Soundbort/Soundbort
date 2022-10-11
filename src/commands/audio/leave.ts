@@ -12,7 +12,7 @@ export function install({ registry }: CmdInstallerArgs): void {
         name: "leave",
         description: "Leave the voice channel.",
         permissions: SlashCommandPermissions.EVERYONE,
-        func(interaction: Discord.CommandInteraction) {
+        func(interaction: Discord.ChatInputCommandInteraction) {
             if (!interaction.inGuild()) {
                 return replyEmbedEphemeral("This commands only works in server channels.", EmbedType.Error);
             }

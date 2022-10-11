@@ -21,7 +21,7 @@ import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 
 const log = Logger.child({ label: "Command => play" });
 
-async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.ButtonInteraction<"cached">, sample: CustomSample | StandardSample) {
+async function play(interaction: Discord.ChatInputCommandInteraction<"cached"> | Discord.ButtonInteraction<"cached">, sample: CustomSample | StandardSample) {
     try {
         const guild = interaction.guild;
 
@@ -38,7 +38,7 @@ async function play(interaction: Discord.CommandInteraction<"cached"> | Discord.
         if (subscription === JoinFailureTypes.FailedTryAgain) {
             return replyEmbedEphemeral("Connecting to the voice channel failed. Try again later.", EmbedType.Error);
         }
-        if (AudioManager.has(guild.id) && guild.me?.voice.channelId && member.voice.channelId !== guild.me.voice.channelId) {
+        if (AudioManager.has(guild.id) && guild.members.me?.voice.channelId && member.voice.channelId !== guild.members.me.voice.channelId) {
             return replyEmbedEphemeral("You need to be in the same voice channel as the bot!", EmbedType.Info);
         }
 

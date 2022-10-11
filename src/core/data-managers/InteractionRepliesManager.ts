@@ -4,7 +4,7 @@ import * as models from "../../modules/database/models";
 import { InteractionRepliesSchema } from "../../modules/database/schemas/InteractionRepliesSchema";
 
 class InteractionRepliesManager {
-    async add(interaction: Discord.CommandInteraction | Discord.MessageComponentInteraction, messageId: Discord.Snowflake, refId?: string): Promise<void> {
+    async add(interaction: Discord.ChatInputCommandInteraction | Discord.MessageComponentInteraction, messageId: Discord.Snowflake, refId?: string): Promise<void> {
         await models.interaction_replies.insertOne({
             interactionId: refId ?? interaction.id,
             guildId: interaction.guildId,

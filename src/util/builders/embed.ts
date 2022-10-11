@@ -24,8 +24,8 @@ const Emoji = {
     [EmbedType.Info]: EMOJI.INFO,
 };
 
-export function createEmbed(desc?: string, type: EmbedType = EmbedType.Basic, emoji?: string): Discord.MessageEmbed {
-    const embed = new Discord.MessageEmbed().setColor(Colors[type]);
+export function createEmbed(desc?: string, type: EmbedType = EmbedType.Basic, emoji?: string): Discord.EmbedBuilder {
+    const embed = new Discord.EmbedBuilder().setColor(Colors[type]);
 
     if (typeof emoji === "undefined" && type !== EmbedType.Basic) emoji = Emoji[type];
 

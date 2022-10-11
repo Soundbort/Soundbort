@@ -99,7 +99,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         }
     }
 
-    protected _getSubcommand(interaction: Discord.CommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | SlashSubCommandGroup | undefined {
+    protected _getSubcommand(interaction: Discord.ChatInputCommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | SlashSubCommandGroup | undefined {
         const command_name = interaction.options.getSubcommandGroup(false) || interaction.options.getSubcommand(true);
         return this.commands.get(command_name);
     }
@@ -116,7 +116,7 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
         await this._autocomplete(interaction);
     }
 
-    private async _runGroupCommand(interaction: Discord.CommandInteraction) {
+    private async _runGroupCommand(interaction: Discord.ChatInputCommandInteraction) {
         if (this.middleware && !await this.middleware(interaction)) return;
 
         const command = this._getSubcommand(interaction);
@@ -124,14 +124,14 @@ export class SlashCommand extends SlashCommandAutocompleteMixin {
 
         await command.run(interaction);
     }
-    private async _runSingleCommand(interaction: Discord.CommandInteraction) {
+    private async _runSingleCommand(interaction: Discord.ChatInputCommandInteraction) {
         const result = await this.func?.(interaction); // Optional chaining (?.), the function will only be called if this.func property is not nullish
         if (!result || interaction.replied) return;
 
         await (interaction.deferred ? interaction.editReply(result) : interaction.reply(result));
     }
 
-    async run(interaction: Discord.CommandInteraction): Promise<void> {
+    async run(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
         if (this.is_group_command) {
             await this._runGroupCommand(interaction);
         } else {

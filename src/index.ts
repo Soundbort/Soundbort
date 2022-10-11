@@ -15,15 +15,15 @@ const djs_log = Logger.child({ label: "discord.js" });
 
 const client = new Discord.Client({
     intents: [
-        Discord.Intents.FLAGS.GUILDS,
-        Discord.Intents.FLAGS.GUILD_VOICE_STATES,
+        Discord.GatewayIntentBits.Guilds,
+        Discord.GatewayIntentBits.GuildVoiceStates,
     ],
 
     presence: {
         status: "dnd",
         activities: [{
             name: "Booting...",
-            type: "PLAYING",
+            type: Discord.ActivityType.Playing,
         }],
     },
 
@@ -31,13 +31,13 @@ const client = new Discord.Client({
     // Drastically decreased memory usage
     makeCache: Discord.Options.cacheWithLimits({
         // cache application commands to be able fetch command id (and permissions? soon?)
-        ApplicationCommandManager: Discord.Options.defaultMakeCacheSettings.ApplicationCommandManager,
+        ApplicationCommandManager: Discord.Options.DefaultMakeCacheSettings.ApplicationCommandManager,
         BaseGuildEmojiManager: 0,
         GuildEmojiManager: 0,
         GuildBanManager: 0,
         GuildInviteManager: 0,
         // keep default, because of autocomplete checks for isModerator => lot of calls in short time, therefore enable cache
-        GuildMemberManager: Discord.Options.defaultMakeCacheSettings.GuildMemberManager,
+        GuildMemberManager: Discord.Options.DefaultMakeCacheSettings.GuildMemberManager,
         GuildStickerManager: 0,
         GuildScheduledEventManager: 0,
         MessageManager: 0,
@@ -48,7 +48,7 @@ const client = new Discord.Client({
         ThreadManager: 0,
         ThreadMemberManager: 0,
         // keep user cache default, because guild member cache depends on it
-        UserManager: Discord.Options.defaultMakeCacheSettings.UserManager,
+        UserManager: Discord.Options.DefaultMakeCacheSettings.UserManager,
         VoiceStateManager: Number.POSITIVE_INFINITY,
     }),
 });

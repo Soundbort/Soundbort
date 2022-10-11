@@ -67,7 +67,9 @@ class StatsCollectorManager extends TypedEmitter<StatsCollectorManagerEvents> {
         const ts = new Date(Math.floor(Date.now() / 1000) * 1000); // round timestamp to the second
 
         const guilds = client.guilds.cache.size;
-        const voice_connections = client.guilds.cache.reduce((acc, curr) => acc + (curr.me?.voice.channelId ? 1 : 0), 0);
+        const voice_connections = client.guilds.cache.reduce((acc, curr) => {
+            return acc + (curr.members.me?.voice.channelId ? 1 : 0);
+        }, 0);
 
         // Set all command values to 0, so they can increment themselves later
         const commands = this.commands;

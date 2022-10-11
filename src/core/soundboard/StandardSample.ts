@@ -94,28 +94,28 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
         // Waveform
 
-        let waveform_attachment: Discord.MessageAttachment | undefined;
+        let waveform_attachment: Discord.AttachmentBuilder | undefined;
 
         try {
             const waveform_buffer = Buffer.from(await canvas.visualizeAudio(this.file));
-            waveform_attachment = new Discord.MessageAttachment(waveform_buffer, "waveform.png");
+            waveform_attachment = new Discord.AttachmentBuilder(waveform_buffer, { name: "waveform.png" });
             embed.setImage("attachment://waveform.png");
         } catch (error) {
             log.error("Error creating waveform for %s", this.name, error);
         }
 
         const buttons = [
-            new Discord.MessageButton()
+            new Discord.ButtonBuilder()
                 .setCustomId(InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_STANDA, n: this.name }))
                 .setLabel("Play")
                 .setEmoji("🔉")
-                .setStyle("PRIMARY"),
+                .setStyle(Discord.ButtonStyle.Primary),
         ];
 
         return {
             embeds: [embed],
             files: waveform_attachment ? [waveform_attachment] : [],
-            components: [new Discord.MessageActionRow().addComponents(buttons)],
+            components: [new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(buttons)],
         };
     }
 

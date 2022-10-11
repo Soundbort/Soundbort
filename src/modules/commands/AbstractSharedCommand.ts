@@ -1,10 +1,10 @@
 import * as Discord from "discord.js";
 
-export type MiddlewareFunc = (interaction: Discord.CommandInteraction) => Discord.Awaitable<boolean>;
+export type MiddlewareFunc = (interaction: Discord.ChatInputCommandInteraction) => Discord.Awaitable<boolean>;
 
 export type SimpleFuncReturn = string | Discord.MessagePayload | Discord.InteractionReplyOptions | undefined | void;
 
-export type SimpleFunc = (interaction: Discord.CommandInteraction) => Discord.Awaitable<SimpleFuncReturn>;
+export type SimpleFunc = (interaction: Discord.ChatInputCommandInteraction) => Discord.Awaitable<SimpleFuncReturn>;
 
 export interface SharedCommandOptions {
     /**

@@ -15,13 +15,17 @@ export default function onInteractionCreate(registry: InteractionRegistry) {
         if (await BlacklistManager.isBlacklisted(interaction.user.id)) {
             if (!interaction.isCommand() && !interaction.isButton()) return;
 
-            return await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
+            await interaction.reply(replyEmbedEphemeral("You're blacklisted from using this bot anywhere.", EmbedType.Error));
+            return;
         }
 
-        if (interaction.isCommand()) {
+        if (interaction.isChatInputCommand()) {
             try {
                 const command = registry.commands.get(interaction.commandName);
-                if (!command) return await interaction.reply(replyEmbedEphemeral("This command doesn't exist anymore or some other thing screwed up.", EmbedType.Error));
+                if (!command) {
+                    await interaction.reply(replyEmbedEphemeral("This command doesn't exist anymore or some other thing screwed up.", EmbedType.Error));
+                    return;
+                }
 
                 log.debug("Command '%s' by %s in %s (%s)", command.data.name, interaction.user.id, interaction.channelId, interaction.channel?.type);
 

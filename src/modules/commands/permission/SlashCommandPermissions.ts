@@ -6,7 +6,7 @@ export interface SlashCommandPermissionsOptions {
      *  @default true */
     dm_permission?: boolean;
     /** 0n if no one is allowed to use the command */
-    default_member_permissions?: Discord.Permissions;
+    default_member_permissions?: Discord.PermissionsBitField;
 }
 
 export class SlashCommandPermissions {
@@ -26,12 +26,12 @@ export class SlashCommandPermissions {
 
     static HIDDEN = new SlashCommandPermissions({
         dm_permission: false,
-        default_member_permissions: new Discord.Permissions(0n),
+        default_member_permissions: new Discord.PermissionsBitField(0n),
     });
 
     static ADMIN = new SlashCommandPermissions({
         dm_permission: false,
-        default_member_permissions: new Discord.Permissions(Discord.Permissions.FLAGS.ADMINISTRATOR),
+        default_member_permissions: new Discord.PermissionsBitField(Discord.PermissionsBitField.Flags.Administrator),
     });
 
     static EVERYONE = new SlashCommandPermissions({

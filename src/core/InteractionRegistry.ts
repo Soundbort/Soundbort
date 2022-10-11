@@ -6,7 +6,7 @@ import { BUTTON_TYPES } from "../const";
 import { doNothing } from "../util/util";
 import { removeDupes } from "../util/array";
 
-import DiscordPermissionsV2Utils, { PatchedAPIApplicationCommand } from "../util/discord-patch/DiscordPermissionsV2Utils";
+import DiscordPermissionsV2Utils from "../util/discord-patch/DiscordPermissionsV2Utils";
 import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
 import { SlashCommand } from "../modules/commands/SlashCommand";
 
@@ -21,8 +21,8 @@ export default class InteractionRegistry {
     public commands = new Discord.Collection<string, SlashCommand>();
     public buttons: { filter: ButtonFilter; func: ButtonHandler }[] = [];
 
-    public global_api_commands = new Map<string, PatchedAPIApplicationCommand>();
-    public guild_api_commands = new Map<Discord.Snowflake, Map<string, PatchedAPIApplicationCommand>>();
+    public global_api_commands = new Map<string, Discord.APIApplicationCommand>();
+    public guild_api_commands = new Map<Discord.Snowflake, Map<string, Discord.APIApplicationCommand>>();
 
     public addCommand(command: SlashCommand): void {
         if (this.commands.has(command.data.name)) throw new Error("Command name already exists");

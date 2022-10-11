@@ -42,7 +42,7 @@ export class SlashSubCommand extends SlashCommandAutocompleteMixin {
         await this._autocomplete(interaction);
     }
 
-    async run(interaction: Discord.CommandInteraction): Promise<void> {
+    async run(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
         const result = await this.func(interaction); // Optional chaining (?.), the function will only be called if this.func property is not nullish
         if (!result || interaction.replied) return;
 

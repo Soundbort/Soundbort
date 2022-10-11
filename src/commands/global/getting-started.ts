@@ -35,7 +35,7 @@ export function install({ client, registry }: CmdInstallerArgs): void {
         })
         .setAuthor({
             name: BOT_NAME + " | Getting started",
-            iconURL: client.user.avatarURL({ size: 32, dynamic: true }) || undefined,
+            iconURL: client.user.avatarURL({ size: 32 }) || undefined,
         });
 
     registry.addCommand(new SlashCommand({

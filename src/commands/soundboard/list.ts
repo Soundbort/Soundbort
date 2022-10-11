@@ -15,21 +15,21 @@ import { StandardSample } from "../../core/soundboard/StandardSample";
 
 import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
 
-function generateSampleButtons(samples: CustomSample[] | StandardSample[]): Discord.MessageActionRow[] {
-    const rows: Discord.MessageActionRow[] = [];
+function generateSampleButtons(samples: CustomSample[] | StandardSample[]): Discord.ActionRowBuilder<Discord.ButtonBuilder>[] {
+    const rows: Discord.ActionRowBuilder<Discord.ButtonBuilder>[] = [];
     let i = 0;
 
     for (const sample of samples) {
-        const button = new Discord.MessageButton()
+        const button = new Discord.ButtonBuilder()
             .setCustomId(sample instanceof CustomSample
                 ? InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_CUSTOM, id: sample.id })
                 : InteractionRegistry.encodeButtonId({ t: BUTTON_TYPES.PLAY_STANDA, n: sample.name }),
             )
             .setLabel(sample.name)
-            .setStyle("PRIMARY");
+            .setStyle(Discord.ButtonStyle.Primary);
 
         const row = Math.floor(i / 5);
-        if (!rows[row]) rows[row] = new Discord.MessageActionRow();
+        if (!rows[row]) rows[row] = new Discord.ActionRowBuilder();
 
         rows[row].addComponents(button);
 
@@ -61,20 +61,20 @@ function generateSampleMessage(
     return { embeds: [embed], components: rows };
 }
 
-async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> {
+async function scopeAll(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
     const client = interaction.client as Discord.Client<true>;
 
     const standard_samples = await StandardSample.getSamples();
     const guild_samples = interaction.guildId ? await CustomSample.getGuildSamples(interaction.guildId) : [];
     const user_samples = await CustomSample.getUserSamples(interaction.user.id);
 
-    const reply = (opts: Discord.InteractionReplyOptions & Discord.MessageOptions) => {
+    const reply = (opts: Discord.InteractionReplyOptions & Discord.MessageCreateOptions) => {
         return interaction.replied ? interaction.channel?.send(opts) : interaction.reply(opts);
     };
 
     if (standard_samples.length > 0) {
         await reply(generateSampleMessage(
-            standard_samples, "Standard Samples", client.user.avatarURL({ dynamic: true, size: 32 }),
+            standard_samples, "Standard Samples", client.user.avatarURL({ size: 32 }),
         ));
     }
 
@@ -87,7 +87,7 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
         const guild_slots = interaction.guildId ? await CustomSample.countSlots(interaction.guildId) : 0;
 
         await reply(generateSampleMessage(
-            guild_samples, `${interaction.guild.name}'s Server Samples`, interaction.guild.iconURL({ dynamic: true, size: 32 }), guild_slots, false,
+            guild_samples, `${interaction.guild.name}'s Server Samples`, interaction.guild.iconURL({ size: 32 }), guild_slots, false,
         ));
     }
 
@@ -99,12 +99,12 @@ async function scopeAll(interaction: Discord.CommandInteraction): Promise<void> 
         const user_slots = await CustomSample.countSlots(interaction.user.id);
 
         await reply(generateSampleMessage(
-            user_samples, `${interaction.user.username}'s Samples`, interaction.user.avatarURL({ dynamic: true, size: 32 }), user_slots, false,
+            user_samples, `${interaction.user.username}'s Samples`, interaction.user.avatarURL({ size: 32 }), user_slots, false,
         ));
     }
 }
 
-async function scopeStandard(interaction: Discord.CommandInteraction): Promise<SimpleFuncReturn> {
+async function scopeStandard(interaction: Discord.ChatInputCommandInteraction): Promise<SimpleFuncReturn> {
     const client = interaction.client as Discord.Client<true>;
 
     const standard = await StandardSample.getSamples();
@@ -114,11 +114,11 @@ async function scopeStandard(interaction: Discord.CommandInteraction): Promise<S
     }
 
     return generateSampleMessage(
-        standard, "Standard Samples", client.user.avatarURL({ dynamic: true, size: 32 }),
+        standard, "Standard Samples", client.user.avatarURL({ size: 32 }),
     );
 }
 
-async function scopeServer(interaction: Discord.CommandInteraction): Promise<SimpleFuncReturn> {
+async function scopeServer(interaction: Discord.ChatInputCommandInteraction): Promise<SimpleFuncReturn> {
     if (!interaction.inCachedGuild()) {
         return replyEmbedEphemeral("Call this command in a server to get the server list.", EmbedType.Error);
     }
@@ -131,11 +131,11 @@ async function scopeServer(interaction: Discord.CommandInteraction): Promise<Sim
     }
 
     return generateSampleMessage(
-        samples, `${interaction.guild.name}'s Server Samples`, interaction.guild.iconURL({ dynamic: true, size: 32 }), slots,
+        samples, `${interaction.guild.name}'s Server Samples`, interaction.guild.iconURL({ size: 32 }), slots,
     );
 }
 
-async function scopeUser(interaction: Discord.CommandInteraction): Promise<SimpleFuncReturn> {
+async function scopeUser(interaction: Discord.ChatInputCommandInteraction): Promise<SimpleFuncReturn> {
     if (interaction.inGuild() && !await GuildConfigManager.hasAllowForeignSamples(interaction.guildId)) {
         return replyEmbedEphemeral("Playing samples that aren't from this server's soundboard is not allowed in this server.", EmbedType.Info);
     }
@@ -148,7 +148,7 @@ async function scopeUser(interaction: Discord.CommandInteraction): Promise<Simpl
     }
 
     return generateSampleMessage(
-        samples, `${interaction.user.username}'s Samples`, interaction.user.avatarURL({ dynamic: true, size: 32 }), slots,
+        samples, `${interaction.user.username}'s Samples`, interaction.user.avatarURL({ size: 32 }), slots,
     );
 }
 

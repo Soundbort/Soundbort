@@ -137,7 +137,7 @@ export default class Core {
     private setStatus(): void {
         this.client.user.setStatus("online");
         this.client.user.setActivity({
-            type: "PLAYING",
+            type: Discord.ActivityType.Playing,
             name: "your sound files",
         });
     }

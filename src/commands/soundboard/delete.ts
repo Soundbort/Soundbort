@@ -13,7 +13,7 @@ import { CustomSample } from "../../core/soundboard/CustomSample";
 import SampleID from "../../core/soundboard/SampleID";
 import { search } from "../../core/soundboard/methods/searchMany";
 
-async function dialogSameId(interaction: Discord.CommandInteraction, sampleId: string) {
+async function dialogSameId(interaction: Discord.ChatInputCommandInteraction, sampleId: string) {
     await createDialog({
         interaction,
         dialog_text:
@@ -24,17 +24,17 @@ async function dialogSameId(interaction: Discord.CommandInteraction, sampleId: s
             id: { id: sampleId, t: BUTTON_TYPES.DELETE_USER },
             label: "Delete From User Board",
             emoji: "🗑️",
-            style: "DANGER",
+            style: Discord.ButtonStyle.Danger,
         }, {
             id: { id: sampleId, t: BUTTON_TYPES.DELETE_SERVER },
             label: "Delete From Server Board",
             emoji: "🗑️",
-            style: "DANGER",
+            style: Discord.ButtonStyle.Danger,
         }],
     });
 }
 
-async function dialogSameName(interaction: Discord.CommandInteraction, userSampleId: string, guildSampleId: string) {
+async function dialogSameName(interaction: Discord.ChatInputCommandInteraction, userSampleId: string, guildSampleId: string) {
     await createDialog({
         interaction,
         dialog_text:
@@ -45,12 +45,12 @@ async function dialogSameName(interaction: Discord.CommandInteraction, userSampl
             id: { id: userSampleId, t: BUTTON_TYPES.DELETE_USER },
             label: "Delete From User Board",
             emoji: "🗑️",
-            style: "DANGER",
+            style: Discord.ButtonStyle.Danger,
         }, {
             id: { id: guildSampleId, t: BUTTON_TYPES.DELETE_SERVER },
             label: "Delete From Server Board",
             emoji: "🗑️",
-            style: "DANGER",
+            style: Discord.ButtonStyle.Danger,
         }],
     });
 }
@@ -214,13 +214,13 @@ export function install({ registry, admin }: CmdInstallerArgs): void {
                     id: { ...decoded, t: BUTTON_TYPES.DELETE_USER },
                     label: "Delete From User Board",
                     emoji: "🗑️",
-                    style: "DANGER",
+                    style: Discord.ButtonStyle.Danger,
                 },
                 hasInGuild && {
                     id: { ...decoded, t: BUTTON_TYPES.DELETE_SERVER },
                     label: "Delete From Server Board",
                     emoji: "🗑️",
-                    style: "DANGER",
+                    style: Discord.ButtonStyle.Danger,
                 },
             ].filter(Boolean) as DialogOptionsButton[],
         });

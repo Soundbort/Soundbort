@@ -35,7 +35,7 @@ export class SlashSubCommandGroup {
         }
     }
 
-    protected _getSubcommand(interaction: Discord.CommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | undefined {
+    protected _getSubcommand(interaction: Discord.ChatInputCommandInteraction | Discord.AutocompleteInteraction): SlashSubCommand | undefined {
         const command_name = interaction.options.getSubcommand(true);
         return this.commands.get(command_name);
     }
@@ -47,7 +47,7 @@ export class SlashSubCommandGroup {
         await command.autocomplete(interaction);
     }
 
-    async run(interaction: Discord.CommandInteraction): Promise<void> {
+    async run(interaction: Discord.ChatInputCommandInteraction): Promise<void> {
         if (this.middleware && !await this.middleware(interaction)) return;
 
         const command = this._getSubcommand(interaction);

@@ -23,7 +23,7 @@ async function sendMessageReply(client: Discord.Client<true>, slot: SingleSoundb
     if (slot.slotType === SAMPLE_TYPES.SERVER && (!doc.guildId || slot.ownerId !== doc.guildId)) return;
 
     // get channel
-    let channel: Discord.AnyChannel | null | undefined;
+    let channel: Discord.Channel | null | undefined;
     if (doc.guildId) {
         const guild = await client.guilds.fetch(doc.guildId);
         channel = await guild.channels.fetch(doc.channelId);
@@ -31,7 +31,7 @@ async function sendMessageReply(client: Discord.Client<true>, slot: SingleSoundb
         channel = await client.channels.fetch(doc.channelId, { allowUnknownGuild: true });
     }
 
-    if (!channel || !channel.isText()) return;
+    if (!channel || !channel.isTextBased()) return;
 
     // make text
     const slot_text = slot.count === 1 ? "one soundboard slot" : "two soundboard slots";
@@ -97,7 +97,7 @@ export function install({ client, registry }: CmdInstallerArgs): void {
             const embed = createEmbed()
                 .setAuthor({
                     name: BOT_NAME + " | Voting",
-                    iconURL: client.user.avatarURL({ size: 32, dynamic: true }) || undefined,
+                    iconURL: client.user.avatarURL({ size: 32 }) || undefined,
                 })
                 .setDescription(
                     "To get more slots for your soundboard you can upvote the bot through the links below.\n" +
@@ -109,12 +109,12 @@ export function install({ client, registry }: CmdInstallerArgs): void {
             const user = interaction.user;
             const user_vote_link = vote_base_link + "&userId=" + user.id;
             const user_label = formatEllipsis(`Get slots for %#${user.discriminator}`, user.username, 80); // label text max 80 characters
-            const buttons: Discord.MessageButton[] = [
-                new Discord.MessageButton()
+            const buttons: Discord.ButtonBuilder[] = [
+                new Discord.ButtonBuilder()
                     .setLabel(user_label)
                     .setEmoji("🗳️")
                     .setURL(user_vote_link)
-                    .setStyle("LINK"),
+                    .setStyle(Discord.ButtonStyle.Link),
             ];
 
             if (interaction.guild) {
@@ -122,16 +122,19 @@ export function install({ client, registry }: CmdInstallerArgs): void {
                 const guild_vote_link = vote_base_link + "&guildId=" + guild.id;
                 const guild_label = formatEllipsis("Get slots for Server '%'", guild.name, 80); // label text max 80 characters
                 buttons.push(
-                    new Discord.MessageButton()
+                    new Discord.ButtonBuilder()
                         .setLabel(guild_label)
                         .setEmoji("🗳️")
                         .setURL(guild_vote_link)
-                        .setStyle("LINK"),
+                        .setStyle(Discord.ButtonStyle.Link),
                 );
             }
 
             const reply = await interaction.reply({
-                embeds: [embed], components: [new Discord.MessageActionRow().addComponents(buttons)], fetchReply: true,
+                embeds: [embed],
+                components: [
+                    new Discord.ActionRowBuilder<Discord.ButtonBuilder>().addComponents(buttons),
+                ],
             });
 
             await InteractionRepliesManager.add(interaction, reply.id);
