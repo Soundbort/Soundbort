@@ -38,12 +38,16 @@
             "hidden": true
         },
         {
+            "type": "ci",
+            "hidden": true
+        },
+        {
             "type": "test",
             "hidden": true
         }
     ],
-    "commitUrlFormat": "https://github.com/LonelessCodes/SoundBort/commit/{{hash}}",
-    "compareUrlFormat": "https://github.com/LonelessCodes/SoundBort/compare/{{previousTag}}...{{currentTag}}",
-    "issueUrlFormat": "https://github.com/LonelessCodes/SoundBort/issues/{{id}}",
-    "userUrlFormat": "https://github.com/LonelessCodes"
+    "commitUrlFormat": "https://github.com/SoundBort/SoundBort/commit/{{hash}}",
+    "compareUrlFormat": "https://github.com/SoundBort/SoundBort/compare/{{previousTag}}...{{currentTag}}",
+    "issueUrlFormat": "https://github.com/SoundBort/SoundBort/issues/{{id}}",
+    "userUrlFormat": "https://github.com/SoundBort"
 }
