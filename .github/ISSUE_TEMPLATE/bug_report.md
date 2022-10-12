@@ -2,7 +2,7 @@
 name: Bug Report
 about: Report a bug within <NAME>
 title: '[ Bug ] <Replace this with a short description>'
-labels: 'bug'
+labels: [bug, need repro]
 assignees: ''
 
 ---

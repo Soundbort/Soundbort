@@ -1,8 +1,8 @@
 ---
-name: Suggestion
-about: Suggest a change to an existing feature within <NAME> (For new feature use the Feature request template)
-title: '[ Enhancement ] <Replace this with a short description>'
-labels: 'enhancement'
+name: Improvement
+about: Suggest a change/improvement to an existing feature within <NAME> (For new feature use the Feature request template)
+title: '[ Improvement ] <Replace this with a short description>'
+labels: 'improvement'
 assignees: ''
 
 ---
