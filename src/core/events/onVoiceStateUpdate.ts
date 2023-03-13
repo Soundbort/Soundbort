@@ -25,7 +25,7 @@ export default function onVoiceStateUpdate() {
             return;
         }
 
-        const channel = new_state.guild.me?.voice.channel;
+        const channel = new_state.guild.members.me?.voice.channel;
         if (!channel) return;
 
         if (channel.members.filter(m => !m.user.bot).size > 0) return;

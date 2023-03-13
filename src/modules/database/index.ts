@@ -1,5 +1,5 @@
 import { Awaitable } from "discord.js";
-import { Collection, Db, MongoClient } from "mongodb";
+import { Collection, Db, Document, MongoClient } from "mongodb";
 
 import { BOT_NAME, DB_URI } from "../../config";
 import Logger from "../../log";
@@ -61,6 +61,6 @@ export function get(): Db {
     return database;
 }
 
-export function collection<T>(name: string): Collection<T> {
+export function collection<T extends Document>(name: string): Collection<T> {
     return get().collection<T>(name);
 }
