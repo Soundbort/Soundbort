@@ -33,6 +33,7 @@
         "unicorn/prefer-module": "off",
         "unicorn/prefer-top-level-await": "off",
         "unicorn/switch-case-braces": ["error", "avoid"],
+        "unicorn/no-negated-condition": "off",
         // ESLINT
         "getter-return": "error",
         "no-compare-neg-zero": "error",

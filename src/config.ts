@@ -57,9 +57,9 @@ export const LOGS_DIR = path.join(PROJECT_ROOT, "logs");
 const package_file: PackageJson = fs.readJsonSync(path.join(PROJECT_ROOT, "package.json"));
 
 export const VERSION = package_file.version as string + (
-    ENVIRONMENT !== EnvironmentStages.PROD
-        ? `-${ENVIRONMENT.toLowerCase()}`
-        : ""
+    ENVIRONMENT === EnvironmentStages.PROD
+        ? ""
+        : `-${ENVIRONMENT.toLowerCase()}`
 );
 
 export const METRICS_PORT = 6969;

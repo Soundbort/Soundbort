@@ -36,7 +36,7 @@ export async function createDialog({ interaction, dialog_text, dialog_type = Emb
         message_buttons.push(message_button);
     }
 
-    if (typeof abort_type !== "undefined") {
+    if (abort_type !== undefined) {
         message_buttons.push(
             new Discord.ButtonBuilder()
                 .setCustomId(InteractionRegistry.encodeButtonId({ t: abort_type, did: dialogId }))

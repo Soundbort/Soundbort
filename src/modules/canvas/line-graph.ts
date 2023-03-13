@@ -375,8 +375,8 @@ function fixInputsXY(data: ChartOptionsData[], xy: ChartOptionsAxies | undefined
         ? Math.max(...data.map(data => Math.max(...data.points.map(p => p.y))))
         : Math.max(...data.map(data => lastItem(data.points)[axies]));
 
-    let xy_min = (!xy || typeof xy.min === "undefined") ? xy_min_data : xy.min;
-    let xy_max = (!xy || typeof xy.max === "undefined") ? xy_max_data : xy.max;
+    let xy_min = (!xy || xy.min === undefined) ? xy_min_data : xy.min;
+    let xy_max = (!xy || xy.max === undefined) ? xy_max_data : xy.max;
 
     // ensure a minimum distance between min and max
     const xy_window_padding = 1;

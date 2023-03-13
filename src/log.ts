@@ -79,7 +79,7 @@ function rest(info: any): string {
 }
 
 function colorize(lookup: string, message?: string): string | undefined {
-    if (typeof message === "undefined") {
+    if (message === undefined) {
         return message;
     }
 
@@ -102,7 +102,7 @@ function colorize(lookup: string, message?: string): string | undefined {
 function printf(info: any): string {
     let str = `${info.timestamp} > `;
 
-    if (typeof info.shard !== "undefined") {
+    if (info.shard !== undefined) {
         str += chalk.magenta(`[shard:${info.shard}] `);
     }
     if (info.label) {

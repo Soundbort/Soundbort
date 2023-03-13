@@ -73,7 +73,7 @@ export default class DatabaseCache<
 
     private _findOne(filter: CacheFilter<mongodb.WithId<TSchema>>): mongodb.WithId<TSchema> | undefined {
         // find documents quicker if filter includes index key
-        if (typeof filter[this.index_name] !== "undefined") {
+        if (filter[this.index_name] !== undefined) {
             const return_val = this.cache.get(filter[this.index_name] as KeyType);
             if (return_val) {
                 // it was found in cache! does it match the rest of the filters?
@@ -91,7 +91,7 @@ export default class DatabaseCache<
 
     private _findMany(filter: CacheFilter<mongodb.WithId<TSchema>>): mongodb.WithId<TSchema>[] {
         // find documents quicker if filter includes index key
-        if (typeof filter[this.index_name] !== "undefined") {
+        if (filter[this.index_name] !== undefined) {
             const return_val = this.cache.get(filter[this.index_name] as KeyType);
             if (return_val) {
                 // it was found in cache! does it match the rest of the filters?

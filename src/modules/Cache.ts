@@ -33,7 +33,7 @@ export class Cache<K, T> extends Map<K, T> {
         if (this.ttl <= 0) return;
 
         const old_timeout = this._ttl.get(key);
-        if (typeof old_timeout !== "undefined") clearTimeout(old_timeout);
+        if (old_timeout !== undefined) clearTimeout(old_timeout);
 
         const timeout = setTimeout(() => this.delete(key), this.ttl);
         this._ttl.set(key, timeout);
@@ -44,7 +44,7 @@ export class Cache<K, T> extends Map<K, T> {
 
         for (const [key] of this._ttl) {
             const old_timeout = this._ttl.get(key);
-            if (typeof old_timeout !== "undefined") {
+            if (old_timeout !== undefined) {
                 clearTimeout(old_timeout);
             }
         }
@@ -55,7 +55,7 @@ export class Cache<K, T> extends Map<K, T> {
         super.delete(key);
 
         const old_timeout = this._ttl.get(key);
-        if (typeof old_timeout !== "undefined") {
+        if (old_timeout !== undefined) {
             clearTimeout(old_timeout);
             this._ttl.delete(key);
         }
