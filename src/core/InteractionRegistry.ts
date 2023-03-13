@@ -1,5 +1,5 @@
 import * as Discord from "discord.js";
-import qs from "query-string";
+import qs from "node:querystring";
 
 import Logger from "../log";
 import { BUTTON_TYPES } from "../const";
@@ -10,7 +10,7 @@ import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
 import { SlashCommand } from "../modules/commands/SlashCommand";
 
 export type ButtonFilter = Record<string, string>;
-export type ButtonParsed = qs.ParsedQuery<string> & { t: BUTTON_TYPES };
+export type ButtonParsed = NodeJS.Dict<string> & { t: BUTTON_TYPES };
 
 export type ButtonHandler = (interaction: Discord.ButtonInteraction, decoded: ButtonParsed) => (Promise<SimpleFuncReturn> | SimpleFuncReturn);
 
@@ -126,11 +126,11 @@ export default class InteractionRegistry {
     }
 
     static encodeButtonId(json: ButtonParsed): string {
-        return qs.stringify(json, { encode: true });
+        return qs.stringify(json);
     }
 
     static decodeButtonId(id: string): ButtonParsed {
-        return qs.parse(id, { decode: true }) as ButtonParsed;
+        return qs.parse(id) as ButtonParsed;
     }
 
     static checkButtonFilter(json: ButtonParsed, filter: ButtonFilter): boolean {
