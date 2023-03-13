@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.4](https://github.com/LonelessCodes/SoundBort/compare/v0.8.3...v0.8.4) (2023-03-13)
+
+
+### Bug Fixes
+
+* fixed leaving vc after ~1 minute by updating discord.js and @discordjs/voice to latest v and it's dependencies ([4f3e4e4](https://github.com/LonelessCodes/SoundBort/commit/4f3e4e4d679dcd887be869aa19b38491f51250a5))
+
 ### [0.8.3](https://github.com/LonelessCodes/SoundBort/compare/v0.8.2...v0.8.3) (2022-07-21)
 
 
