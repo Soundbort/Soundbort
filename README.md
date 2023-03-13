@@ -77,12 +77,12 @@ In the root folder create an `.env` file based on the `.env.template` file and f
 ### Running
 
 ```sh
-# run for development, compile at runtime (car)
-npm run start:car
+# run for development, run on ts-node
+npm run dev
 
 # build for development and run
 npm run build
-npm run start:devel
+npm run preview
 
 # build for production and run
 npm run build
@@ -91,7 +91,7 @@ npm run start
 
 ### Editing
 
-If you're going to edit the code, make sure you're using a proper IDE for code editing. Your best bet might be VS Code. If you want to contribute to the project, run `npm run lint` and `npm run build` and by chance build the docker container `npm run build:docker` and fix any errors before creating a pull request.
+If you're going to edit the code, make sure you're using a proper IDE for code editing. Your best bet might be VS Code. If you want to contribute to the project, run `npm run lint` and `npm run build` and by chance build the docker container `npm run docker:build` and fix any errors before creating a pull request.
 
 ---
 

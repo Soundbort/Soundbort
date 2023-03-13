@@ -48,4 +48,4 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build the Docker image
-        run: npm run build:docker
+        run: npm run docker:build
