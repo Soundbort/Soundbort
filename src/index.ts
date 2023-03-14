@@ -14,6 +14,8 @@ const djs_log = Logger.child({ label: "discord.js" });
 // ////////////// START BOT //////////////
 
 const client = new Discord.Client({
+    shards: "auto",
+
     intents: [
         Discord.Intents.FLAGS.GUILDS,
         Discord.Intents.FLAGS.GUILD_VOICE_STATES,
