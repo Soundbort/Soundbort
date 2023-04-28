@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 
-import DataDeletionManager from "../data-managers/DataDeletionManager";
+import DataDeletionManager from "../data-managers/DataDeletionManager.js";
 
 export default function onGuildCreate() {
     return async (guild: Discord.Guild): Promise<void> => {

@@ -1,11 +1,11 @@
-import { CmdInstallerArgs } from "../../util/types";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { createStringOption } from "../../modules/commands/options/string";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import { search } from "../../core/soundboard/methods/searchMany";
-import { findOne } from "../../core/soundboard/methods/findOne";
+import { search } from "../../core/soundboard/methods/searchMany.js";
+import { findOne } from "../../core/soundboard/methods/findOne.js";
 
 export function install({ registry, admin }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({

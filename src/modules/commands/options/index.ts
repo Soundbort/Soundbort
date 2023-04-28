@@ -1,12 +1,12 @@
-import { createAttachmentOption } from "./attachment";
-import { createBooleanOption } from "./boolean";
-import { createChannelOption } from "./channel";
-import { createIntegerOption } from "./integer";
-import { createMentionableOption } from "./mentionable";
-import { createNumberOption } from "./number";
-import { createRoleOption } from "./role";
-import { createStringOption } from "./string";
-import { createUserOption } from "./user";
+import { createAttachmentOption } from "./attachment.js";
+import { createBooleanOption } from "./boolean.js";
+import { createChannelOption } from "./channel.js";
+import { createIntegerOption } from "./integer.js";
+import { createMentionableOption } from "./mentionable.js";
+import { createNumberOption } from "./number.js";
+import { createRoleOption } from "./role.js";
+import { createStringOption } from "./string.js";
+import { createUserOption } from "./user.js";
 
 export type CommandOptionData =
   | ReturnType<typeof createAttachmentOption>

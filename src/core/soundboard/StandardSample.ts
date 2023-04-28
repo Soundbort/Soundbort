@@ -1,21 +1,22 @@
+import { mkdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import fs from "fs-extra";
-import path from "node:path";
-import * as Voice from "@discordjs/voice";
 import * as Discord from "discord.js";
+import * as Voice from "@discordjs/voice";
 import moment from "moment";
 import escapeStringRegexp from "escape-string-regexp";
 
-import { BUTTON_TYPES } from "../../const";
-import Logger from "../../log";
-import { createEmbed } from "../../util/builders/embed";
-import canvas from "../../modules/canvas/index";
+import { BUTTON_TYPES } from "../../const.js";
+import Logger from "../../log.js";
+import { createEmbed } from "../../util/builders/embed.js";
+import canvas from "../../modules/canvas/index.js";
 
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample.js";
 
-import * as models from "../../modules/database/models";
-import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
+import * as models from "../../modules/database/models.js";
+import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema.js";
 
-import InteractionRegistry from "../InteractionRegistry";
+import InteractionRegistry from "../InteractionRegistry.js";
 
 const log = Logger.child({ label: "SampleManager => StandardSample" });
 
@@ -39,7 +40,7 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         this.last_played_at = doc.last_played_at;
     }
 
-    get file(): string {
+    get file(): URL {
         return StandardSample.generateFilePath(this.name);
     }
 
@@ -97,7 +98,7 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
         let waveform_attachment: Discord.AttachmentBuilder | undefined;
 
         try {
-            const waveform_buffer = Buffer.from(await canvas.visualizeAudio(this.file));
+            const waveform_buffer = Buffer.from(await canvas.visualizeAudio(fileURLToPath(this.file)));
             waveform_attachment = new Discord.AttachmentBuilder(waveform_buffer, { name: "waveform.png" });
             embed.setImage("attachment://waveform.png");
         } catch (error) {
@@ -121,18 +122,11 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
     // UTILITY
 
-    static async ensureDir(): Promise<void> {
-        await fs.ensureDir(StandardSample.BASE, 0o0777);
+    static generateFilePath(name: string): URL {
+        return new URL(name + StandardSample.EXT, StandardSample.BASE);
     }
 
-    static generateFilePath(name: string): string {
-        return path.join(StandardSample.BASE, name + StandardSample.EXT);
-    }
-
-    static BASE = path.join(AbstractSample.BASE, "standard");
-    static {
-        fs.mkdirpSync(this.BASE);
-    }
+    static BASE = new URL("standard/", AbstractSample.BASE);
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
 
@@ -189,7 +183,6 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
     static async import(sample: AbstractSample): Promise<StandardSample> {
         const file = StandardSample.generateFilePath(sample.name);
 
-        await fs.ensureDir(path.dirname(file));
         await fs.copyFile(sample.file, file);
 
         const new_sample = await StandardSample.create({
@@ -209,3 +202,5 @@ export class StandardSample extends AbstractSample implements SoundboardStandard
 
     static MAX_SLOTS = 25;
 }
+
+await mkdir(StandardSample.BASE, { recursive: true, mode: 0o0777 });

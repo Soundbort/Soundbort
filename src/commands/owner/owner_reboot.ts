@@ -1,11 +1,11 @@
-import Logger from "../../log";
-import { exit } from "../../util/exit";
+import Logger from "../../log.js";
+import { exit } from "../../util/exit.js";
 
-import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
-import { createBooleanOption } from "../../modules/commands/options/boolean";
-import { replyEmbed } from "../../util/builders/embed";
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand.js";
+import { createBooleanOption } from "../../modules/commands/options/boolean.js";
+import { replyEmbed } from "../../util/builders/embed.js";
 
-import AudioManager from "../../core/audio/AudioManager";
+import AudioManager from "../../core/audio/AudioManager.js";
 
 const log = Logger.child({ label: "Reboot" });
 

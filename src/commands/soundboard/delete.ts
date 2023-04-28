@@ -1,17 +1,17 @@
 import * as Discord from "discord.js";
 
-import { BUTTON_TYPES } from "../../const";
+import { BUTTON_TYPES } from "../../const.js";
 
-import { CmdInstallerArgs } from "../../util/types";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { createStringOption } from "../../modules/commands/options/string";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
-import { DialogOptionsButton, createDialog } from "../../util/builders/dialog";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { DialogOptionsButton, createDialog } from "../../util/builders/dialog.js";
 
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import SampleID from "../../core/soundboard/SampleID";
-import { search } from "../../core/soundboard/methods/searchMany";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import SampleID from "../../core/soundboard/SampleID.js";
+import { search } from "../../core/soundboard/methods/searchMany.js";
 
 async function dialogSameId(interaction: Discord.ChatInputCommandInteraction, sampleId: string) {
     await createDialog({

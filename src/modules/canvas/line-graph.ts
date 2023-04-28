@@ -1,14 +1,14 @@
 import { createCanvas, GlobalFonts, SKRSContext2D } from "@napi-rs/canvas";
-import path from "node:path";
+import { fileURLToPath } from "node:url";
 import color from "color";
 import moment from "moment";
 
-import { lastItem } from "../../util/array";
-import { ASSETS_DIR } from "../../config";
-import { COLOR } from "../../const";
+import { lastItem } from "../../util/array.js";
+import { ASSETS_DIR } from "../../config.js";
+import { COLOR } from "../../const.js";
 
-GlobalFonts.registerFromPath(path.join(ASSETS_DIR, "fonts", "Roboto-Regular.ttf"), "Roboto Regular");
-GlobalFonts.registerFromPath(path.join(ASSETS_DIR, "fonts", "Roboto-Bold.ttf"), "Roboto Bold");
+GlobalFonts.registerFromPath(fileURLToPath(new URL("fonts/Roboto-Regular.ttf", ASSETS_DIR)), "Roboto Regular");
+GlobalFonts.registerFromPath(fileURLToPath(new URL("fonts/Roboto-Bold.ttf", ASSETS_DIR)), "Roboto Bold");
 
 const WHITE_COLOR = color(COLOR.CHART_BG, "rgb").string();
 const LEGEND_TEXT_COLOR = color(COLOR.CHART_FG, "rgb").mix(color(COLOR.CHART_BG, "rgb"), 0.4).string();

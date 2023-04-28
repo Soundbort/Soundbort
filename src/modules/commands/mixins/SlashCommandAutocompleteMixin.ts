@@ -1,9 +1,9 @@
 import * as Discord from "discord.js";
 
-import Logger from "../../../log";
-import nanoTimer from "../../../util/timer";
-import { ApplicationCommandOptionChoice } from "../choice";
-import { CommandOptionData } from "../options";
+import Logger from "../../../log.js";
+import nanoTimer from "../../../util/timer.js";
+import { ApplicationCommandOptionChoice } from "../choice/index.js";
+import { CommandOptionData } from "../options/index.js";
 
 const log = Logger.child({ label: "SlashCommandAutocomplete" });
 

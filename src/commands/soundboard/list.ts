@@ -1,19 +1,19 @@
 import * as Discord from "discord.js";
 
-import InteractionRegistry from "../../core/InteractionRegistry";
-import { CmdInstallerArgs } from "../../util/types";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { createStringOption } from "../../modules/commands/options/string";
-import { createChoice } from "../../modules/commands/choice";
-import { SimpleFuncReturn } from "../../modules/commands/AbstractSharedCommand";
-import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
+import InteractionRegistry from "../../core/InteractionRegistry.js";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { createChoice } from "../../modules/commands/choice/index.js";
+import { SimpleFuncReturn } from "../../modules/commands/AbstractSharedCommand.js";
+import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import { StandardSample } from "../../core/soundboard/StandardSample";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import { StandardSample } from "../../core/soundboard/StandardSample.js";
 
-import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
+import GuildConfigManager from "../../core/data-managers/GuildConfigManager.js";
 
 // TODO: format "/command" with Discord.chatInputApplicationCommandMention()
 

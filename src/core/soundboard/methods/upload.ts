@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import path from "node:path";
 import temp from "temp";
@@ -5,14 +6,14 @@ import fs from "fs-extra";
 import * as Discord from "discord.js";
 import ffmpeg, { FfprobeData } from "fluent-ffmpeg";
 
-import { SAMPLE_TYPES } from "../../../const";
-import Logger from "../../../log";
-import { downloadFile, isEnoughDiskSpace } from "../../../util/files";
+import { SAMPLE_TYPES } from "../../../const.js";
+import Logger from "../../../log.js";
+import { downloadFile, isEnoughDiskSpace } from "../../../util/files.js";
 
-import SampleID from "../SampleID";
-import { CustomSample } from "../CustomSample";
-import { StandardSample } from "../StandardSample";
-import { EmbedType, replyEmbed } from "../../../util/builders/embed";
+import SampleID from "../SampleID.js";
+import { CustomSample } from "../CustomSample.js";
+import { StandardSample } from "../StandardSample.js";
+import { EmbedType, replyEmbed } from "../../../util/builders/embed.js";
 
 const ffprobe = promisify(ffmpeg.ffprobe) as (file: string) => Promise<FfprobeData>;
 
@@ -229,7 +230,7 @@ export async function* upload(
             return yield failed(UploadErrors.ConversionError);
         }
 
-        let sample_file: string;
+        let sample_file: URL;
         let new_id: string | undefined;
 
         if (scope !== SAMPLE_TYPES.STANDARD) {
@@ -240,15 +241,11 @@ export async function* upload(
             }
 
             sample_file = CustomSample.generateFilePath(new_id);
-
-            await CustomSample.ensureDir();
         } else {
             sample_file = StandardSample.generateFilePath(name);
-
-            await StandardSample.ensureDir();
         }
 
-        await fs.move(temp_conversion_file, sample_file);
+        await fs.move(temp_conversion_file, fileURLToPath(sample_file));
         await temp.cleanup();
 
         // /////////// FINISHING UP ///////////

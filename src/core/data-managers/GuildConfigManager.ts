@@ -2,8 +2,8 @@ import * as Discord from "discord.js";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { MatchKeysAndValues } from "mongodb";
 
-import * as models from "../../modules/database/models";
-import { GuildConfigSchema } from "../../modules/database/schemas/GuildConfigSchema";
+import * as models from "../../modules/database/models.js";
+import { GuildConfigSchema } from "../../modules/database/schemas/GuildConfigSchema.js";
 
 interface GuildConfigManagerEvents {
     change(guildId: Discord.Snowflake, config: GuildConfigSchema): void;

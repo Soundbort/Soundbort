@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 
-import * as models from "../../modules/database/models";
-import { InteractionRepliesSchema } from "../../modules/database/schemas/InteractionRepliesSchema";
+import * as models from "../../modules/database/models.js";
+import { InteractionRepliesSchema } from "../../modules/database/schemas/InteractionRepliesSchema.js";
 
 class InteractionRepliesManager {
     async add(interaction: Discord.ChatInputCommandInteraction | Discord.MessageComponentInteraction, messageId: Discord.Snowflake, refId?: string): Promise<void> {

@@ -4,8 +4,8 @@
 import * as mongodb from "mongodb";
 import { Except } from "type-fest";
 
-import { Cache, CacheOptions } from "../Cache";
-import * as database from "./index";
+import { Cache, CacheOptions } from "../Cache.js";
+import * as database from "./index.js";
 
 export interface DatabaseCacheOptions<KeyName> extends CacheOptions {
     indexName: KeyName;

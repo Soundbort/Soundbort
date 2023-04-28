@@ -1,6 +1,6 @@
 import { Collection, Document } from "mongodb";
 
-import * as database from "./index";
+import * as database from "./index.js";
 
 // A lot of typescript cheating to make this proxy wrap
 // around the db client getter from database/index.ts

@@ -6,12 +6,11 @@
  * Therefore put all canvas stuff in one worker.
  */
 
-import path from "node:path";
 import * as Comlink from "comlink";
-import nodeEndpoint from "comlink/dist/umd/node-adapter";
 
-import { createWorker } from "../../util/worker/index";
+import nodeEndpoint from "../../util/worker/node-adapter.js";
+import { createWorker } from "../../util/worker/index.js";
 
-const worker = createWorker(path.join(__dirname, "worker.ts"));
+const worker = createWorker(new URL("worker.js", import.meta.url));
 
-export default Comlink.wrap<import("./worker").WorkerAPI>(nodeEndpoint(worker));
+export default Comlink.wrap<import("./worker.js").WorkerAPI>(nodeEndpoint(worker)); // ? unfortunately comlink types do not work well for nodejs esm

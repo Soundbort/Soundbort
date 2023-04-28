@@ -1,13 +1,13 @@
 import * as Discord from "discord.js";
 import qs from "node:querystring";
 
-import Logger from "../log";
-import { BUTTON_TYPES } from "../const";
-import { doNothing } from "../util/util";
-import { removeDupes } from "../util/array";
+import Logger from "../log.js";
+import { BUTTON_TYPES } from "../const.js";
+import { doNothing } from "../util/util.js";
+import { removeDupes } from "../util/array.js";
 
-import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand";
-import { SlashCommand } from "../modules/commands/SlashCommand";
+import { SimpleFuncReturn } from "../modules/commands/AbstractSharedCommand.js";
+import { SlashCommand } from "../modules/commands/SlashCommand.js";
 
 export type ButtonFilter = Record<string, string>;
 export type ButtonParsed = NodeJS.Dict<string> & { t: BUTTON_TYPES };

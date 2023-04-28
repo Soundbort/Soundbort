@@ -1,16 +1,16 @@
 import * as Discord from "discord.js";
 
-import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
 
-import { CmdInstallerArgs } from "../../util/types";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { createStringOption } from "../../modules/commands/options/string";
-import { createChoice } from "../../modules/commands/choice";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { createChoice } from "../../modules/commands/choice/index.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import { UploadErrors } from "../../core/soundboard/methods/upload";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import { UploadErrors } from "../../core/soundboard/methods/upload.js";
 
 async function importUser(interaction: Discord.ButtonInteraction | Discord.ChatInputCommandInteraction, sample: CustomSample) {
     const user = interaction.user;

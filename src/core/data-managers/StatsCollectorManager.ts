@@ -4,15 +4,15 @@ import http from "node:http";
 import os from "node:os";
 import { promisify } from "node:util";
 
-import Logger from "../../log";
+import Logger from "../../log.js";
 
-import * as database from "../../modules/database/index";
-import * as models from "../../modules/database/models";
-import { StatsSchema } from "../../modules/database/schemas/StatsSchema";
-import { CustomSample } from "../soundboard/CustomSample";
-import { METRICS_PORT } from "../../config";
-import { lastItem } from "../../util/array";
-import { onExit } from "../../util/exit";
+import * as database from "../../modules/database/index.js";
+import * as models from "../../modules/database/models.js";
+import { StatsSchema } from "../../modules/database/schemas/StatsSchema.js";
+import { CustomSample } from "../soundboard/CustomSample.js";
+import { METRICS_PORT } from "../../config.js";
+import { lastItem } from "../../util/array.js";
+import { onExit } from "../../util/exit.js";
 
 const log = Logger.child({ label: "Core => StatsCollectorManager" });
 

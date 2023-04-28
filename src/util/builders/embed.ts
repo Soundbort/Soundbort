@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 
-import { COLOR, EMOJI } from "../../const";
+import { COLOR, EMOJI } from "../../const.js";
 
 export enum EmbedType {
     Basic,

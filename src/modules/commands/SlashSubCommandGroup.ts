@@ -1,7 +1,7 @@
 import * as Discord from "discord.js";
 
-import { SharedCommandOptions, MiddlewareFunc } from "./AbstractSharedCommand";
-import { SlashSubCommand } from "./SlashSubCommand";
+import { SharedCommandOptions, MiddlewareFunc } from "./AbstractSharedCommand.js";
+import { SlashSubCommand } from "./SlashSubCommand.js";
 
 export interface SlashSubCommandGroupOptions extends SharedCommandOptions {
     commands: SlashSubCommand[];

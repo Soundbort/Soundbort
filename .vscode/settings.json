@@ -3,5 +3,11 @@
     "files.exclude": {
         "node_modules": true
     },
-    "editor.tabSize": 4
+    "editor.tabSize": 4,
+
+    // By default, VS Code does not add filename extensions when it 
+    // adds imports for us. That can be changed via the following 
+    // two settings:
+    "javascript.preferences.importModuleSpecifierEnding": "js",
+    "typescript.preferences.importModuleSpecifierEnding": "js"
 }

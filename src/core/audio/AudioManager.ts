@@ -2,8 +2,8 @@ import * as Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import Logger from "../../log";
-import { AudioSubscription } from "./AudioSubscription";
+import Logger from "../../log.js";
+import { AudioSubscription } from "./AudioSubscription.js";
 
 const log = Logger.child({ label: "Audio" });
 

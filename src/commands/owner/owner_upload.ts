@@ -1,12 +1,12 @@
-import { SAMPLE_TYPES } from "../../const";
+import { SAMPLE_TYPES } from "../../const.js";
 
-import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup";
-import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
-import { createAttachmentOption } from "../../modules/commands/options/attachment";
-import { createStringOption } from "../../modules/commands/options/string";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup.js";
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand.js";
+import { createAttachmentOption } from "../../modules/commands/options/attachment.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import { getLastAttachment, upload, UploadErrors } from "../../core/soundboard/methods/upload";
+import { getLastAttachment, upload, UploadErrors } from "../../core/soundboard/methods/upload.js";
 
 export default new SlashSubCommandGroup({
     name: "upload",

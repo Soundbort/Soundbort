@@ -1,11 +1,11 @@
 import * as Discord from "discord.js";
 
-import { SharedCommandOptions, MiddlewareFunc, SimpleFunc } from "./AbstractSharedCommand";
-import { SlashCommandAutocompleteMixin } from "./mixins/SlashCommandAutocompleteMixin";
-import { CommandOptionData } from "./options";
-import { SlashCommandPermissions } from "./permission/SlashCommandPermissions";
-import { SlashSubCommand } from "./SlashSubCommand";
-import { SlashSubCommandGroup } from "./SlashSubCommandGroup";
+import { SharedCommandOptions, MiddlewareFunc, SimpleFunc } from "./AbstractSharedCommand.js";
+import { SlashCommandAutocompleteMixin } from "./mixins/SlashCommandAutocompleteMixin.js";
+import { CommandOptionData } from "./options/index.js";
+import { SlashCommandPermissions } from "./permission/SlashCommandPermissions.js";
+import { SlashSubCommand } from "./SlashSubCommand.js";
+import { SlashSubCommandGroup } from "./SlashSubCommandGroup.js";
 
 export type GuildCreateEventHandler = (guild: Discord.Guild) => Discord.Awaitable<void>;
 

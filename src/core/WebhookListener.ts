@@ -2,10 +2,10 @@ import express from "express";
 import http from "node:http";
 import { promisify } from "node:util";
 
-import Logger from "../log";
-import { WEBHOOK_PORT } from "../config";
-import { onExit } from "../util/exit";
-import VotesManager from "./data-managers/VotesManager";
+import Logger from "../log.js";
+import { WEBHOOK_PORT } from "../config.js";
+import { onExit } from "../util/exit.js";
+import VotesManager from "./data-managers/VotesManager.js";
 
 const log = Logger.child({ label: "Core => WebhookManager" });
 

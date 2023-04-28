@@ -1,10 +1,10 @@
-import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
-import { createStringOption } from "../../modules/commands/options/string";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import { StandardSample } from "../../core/soundboard/StandardSample";
-import { UploadErrors } from "../../core/soundboard/methods/upload";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import { StandardSample } from "../../core/soundboard/StandardSample.js";
+import { UploadErrors } from "../../core/soundboard/methods/upload.js";
 
 export default new SlashSubCommand({
     name: "import",

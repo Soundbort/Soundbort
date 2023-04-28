@@ -1,11 +1,11 @@
 import * as Discord from "discord.js";
 
-import { BOT_NAME, VERSION } from "../../config";
+import { BOT_NAME, VERSION } from "../../config.js";
 
-import { CmdInstallerArgs } from "../../util/types";
-import { createEmbed } from "../../util/builders/embed";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { createEmbed } from "../../util/builders/embed.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
 
 // TODO: format "/command" with Discord.chatInputApplicationCommandMention()
 

@@ -1,10 +1,10 @@
 import * as Discord from "discord.js";
 
-import Logger from "../../log";
-import { canUseCommand } from "../../util/permissions";
-import InteractionRegistry from "../InteractionRegistry";
-import { CustomSample } from "../soundboard/CustomSample";
-import { StandardSample } from "../soundboard/StandardSample";
+import Logger from "../../log.js";
+import { canUseCommand } from "../../util/permissions.js";
+import InteractionRegistry from "../InteractionRegistry.js";
+import { CustomSample } from "../soundboard/CustomSample.js";
+import { StandardSample } from "../soundboard/StandardSample.js";
 
 const log = Logger.child({ label: "AdminPermissions" });
 

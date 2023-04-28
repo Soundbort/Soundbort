@@ -1,30 +1,30 @@
-import path from "node:path";
+import glob from "fast-glob";
 import * as Discord from "discord.js";
 import { AutoPoster as topGGStatsPoster } from "topgg-autoposter";
 import { CronJob } from "cron";
 
-import Logger from "../log";
-import { SAMPLE_TYPES } from "../const";
-import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config";
+import Logger from "../log.js";
+import { SAMPLE_TYPES } from "../const.js";
+import { TOP_GG_TOKEN, TOP_GG_WEBHOOK_TOKEN } from "../config.js";
 
-import timer from "../util/timer";
-import { walk } from "../util/files";
-import { CmdInstallerFile } from "../util/types";
+import timer from "../util/timer.js";
+import { CmdInstallerFile } from "../util/types.js";
 
-import WebhookListener from "./WebhookListener";
-import AdminPermissions from "./permissions/AdminPermissions";
-import StatsCollectorManager from "./data-managers/StatsCollectorManager";
-import DataDeletionManager from "./data-managers/DataDeletionManager";
-import GuildConfigManager from "./data-managers/GuildConfigManager";
-import InteractionRepliesManager from "./data-managers/InteractionRepliesManager";
-import onInteractionCreate from "./events/onInteractionCreate";
-import onVoiceStateUpdate from "./events/onVoiceStateUpdate";
-import onGuildCreate from "./events/onGuildCreate";
-import onGuildDelete from "./events/onGuildDelete";
+import WebhookListener from "./WebhookListener.js";
+import AdminPermissions from "./permissions/AdminPermissions.js";
+import StatsCollectorManager from "./data-managers/StatsCollectorManager.js";
+import DataDeletionManager from "./data-managers/DataDeletionManager.js";
+import GuildConfigManager from "./data-managers/GuildConfigManager.js";
+import InteractionRepliesManager from "./data-managers/InteractionRepliesManager.js";
+import onInteractionCreate from "./events/onInteractionCreate.js";
+import onVoiceStateUpdate from "./events/onVoiceStateUpdate.js";
+import onGuildCreate from "./events/onGuildCreate.js";
+import onGuildDelete from "./events/onGuildDelete.js";
 
-import InteractionRegistry from "./InteractionRegistry";
+import InteractionRegistry from "./InteractionRegistry.js";
 
-import { CustomSample } from "./soundboard/CustomSample";
+import { CustomSample } from "./soundboard/CustomSample.js";
+import { fileURLToPath } from "node:url";
 
 const log = Logger.child({ label: "Core" });
 
@@ -67,8 +67,8 @@ export default class Core {
         const install_start = timer();
         const registry = new InteractionRegistry();
 
-        const commands_path = path.join(__dirname, "..", "commands");
-        const files = await walk(commands_path)
+        const commands_path = fileURLToPath(new URL("../commands/", import.meta.url));
+        const files = await glob("**/*.{js,ts}", { absolute: true, cwd: commands_path })
             .then(files => files.filter(file => /\.(ts|js)$/.test(file)));
 
         const installer_args = {
@@ -79,17 +79,16 @@ export default class Core {
 
         await Promise.all(files.map(async file => {
             const start = timer();
-            const relative_path = path.relative(path.join(__dirname, ".."), file);
 
             try {
                 const install = await import(file) as CmdInstallerFile;
                 await install.install?.(installer_args);
             } catch (error) {
-                log.error("failed   : %s", relative_path);
+                log.error("failed   : %s", file);
                 throw error;
             }
 
-            log.debug("installed: %s %s ms", relative_path, timer.diffMs(start).toFixed(3));
+            log.debug("installed: %s %s ms", file, timer.diffMs(start).toFixed(3));
         }));
 
         const install_time = timer.diff(install_start) / timer.NS_PER_SEC;

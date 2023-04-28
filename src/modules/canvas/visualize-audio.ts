@@ -6,7 +6,7 @@ import { createCanvas, SKRSContext2D } from "@napi-rs/canvas";
 import ffmpeg from "fluent-ffmpeg";
 import concatStream from "concat-stream";
 
-import Logger from "../../log";
+import Logger from "../../log.js";
 
 const log = Logger.child({ label: "Waveform Worker" });
 

@@ -1,5 +1,5 @@
 import * as Discord from "discord.js";
-import { BaseOptionData, createBaseOptionData } from "./_shared";
+import { BaseOptionData, createBaseOptionData } from "./_shared.js";
 
 export function createChannelOption(
     opts: Omit<Discord.APIApplicationCommandChannelOption, "type">,

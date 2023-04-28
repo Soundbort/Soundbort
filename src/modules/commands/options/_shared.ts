@@ -1,13 +1,13 @@
 import * as Discord from "discord.js";
 import { Merge } from "type-fest";
 
-import { ApplicationCommandOptionChoice, ChoiceTypes } from "../choice";
+import { ApplicationCommandOptionChoice, ChoiceTypes } from "../choice/index.js";
 
 export type CommandOptionAutocompleteFunc<T = any> = (value: T, interaction: Discord.AutocompleteInteraction) => Discord.Awaitable<ApplicationCommandOptionChoice[]>;
 
 export type WithAutocompleteOrChoice<Base, ChoiceType extends ChoiceTypes> =
-    | Merge<Base, { autocomplete?: CommandOptionAutocompleteFunc<ChoiceType>; choices?: undefined }>
-    | Merge<Base, { autocomplete?: undefined; choices: Discord.APIApplicationCommandOptionChoice<ChoiceType>[]; }>;
+    | Merge<Base, { autocomplete?: CommandOptionAutocompleteFunc<ChoiceType> }>
+    | Merge<Omit<Base, "autocomplete">, { choices: Discord.APIApplicationCommandOptionChoice<ChoiceType>[]; autocomplete?: undefined }>;
 
 export interface HasTypeField {
     type: Discord.ApplicationCommandOptionType;

@@ -1,8 +1,8 @@
 import * as Discord from "discord.js";
 
-import { SharedCommandOptions, SimpleFunc } from "./AbstractSharedCommand";
-import { SlashCommandAutocompleteMixin } from "./mixins/SlashCommandAutocompleteMixin";
-import { CommandOptionData } from "./options";
+import { SharedCommandOptions, SimpleFunc } from "./AbstractSharedCommand.js";
+import { SlashCommandAutocompleteMixin } from "./mixins/SlashCommandAutocompleteMixin.js";
+import { CommandOptionData } from "./options/index.js";
 
 export interface SlashSubCommandOptions extends SharedCommandOptions {
     options?: CommandOptionData[];

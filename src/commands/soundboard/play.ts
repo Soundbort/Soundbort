@@ -1,23 +1,23 @@
 import * as Discord from "discord.js";
 
-import { BUTTON_TYPES } from "../../const";
-import Logger from "../../log";
+import { BUTTON_TYPES } from "../../const.js";
+import Logger from "../../log.js";
 
-import { doNothing } from "../../util/util";
-import { timeout } from "../../util/timers";
-import { CmdInstallerArgs } from "../../util/types";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { createStringOption } from "../../modules/commands/options/string";
+import { doNothing } from "../../util/util.js";
+import { timeout } from "../../util/timers.js";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
 
-import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager";
-import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager";
-import { CustomSample } from "../../core/soundboard/CustomSample";
-import { StandardSample } from "../../core/soundboard/StandardSample";
-import { search } from "../../core/soundboard/methods/searchMany";
-import { findOne } from "../../core/soundboard/methods/findOne";
-import GuildConfigManager from "../../core/data-managers/GuildConfigManager";
+import AudioManager, { JoinFailureTypes } from "../../core/audio/AudioManager.js";
+import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager.js";
+import { CustomSample } from "../../core/soundboard/CustomSample.js";
+import { StandardSample } from "../../core/soundboard/StandardSample.js";
+import { search } from "../../core/soundboard/methods/searchMany.js";
+import { findOne } from "../../core/soundboard/methods/findOne.js";
+import GuildConfigManager from "../../core/data-managers/GuildConfigManager.js";
 
 const log = Logger.child({ label: "Command => play" });
 

@@ -3,7 +3,8 @@ import chalk from "chalk";
 import winston from "winston";
 import "winston-daily-rotate-file";
 
-import { ENVIRONMENT, EnvironmentStages, LOGS_DIR } from "./config";
+import { ENVIRONMENT, EnvironmentStages, LOGS_DIR } from "./config.js";
+import { fileURLToPath } from "node:url";
 
 const levels = {
     error: 0,
@@ -47,12 +48,12 @@ const Logger = winston.createLogger({
     transports: [
         new winston.transports.DailyRotateFile({
             ...rotate_file_opts,
-            filename: `${LOGS_DIR}/%DATE%-bot-error.log`,
+            filename: `${fileURLToPath(LOGS_DIR)}/%DATE%-bot-error.log`,
             level: "error",
         }),
         new winston.transports.DailyRotateFile({
             ...rotate_file_opts,
-            filename: `${LOGS_DIR}/%DATE%-bot-combined.log`,
+            filename: `${fileURLToPath(LOGS_DIR)}/%DATE%-bot-combined.log`,
         }),
     ],
 });

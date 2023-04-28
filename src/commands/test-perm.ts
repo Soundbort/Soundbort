@@ -1,13 +1,13 @@
-import { OWNER_GUILD_IDS } from "../config";
+import { OWNER_GUILD_IDS } from "../config.js";
 
-import { canUseCommand } from "../util/permissions";
+import { canUseCommand } from "../util/permissions.js";
 
-import { CmdInstallerArgs } from "../util/types";
-import timer from "../util/timer";
+import { CmdInstallerArgs } from "../util/types.js";
+import timer from "../util/timer.js";
 
-import { SlashCommand } from "../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
-import { createStringOption } from "../modules/commands/options/string";
+import { SlashCommand } from "../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions.js";
+import { createStringOption } from "../modules/commands/options/string.js";
 
 export function install({ registry }: CmdInstallerArgs) {
     registry.addCommand(new SlashCommand({

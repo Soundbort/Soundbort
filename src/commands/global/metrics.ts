@@ -2,20 +2,20 @@ import * as Discord from "discord.js";
 import color from "color";
 import os from "node:os";
 
-import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../../const";
-import { BOT_NAME, VERSION } from "../../config";
+import { BUTTON_TYPES, BUTTON_TYPES_NAMES, COLOR } from "../../const.js";
+import { BOT_NAME, VERSION } from "../../config.js";
 
-import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager";
+import StatsCollectorManager from "../../core/data-managers/StatsCollectorManager.js";
 
-import { CmdInstallerArgs } from "../../util/types";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
-import { createStringOption } from "../../modules/commands/options/string";
-import { createChoice } from "../../modules/commands/choice";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { EmbedType, createEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { createChoice } from "../../modules/commands/choice/index.js";
 
-import { ChartOptionsData } from "../../modules/canvas/line-graph";
-import canvas from "../../modules/canvas/index";
+import { ChartOptionsData } from "../../modules/canvas/line-graph.js";
+import canvas from "../../modules/canvas/index.js";
 
 enum TimeWindowChoices {
     Day = "24 hours",

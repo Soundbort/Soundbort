@@ -1,6 +1,6 @@
 import * as Discord from "discord.js";
 
-import AudioManager from "../audio/AudioManager";
+import AudioManager from "../audio/AudioManager.js";
 
 /*
  * The following event handler handles how Soundbort automatically

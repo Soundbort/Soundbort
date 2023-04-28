@@ -1,11 +1,11 @@
 // Power to the workers
 import { parentPort } from "node:worker_threads";
 import * as Comlink from "comlink";
-import nodeEndpoint from "comlink/dist/umd/node-adapter";
 
-import Logger from "../../log";
-import { visualizeAudio } from "./visualize-audio";
-import { lineGraph } from "./line-graph";
+import Logger from "../../log.js";
+import { visualizeAudio } from "./visualize-audio.js";
+import { lineGraph } from "./line-graph.js";
+import nodeEndpoint from "../../util/worker/node-adapter.js";
 
 const log = Logger.child({ label: "Canvas => Worker" });
 

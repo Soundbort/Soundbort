@@ -1,19 +1,19 @@
-import { OWNER_GUILD_IDS } from "../../config";
+import { OWNER_GUILD_IDS } from "../../config.js";
 
-import { isOwner } from "../../util/util";
+import { isOwner } from "../../util/util.js";
 
-import { CmdInstallerArgs } from "../../util/types";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
 
 // import commands. We can do this, because they don't register any commands by themselves,
 // so if they're already imported by the Core it doesn't matter
-import reboot_cmd from "./owner_reboot";
-import blacklist_cmd from "./owner_blacklist";
-import upload_standard_cmd from "./owner_upload";
-import delete_cmd from "./owner_delete";
-import import_cmd from "./owner_import";
+import reboot_cmd from "./owner_reboot.js";
+import blacklist_cmd from "./owner_blacklist.js";
+import upload_standard_cmd from "./owner_upload.js";
+import delete_cmd from "./owner_delete.js";
+import import_cmd from "./owner_import.js";
 
 export function install({ registry }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({

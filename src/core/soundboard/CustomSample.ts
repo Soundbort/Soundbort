@@ -1,26 +1,27 @@
-import path from "node:path";
+import { mkdir } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import fs from "fs-extra";
 import * as Discord from "discord.js";
 import * as Voice from "@discordjs/voice";
-import fs from "fs-extra";
 import moment from "moment";
 import { Filter } from "mongodb";
 import escapeStringRegexp from "escape-string-regexp";
 import { TypedEmitter } from "tiny-typed-emitter";
 
-import Logger from "../../log";
-import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const";
-import { createEmbed } from "../../util/builders/embed";
-import canvas from "../../modules/canvas/index";
+import Logger from "../../log.js";
+import { BUTTON_TYPES, SAMPLE_TYPES } from "../../const.js";
+import { createEmbed } from "../../util/builders/embed.js";
+import canvas from "../../modules/canvas/index.js";
 
-import { AbstractSample, ToEmbedOptions } from "./AbstractSample";
+import { AbstractSample, ToEmbedOptions } from "./AbstractSample.js";
 
-import * as models from "../../modules/database/models";
-import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema";
-import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema";
-import { VotesSchema } from "../../modules/database/schemas/VotesSchema";
+import * as models from "../../modules/database/models.js";
+import { SoundboardCustomSampleSchema, SoundboardCustomSampleScope } from "../../modules/database/schemas/SoundboardCustomSampleSchema.js";
+import { SingleSoundboardSlot, SoundboardSlot } from "../../modules/database/schemas/SoundboardSlotsSchema.js";
+import { VotesSchema } from "../../modules/database/schemas/VotesSchema.js";
 
-import InteractionRegistry from "../InteractionRegistry";
-import VotesManager from "../data-managers/VotesManager";
+import InteractionRegistry from "../InteractionRegistry.js";
+import VotesManager from "../data-managers/VotesManager.js";
 
 const log = Logger.child({ label: "SampleManager => CustomSample" });
 
@@ -48,7 +49,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         this.creatorId = doc.creatorId;
     }
 
-    get file(): string {
+    get file(): URL {
         return CustomSample.generateFilePath(this.id);
     }
 
@@ -121,7 +122,7 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         let waveform_attachment: Discord.AttachmentBuilder | undefined;
 
         try {
-            const waveform_buffer = Buffer.from(await canvas.visualizeAudio(this.file));
+            const waveform_buffer = Buffer.from(await canvas.visualizeAudio(fileURLToPath(this.file)));
             waveform_attachment = new Discord.AttachmentBuilder(waveform_buffer, { name: "waveform.png" });
             embed.setImage("attachment://waveform.png");
         } catch (error) {
@@ -182,13 +183,11 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
 
     // UTILITY
 
-    static async ensureDir(): Promise<void> {
-        await fs.ensureDir(AbstractSample.BASE, 0o0777);
+    static generateFilePath(id: string): URL {
+        return new URL(id + CustomSample.EXT, CustomSample.BASE);
     }
 
-    static generateFilePath(id: string): string {
-        return path.join(CustomSample.BASE, id + CustomSample.EXT);
-    }
+    static BASE = new URL(AbstractSample.BASE);
 
     // //////// STATIC DB MANAGEMENT METHODS ////////
 
@@ -457,6 +456,8 @@ export class CustomSample extends AbstractSample implements SoundboardCustomSamp
         return (add_slots[0]?.count ?? 0) + this.MIN_SLOTS;
     }
 }
+
+await mkdir(CustomSample.BASE, { recursive: true, mode: 0o0777 });
 
 VotesManager.on("vote", async vote => {
     try {

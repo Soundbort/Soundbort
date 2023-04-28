@@ -1,4 +1,3 @@
-import path from "node:path";
 import dotenv from "dotenv";
 import fs from "fs-extra";
 import { PackageJson } from "type-fest";
@@ -49,12 +48,12 @@ export const TOP_GG_WEBHOOK_TOKEN = process.env.SOUNDBORT_TOP_GG_WEBHOOK_TOKEN;
 
 // ////////////// INFO //////////////
 
-export const PROJECT_ROOT = path.normalize(path.join(__dirname, ".."));
-export const ASSETS_DIR = path.join(PROJECT_ROOT, "assets");
-export const DATA_DIR = path.join(PROJECT_ROOT, "data");
-export const LOGS_DIR = path.join(PROJECT_ROOT, "logs");
+export const PROJECT_ROOT = new URL("../", import.meta.url);
+export const ASSETS_DIR = new URL("assets/", PROJECT_ROOT);
+export const DATA_DIR = new URL("data/", PROJECT_ROOT);
+export const LOGS_DIR = new URL("logs/", PROJECT_ROOT);
 
-const package_file: PackageJson = fs.readJsonSync(path.join(PROJECT_ROOT, "package.json"));
+const package_file: PackageJson = fs.readJsonSync(new URL("package.json", PROJECT_ROOT));
 
 export const VERSION = package_file.version as string + (
     ENVIRONMENT === EnvironmentStages.PROD

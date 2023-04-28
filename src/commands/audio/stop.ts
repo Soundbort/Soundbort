@@ -1,11 +1,11 @@
 import * as Discord from "discord.js";
 
-import { CmdInstallerArgs } from "../../util/types";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import AudioManager from "../../core/audio/AudioManager";
+import AudioManager from "../../core/audio/AudioManager.js";
 
 export function install({ registry }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({

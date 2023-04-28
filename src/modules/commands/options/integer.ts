@@ -1,5 +1,5 @@
 import * as Discord from "discord.js";
-import { WithAutocompleteOrChoice, WithAutocompleteOrChoicesOptionData } from "./_shared";
+import { WithAutocompleteOrChoice, WithAutocompleteOrChoicesOptionData } from "./_shared.js";
 
 export function createIntegerOption(
     opts: WithAutocompleteOrChoice<Omit<Discord.APIApplicationCommandIntegerOption, "type">, number>,

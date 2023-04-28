@@ -1,4 +1,4 @@
-import { SAMPLE_TYPES } from "../../../const";
+import { SAMPLE_TYPES } from "../../../const.js";
 
 export interface SoundboardSlot {
     ts: Date;

@@ -6,7 +6,7 @@
 
 import * as Discord from "discord.js";
 
-import Logger from "../log";
+import Logger from "../log.js";
 
 export interface TestCommandPermissionsReturn {
     channel: boolean;

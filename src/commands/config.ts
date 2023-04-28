@@ -1,13 +1,13 @@
-import { BOT_NAME } from "../config";
+import { BOT_NAME } from "../config.js";
 
-import { CmdInstallerArgs } from "../util/types";
-import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../util/builders/embed";
-import { SlashCommand } from "../modules/commands/SlashCommand";
-import { SlashSubCommand } from "../modules/commands/SlashSubCommand";
-import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions";
-import { createBooleanOption } from "../modules/commands/options/boolean";
+import { CmdInstallerArgs } from "../util/types.js";
+import { EmbedType, replyEmbed, replyEmbedEphemeral } from "../util/builders/embed.js";
+import { SlashCommand } from "../modules/commands/SlashCommand.js";
+import { SlashSubCommand } from "../modules/commands/SlashSubCommand.js";
+import { SlashCommandPermissions } from "../modules/commands/permission/SlashCommandPermissions.js";
+import { createBooleanOption } from "../modules/commands/options/boolean.js";
 
-import GuildConfigManager from "../core/data-managers/GuildConfigManager";
+import GuildConfigManager from "../core/data-managers/GuildConfigManager.js";
 
 const set_admin_role_cmd = new SlashSubCommand({
     name: "set-admin-role",

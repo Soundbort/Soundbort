@@ -1,9 +1,9 @@
-import { SlashSubCommand } from "../../modules/commands/SlashSubCommand";
-import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup";
-import { createStringOption } from "../../modules/commands/options/string";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import { SlashSubCommand } from "../../modules/commands/SlashSubCommand.js";
+import { SlashSubCommandGroup } from "../../modules/commands/SlashSubCommandGroup.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import BlacklistManager from "../../core/data-managers/BlacklistManager";
+import BlacklistManager from "../../core/data-managers/BlacklistManager.js";
 
 const blacklist_add_cmd = new SlashSubCommand({
     name: "add",

@@ -1,14 +1,14 @@
-import { SAMPLE_TYPES } from "../../const";
+import { SAMPLE_TYPES } from "../../const.js";
 
-import { CmdInstallerArgs } from "../../util/types";
-import { SlashCommand } from "../../modules/commands/SlashCommand";
-import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions";
-import { createChoice } from "../../modules/commands/choice";
-import { createAttachmentOption } from "../../modules/commands/options/attachment";
-import { createStringOption } from "../../modules/commands/options/string";
-import { replyEmbedEphemeral, replyEmbed, EmbedType } from "../../util/builders/embed";
+import { CmdInstallerArgs } from "../../util/types.js";
+import { SlashCommand } from "../../modules/commands/SlashCommand.js";
+import { SlashCommandPermissions } from "../../modules/commands/permission/SlashCommandPermissions.js";
+import { createChoice } from "../../modules/commands/choice/index.js";
+import { createAttachmentOption } from "../../modules/commands/options/attachment.js";
+import { createStringOption } from "../../modules/commands/options/string.js";
+import { replyEmbedEphemeral, replyEmbed, EmbedType } from "../../util/builders/embed.js";
 
-import { getLastAttachment, upload, UploadErrors } from "../../core/soundboard/methods/upload";
+import { getLastAttachment, upload, UploadErrors } from "../../core/soundboard/methods/upload.js";
 
 export function install({ registry, admin }: CmdInstallerArgs): void {
     registry.addCommand(new SlashCommand({

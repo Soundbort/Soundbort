@@ -1,11 +1,11 @@
-import fs from "fs-extra";
-import path from "node:path";
-import * as Voice from "@discordjs/voice";
+import { mkdir } from "node:fs/promises";
+import { createReadStream } from "node:fs";
 import * as Discord from "discord.js";
+import * as Voice from "@discordjs/voice";
 
-import { DATA_DIR } from "../../config";
-import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema";
-import { EmbedType } from "../../util/builders/embed";
+import { DATA_DIR } from "../../config.js";
+import { SoundboardStandardSampleSchema } from "../../modules/database/schemas/SoundboardStandardSampleSchema.js";
+import { EmbedType } from "../../util/builders/embed.js";
 
 export interface ToEmbedOptions {
     show_timestamps?: boolean;
@@ -33,11 +33,11 @@ export abstract class AbstractSample implements SoundboardStandardSampleSchema {
         this.last_played_at = doc.last_played_at;
     }
 
-    abstract get file(): string;
+    abstract get file(): URL;
 
     protected _play(audio_player: Voice.AudioPlayer): Voice.AudioResource<AbstractSample> {
         // Attempt to convert the Sound into an AudioResource
-        const stream = fs.createReadStream(this.file);
+        const stream = createReadStream(this.file);
         const resource = Voice.createAudioResource(stream, { metadata: this, inputType: Voice.StreamType.OggOpus });
 
         /*
@@ -54,10 +54,8 @@ export abstract class AbstractSample implements SoundboardStandardSampleSchema {
 
     abstract toEmbed(opts: ToEmbedOptions): Promise<Discord.InteractionReplyOptions>;
 
-    static BASE = path.join(DATA_DIR, "soundboard");
-    static {
-        fs.mkdirpSync(this.BASE);
-    }
-
+    static BASE = new URL("soundboard/", DATA_DIR);
     static EXT = ".ogg";
 }
+
+await mkdir(AbstractSample.BASE, { recursive: true });

@@ -1,9 +1,9 @@
-import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
 
-export function createWorker(worker_path: string): Worker {
-    return new Worker(
-        /\.ts$/.test(__filename) ? path.join(__dirname, "worker-portal.js") : worker_path.replace(/\.ts$/, ".js"),
-        { workerData: { workerPath: worker_path } },
-    );
+export function createWorker(worker_url: URL): Worker {
+    if (process.execArgv.includes("--loader")) {
+        return new Worker(fileURLToPath(worker_url).replace(/\.js$/, ".ts"));
+    }
+    return new Worker(worker_url);
 }

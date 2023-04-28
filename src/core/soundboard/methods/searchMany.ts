@@ -1,12 +1,12 @@
 import * as Discord from "discord.js";
 
-import AdminPermissions from "../../permissions/AdminPermissions";
-import GuildConfigManager from "../../data-managers/GuildConfigManager";
+import AdminPermissions from "../../permissions/AdminPermissions.js";
+import GuildConfigManager from "../../data-managers/GuildConfigManager.js";
 
-import { ApplicationCommandOptionChoice } from "../../../modules/commands/choice";
-import { CustomSample } from "../CustomSample";
-import { StandardSample } from "../StandardSample";
-import { STANDARD_SAMPLE_PREFIX } from "./findOne";
+import { ApplicationCommandOptionChoice } from "../../../modules/commands/choice/index.js";
+import { CustomSample } from "../CustomSample.js";
+import { StandardSample } from "../StandardSample.js";
+import { STANDARD_SAMPLE_PREFIX } from "./findOne.js";
 
 function compareName(a: { name: string }, b: { name: string }) {
     if (a.name < b.name) {

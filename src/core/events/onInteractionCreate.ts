@@ -1,12 +1,12 @@
 import * as Discord from "discord.js";
 
-import Logger from "../../log";
-import { BUTTON_TYPES } from "../../const";
-import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed";
+import Logger from "../../log.js";
+import { BUTTON_TYPES } from "../../const.js";
+import { EmbedType, replyEmbedEphemeral } from "../../util/builders/embed.js";
 
-import InteractionRegistry from "../InteractionRegistry";
-import BlacklistManager from "../data-managers/BlacklistManager";
-import StatsCollectorManager from "../data-managers/StatsCollectorManager";
+import InteractionRegistry from "../InteractionRegistry.js";
+import BlacklistManager from "../data-managers/BlacklistManager.js";
+import StatsCollectorManager from "../data-managers/StatsCollectorManager.js";
 
 const log = Logger.child({ label: "Core => onInteractionCreate" });
 
