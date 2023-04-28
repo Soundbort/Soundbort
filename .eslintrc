@@ -31,7 +31,6 @@
         "unicorn/prefer-object-from-entries": "off",
         "unicorn/no-null": "off",
         "unicorn/prefer-module": "off",
-        "unicorn/prefer-top-level-await": "off",
         "unicorn/switch-case-braces": ["error", "avoid"],
         "unicorn/no-negated-condition": "off",
         "unicorn/import-style": "off",
