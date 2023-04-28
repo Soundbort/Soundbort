@@ -34,6 +34,7 @@
         "unicorn/prefer-top-level-await": "off",
         "unicorn/switch-case-braces": ["error", "avoid"],
         "unicorn/no-negated-condition": "off",
+        "unicorn/import-style": "off",
         // ESLINT
         "getter-return": "error",
         "no-compare-neg-zero": "error",

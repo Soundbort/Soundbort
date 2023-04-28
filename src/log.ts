@@ -1,10 +1,10 @@
+import { fileURLToPath } from "node:url";
 import * as util from "node:util";
-import chalk from "chalk";
+import chalk, { ChalkInstance, ColorName, ModifierName } from "chalk";
 import winston from "winston";
 import "winston-daily-rotate-file";
 
 import { ENVIRONMENT, EnvironmentStages, LOGS_DIR } from "./config.js";
-import { fileURLToPath } from "node:url";
 
 const levels = {
     error: 0,
@@ -14,10 +14,8 @@ const levels = {
     debug: 4,
 };
 
-declare type ChalkKeywords = typeof chalk.Color | typeof chalk.Modifiers;
-
 interface ChalkColorLookup {
-    [level: string]: ChalkKeywords[] | undefined;
+    [level: string]: (ColorName | ModifierName)[] | undefined;
 }
 
 const colors: ChalkColorLookup = {
@@ -90,7 +88,7 @@ function colorize(lookup: string, message?: string): string | undefined {
     }
 
     // iterate over each item in the list and add ontop of the items before
-    let state: chalk.Chalk | undefined;
+    let state: ChalkInstance | undefined;
     for (let i = 0, len = lookup_color.length; i < len; i++) {
         try {
             state = (state || chalk)[lookup_color[i]];
