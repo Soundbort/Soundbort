@@ -1,5 +1,4 @@
 name: CI
-description: Lint code, run tests and build and push the docker image to GHCR.
 
 on:
   push:
