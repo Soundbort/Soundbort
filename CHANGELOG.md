@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.9.0](https://github.com/SoundBort/SoundBort/compare/v0.8.3...v0.9.0) (2023-04-28)
+
 ### [0.8.3](https://github.com/LonelessCodes/SoundBort/compare/v0.8.2...v0.8.3) (2022-07-21)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "soundbort",
-  "version": "0.8.3",
+  "version": "0.9.0",
   "description": "Soundboard Discord bot derived from TrixieBot's soundboard implementation!",
   "type": "module",
   "homepage": "https://github.com/Soundbort/Soundbort",
