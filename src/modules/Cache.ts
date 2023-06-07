@@ -9,7 +9,7 @@ export interface CacheOptions {
     maxSize?: number;
 }
 
-const DEFAULTS: Required<CacheOptions> = {
+export const DEFAULTS: Required<CacheOptions> = {
     maxSize: 0,
     ttl: 0,
 };
@@ -20,13 +20,11 @@ export class Cache<K, T> extends Map<K, T> {
 
     private _ttl: Map<K, NodeJS.Timeout> = new Map();
 
-    constructor(_opts: CacheOptions = {}) {
+    constructor(opts: CacheOptions = {}) {
         super();
 
-        const opts = { ...DEFAULTS, ..._opts } as Required<CacheOptions>;
-
-        this.ttl = opts.ttl * 1000;
-        this.maxSize = opts.maxSize;
+        this.ttl = (opts.ttl ?? DEFAULTS.ttl) * 1000;
+        this.maxSize = opts.maxSize ?? DEFAULTS.maxSize;
     }
 
     private _setTTLTimeout(key: K) {
@@ -102,8 +100,10 @@ export class Cache<K, T> extends Map<K, T> {
 
     set(key: K, new_doc: T): this {
         if (this.maxSize > 0 && this.size >= this.maxSize) {
-            const first_key = this.keys().next().value;
-            this.delete(first_key);
+            const first_key = this.keys().next();
+            if (!first_key.done) {
+                this.delete(first_key.value);
+            }
         }
 
         super.set(key, new_doc);
