@@ -37,7 +37,7 @@
     "fast-glob": "^3.2.12",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.1.1",
-    "mongodb": "^4.16.0",
+    "mongodb": "^4.17.0",
     "nanoid": "^4.0.2",
     "sodium-native": "^4.0.1",
     "temp": "^0.9.4",
